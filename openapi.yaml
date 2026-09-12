@@ -1,0 +1,93 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: AssetService API
+    version: 0.0.1
+paths:
+    /v1/images:finalize:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_FinalizeImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.FinalizeImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
+    /v1/images:prepare:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_PrepareImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.PrepareImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.PrepareImageResponse'
+components:
+    schemas:
+        velony.asset.api.v1.FinalizeImageRequest:
+            required:
+                - key
+            type: object
+            properties:
+                key:
+                    type: string
+                resizeOptions:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResizeOptions'
+        velony.asset.api.v1.Image:
+            type: object
+            properties:
+                name:
+                    type: string
+                key:
+                    readOnly: true
+                    type: string
+        velony.asset.api.v1.ImageResizeOptions:
+            required:
+                - width
+                - height
+                - fit
+            type: object
+            properties:
+                width:
+                    type: integer
+                    format: uint32
+                height:
+                    type: integer
+                    format: uint32
+                fit:
+                    type: integer
+                    format: enum
+        velony.asset.api.v1.PrepareImageRequest:
+            required:
+                - key
+            type: object
+            properties:
+                key:
+                    type: string
+        velony.asset.api.v1.PrepareImageResponse:
+            type: object
+            properties:
+                uploadUri:
+                    type: string
+tags:
+    - name: AssetService

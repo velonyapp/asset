@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package velony.asset.event.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/asset/gen/event/v1;eventv1";
+
+message UserAvatarKeyChangedPayload {
+  string                    user_id     = 1;
+  string                    avatar_key  = 2;
+  google.protobuf.Timestamp update_time = 3;
+}

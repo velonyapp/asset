@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package velony.asset.api.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
+
+service AssetService {
+  rpc PrepareImage(PrepareImageRequest) returns (PrepareImageResponse) {
+    option (google.api.http) = {
+      post: "/v1/images:prepare"
+      body: "*"
+    };
+  }
+
+  rpc FinalizeImage(FinalizeImageRequest) returns (Image) {
+    option (google.api.http) = {
+      post: "/v1/images:finalize"
+      body: "*"
+    };
+  }
+}
+
+message Image {
+  option (google.api.resource) = {
+    type    : "asset.velony.app/Image"
+    pattern : "images/{image}"
+    singular: "image"
+    plural  : "images"
+  };
+
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  string key = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message PrepareImageRequest {
+  string key = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message PrepareImageResponse {
+  string upload_uri = 1;
+}
+
+enum ImageResizeFit {
+  IMAGE_RESIZE_FIT_UNSPECIFIED = 0;
+  IMAGE_RESIZE_FIT_CONTAIN     = 1;
+  IMAGE_RESIZE_FIT_COVER       = 2;
+}
+
+message ImageResizeOptions {
+  uint32 width  = 1 [(google.api.field_behavior) = REQUIRED];
+  uint32 height = 2 [(google.api.field_behavior) = REQUIRED];
+
+  ImageResizeFit fit = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message FinalizeImageRequest {
+  string key = 1 [(google.api.field_behavior) = REQUIRED];
+
+  ImageResizeOptions resize_options = 2 [(google.api.field_behavior) = OPTIONAL];
+}
