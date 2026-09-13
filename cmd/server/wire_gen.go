@@ -14,6 +14,7 @@ import (
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/redis"
+	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
 	"github.com/velonyapp/asset/internal/presentation/api"
@@ -33,12 +34,17 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 		return nil, nil, err
 	}
 	image := mysql.NewImageRepo(db)
-	client, err := redis.NewConnection(data)
+	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
-	cache := redis.NewCache(client)
-	prepareImageHandler := usecase.NewPrepareImageHandler(image, cache)
+	storage := s3.NewStorage(client, data)
+	prepareImageHandler := usecase.NewPrepareImageHandler(image, storage)
+	redisClient, err := redis.NewConnection(data)
+	if err != nil {
+		return nil, nil, err
+	}
+	cache := redis.NewCache(redisClient)
 	finalizeImageHandler := usecase.NewFinalizeImageHandler(image, cache)
 	apiService := api.NewService(prepareImageHandler, finalizeImageHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()

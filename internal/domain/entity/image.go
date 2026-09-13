@@ -14,37 +14,47 @@ var (
 
 type Image struct {
 	ID         vo.ImageID
-	Key        vo.AssetKey
+	StorageKey vo.StorageKey
+	Status     vo.ImageStatus
 	CreateTime vo.Time
 	DeleteTime *vo.Time
 }
 
 func NewImage(
-	ID vo.ImageID,
-	Key vo.AssetKey,
-	CreateTime vo.Time,
-	DeleteTime *vo.Time,
+	StorageKey vo.StorageKey,
+	Status vo.ImageStatus,
 ) *Image {
 	now := vo.NewTimeNow()
 	imageID := vo.NewImageIDRandom()
 
 	image := &Image{
 		ID:         imageID,
-		Key:        Key,
+		StorageKey: StorageKey,
+		Status:     Status,
 		CreateTime: now,
 	}
 
 	return image
 }
 
-func (u *Image) Delete() error {
-	if u.DeleteTime != nil {
+func (i *Image) ChangeStatus(status vo.ImageStatus) error {
+	if i.DeleteTime != nil {
+		return ErrImageDeleted
+	}
+
+	i.Status = status
+
+	return nil
+}
+
+func (i *Image) Delete() error {
+	if i.DeleteTime != nil {
 		return ErrImageDeleted
 	}
 
 	now := vo.NewTimeNow()
 
-	u.DeleteTime = &now
+	i.DeleteTime = &now
 
 	return nil
 }

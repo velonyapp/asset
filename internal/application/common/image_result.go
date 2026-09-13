@@ -5,8 +5,9 @@ import (
 )
 
 type ImageResult struct {
-	ID  string
-	Key string
+	ID     string
+	Key    string
+	Status string
 }
 
 func NewImageResult(image *entity.Image) *ImageResult {

@@ -9,7 +9,7 @@ import (
 
 type Image interface {
 	FindByID(ctx context.Context, id vo.ImageID) (*entity.Image, error)
-	FindByKey(ctx context.Context, key vo.AssetKey) (*entity.Image, error)
+	FindByStorageKey(ctx context.Context, storageKey vo.StorageKey) (*entity.Image, error)
 
 	Save(ctx context.Context, image *entity.Image) error
 }

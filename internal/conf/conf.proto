@@ -73,10 +73,29 @@ message Data {
     optional uint32 max_active_connections = 2;
   }
 
+  message S3 {
+    string endpoint = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    string access_key_id = 2 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    string secret_access_key = 3 [
+      (buf.validate.field).string.min_len = 1
+    ];
+
+    string bucket = 4 [
+      (buf.validate.field).string.min_len = 1
+    ];
+  }
+
   MySQL mysql = 1 [
     (buf.validate.field).required = true
   ];
   Redis redis = 2;
+  S3 s3 = 3 [
+    (buf.validate.field).required = true
+  ];
 }
 
 message Observability {

@@ -15,9 +15,7 @@ type ImageRepo struct {
 	db *sql.DB
 }
 
-func NewImageRepo(
-	db *sql.DB,
-) repo.Image {
+func NewImageRepo(db *sql.DB) repo.Image {
 	return &ImageRepo{db: db}
 }
 
@@ -30,8 +28,8 @@ func (repo *ImageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 		SELECT
 			id,
 			key,
-			create_time,
-			delete_time
+			status,
+			create_time
 		FROM images
 		WHERE id = ?
 		LIMIT 1
@@ -51,19 +49,19 @@ func (repo *ImageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 	return image, nil
 }
 
-func (repo *ImageRepo) FindByKey(ctx context.Context, key vo.AssetKey) (*entity.Image, error) {
+func (repo *ImageRepo) FindByStorageKey(ctx context.Context, storageKey vo.StorageKey) (*entity.Image, error) {
 	const query = `
 		SELECT
 			id,
 			key,
-			create_time,
-			delete_time
+			status,
+			create_time
 		FROM images
 		WHERE key = ?
 		LIMIT 1
 	`
 
-	row := executor(ctx, repo.db).QueryRowContext(ctx, query, key.Value())
+	row := executor(ctx, repo.db).QueryRowContext(ctx, query, storageKey.Value())
 
 	image, err := scanImage(row)
 	if err != nil {
@@ -78,34 +76,39 @@ func (repo *ImageRepo) FindByKey(ctx context.Context, key vo.AssetKey) (*entity.
 }
 
 func (repo *ImageRepo) Save(ctx context.Context, image *entity.Image) error {
+	if image.DeleteTime != nil {
+		const query = `
+			DELETE FROM images
+			WHERE id = ?
+		`
+
+		_, err := executor(ctx, repo.db).ExecContext(ctx, query, image.ID.Value())
+		return err
+	}
+
 	const query = `
 		INSERT INTO images (
 			id,
 			key,
-			create_time,
-			delete_time
+			status,
+			create_time
 		)
 		VALUES (?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			key = ?,
-			create_time = ?,
-			delete_time = ?
+			status = ?,
+			create_time = ?
 	`
-
-	var deleteTime any
-	if image.DeleteTime != nil {
-		deleteTime = image.DeleteTime.Value()
-	}
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		image.ID.Value(),
-		image.Key.Value(),
+		image.StorageKey.Value(),
+		image.Status.String(),
 		image.CreateTime.Value(),
-		deleteTime,
 
-		image.Key.Value(),
+		image.StorageKey.Value(),
+		image.Status.String(),
 		image.CreateTime.Value(),
-		deleteTime,
 	); err != nil {
 		return err
 	}
@@ -116,32 +119,34 @@ func (repo *ImageRepo) Save(ctx context.Context, image *entity.Image) error {
 func scanImage(scanner imageScanner) (*entity.Image, error) {
 	var (
 		id         string
-		key        string
+		storageKey string
+		status     string
 		createTime time.Time
-		deleteTime sql.NullTime
 	)
 
 	if err := scanner.Scan(
 		&id,
-		&key,
+		&storageKey,
+		&status,
 		&createTime,
-		&deleteTime,
 	); err != nil {
 		return nil, err
 	}
 
-	keyVO, _ := vo.NewAssetKey(key)
+	storageKeyVO, err := vo.NewStorageKey(storageKey)
+	if err != nil {
+		return nil, err
+	}
 
-	var deleteTimeVO *vo.Time
-	if deleteTime.Valid {
-		value := vo.NewTime(deleteTime.Time)
-		deleteTimeVO = &value
+	statusVO, err := vo.NewImageStatus(status)
+	if err != nil {
+		return nil, err
 	}
 
 	return &entity.Image{
 		ID:         vo.NewImageID(id),
-		Key:        keyVO,
+		StorageKey: storageKeyVO,
+		Status:     statusVO,
 		CreateTime: vo.NewTime(createTime),
-		DeleteTime: deleteTimeVO,
 	}, nil
 }
