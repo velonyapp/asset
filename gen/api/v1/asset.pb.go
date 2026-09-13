@@ -170,7 +170,7 @@ func (x *PrepareImageRequest) GetKey() string {
 
 type PrepareImageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UploadUri     string                 `protobuf:"bytes,1,opt,name=upload_uri,json=uploadUri,proto3" json:"upload_uri,omitempty"`
+	UploadUrl     string                 `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -205,9 +205,9 @@ func (*PrepareImageResponse) Descriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *PrepareImageResponse) GetUploadUri() string {
+func (x *PrepareImageResponse) GetUploadUrl() string {
 	if x != nil {
-		return x.UploadUri
+		return x.UploadUrl
 	}
 	return ""
 }
@@ -337,7 +337,7 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tB\x03\xe0A\x02R\x03key\"5\n" +
 	"\x14PrepareImageResponse\x12\x1d\n" +
 	"\n" +
-	"upload_uri\x18\x01 \x01(\tR\tuploadUri\"\x88\x01\n" +
+	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"\x88\x01\n" +
 	"\x12ImageResizeOptions\x12\x19\n" +
 	"\x05width\x18\x01 \x01(\rB\x03\xe0A\x02R\x05width\x12\x1b\n" +
 	"\x06height\x18\x02 \x01(\rB\x03\xe0A\x02R\x06height\x12:\n" +

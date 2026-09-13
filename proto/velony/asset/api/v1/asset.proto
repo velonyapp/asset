@@ -44,7 +44,7 @@ message PrepareImageRequest {
 }
 
 message PrepareImageResponse {
-  string upload_uri = 1;
+  string upload_url = 1;
 }
 
 enum ImageResizeFit {

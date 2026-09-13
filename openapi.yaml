@@ -87,7 +87,7 @@ components:
         velony.asset.api.v1.PrepareImageResponse:
             type: object
             properties:
-                uploadUri:
+                uploadUrl:
                     type: string
 tags:
     - name: AssetService
