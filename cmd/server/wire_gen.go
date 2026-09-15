@@ -12,9 +12,8 @@ import (
 	"github.com/velonyapp/asset/internal/application/usecase"
 	"github.com/velonyapp/asset/internal/conf"
 	"github.com/velonyapp/asset/internal/info"
-	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
-	"github.com/velonyapp/asset/internal/infrastructure/data/redis"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
+	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
 	"github.com/velonyapp/asset/internal/presentation/api"
@@ -29,24 +28,16 @@ import (
 
 // wireApp init kratos application.
 func wireApp(contextContext context.Context, service *info.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
-	db, err := mysql.NewConnection(data)
-	if err != nil {
-		return nil, nil, err
-	}
-	image := mysql.NewImageRepo(db)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
-	prepareImageHandler := usecase.NewPrepareImageHandler(image, storage)
-	redisClient, err := redis.NewConnection(data)
-	if err != nil {
-		return nil, nil, err
-	}
-	cache := redis.NewCache(redisClient)
-	finalizeImageHandler := usecase.NewFinalizeImageHandler(image, cache)
-	apiService := api.NewService(prepareImageHandler, finalizeImageHandler)
+	imageProcessor := image.NewProcessor()
+	uploadImageToken := image.NewUploadToken()
+	uploadImageHandler := usecase.NewUploadImageHandler(storage, imageProcessor, uploadImageToken)
+	presignImageHandler := usecase.NewPresignImageHandler(uploadImageToken)
+	apiService := api.NewService(uploadImageHandler, presignImageHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {

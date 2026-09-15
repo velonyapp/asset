@@ -7,6 +7,6 @@ import (
 )
 
 var ProviderSet = wire.NewSet(
-	usecase.NewPrepareImageHandler,
-	usecase.NewFinalizeImageHandler,
+	usecase.NewUploadImageHandler,
+	usecase.NewPresignImageHandler,
 )

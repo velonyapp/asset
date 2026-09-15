@@ -186,9 +186,7 @@ func (x *Transport) GetGrpc() *Transport_GRPC {
 
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Mysql         *Data_MySQL            `protobuf:"bytes,1,opt,name=mysql,proto3" json:"mysql,omitempty"`
-	Redis         *Data_Redis            `protobuf:"bytes,2,opt,name=redis,proto3" json:"redis,omitempty"`
-	S3            *Data_S3               `protobuf:"bytes,3,opt,name=s3,proto3" json:"s3,omitempty"`
+	S3            *Data_S3               `protobuf:"bytes,1,opt,name=s3,proto3" json:"s3,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,20 +219,6 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Data.ProtoReflect.Descriptor instead.
 func (*Data) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Data) GetMysql() *Data_MySQL {
-	if x != nil {
-		return x.Mysql
-	}
-	return nil
-}
-
-func (x *Data) GetRedis() *Data_Redis {
-	if x != nil {
-		return x.Redis
-	}
-	return nil
 }
 
 func (x *Data) GetS3() *Data_S3 {
@@ -400,126 +384,6 @@ func (x *Transport_GRPC) GetTimeout() *durationpb.Duration {
 	return nil
 }
 
-type Data_MySQL struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Dsn                   string                 `protobuf:"bytes,1,opt,name=dsn,proto3" json:"dsn,omitempty"`
-	MaxOpenConnections    *uint32                `protobuf:"varint,2,opt,name=max_open_connections,json=maxOpenConnections,proto3,oneof" json:"max_open_connections,omitempty"`
-	MaxIdleConnections    *uint32                `protobuf:"varint,3,opt,name=max_idle_connections,json=maxIdleConnections,proto3,oneof" json:"max_idle_connections,omitempty"`
-	MaxConnectionLifetime *durationpb.Duration   `protobuf:"bytes,4,opt,name=max_connection_lifetime,json=maxConnectionLifetime,proto3" json:"max_connection_lifetime,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
-}
-
-func (x *Data_MySQL) Reset() {
-	*x = Data_MySQL{}
-	mi := &file_conf_conf_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Data_MySQL) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Data_MySQL) ProtoMessage() {}
-
-func (x *Data_MySQL) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Data_MySQL.ProtoReflect.Descriptor instead.
-func (*Data_MySQL) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{2, 0}
-}
-
-func (x *Data_MySQL) GetDsn() string {
-	if x != nil {
-		return x.Dsn
-	}
-	return ""
-}
-
-func (x *Data_MySQL) GetMaxOpenConnections() uint32 {
-	if x != nil && x.MaxOpenConnections != nil {
-		return *x.MaxOpenConnections
-	}
-	return 0
-}
-
-func (x *Data_MySQL) GetMaxIdleConnections() uint32 {
-	if x != nil && x.MaxIdleConnections != nil {
-		return *x.MaxIdleConnections
-	}
-	return 0
-}
-
-func (x *Data_MySQL) GetMaxConnectionLifetime() *durationpb.Duration {
-	if x != nil {
-		return x.MaxConnectionLifetime
-	}
-	return nil
-}
-
-type Data_Redis struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	Dsn                  string                 `protobuf:"bytes,1,opt,name=dsn,proto3" json:"dsn,omitempty"`
-	MaxActiveConnections *uint32                `protobuf:"varint,2,opt,name=max_active_connections,json=maxActiveConnections,proto3,oneof" json:"max_active_connections,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *Data_Redis) Reset() {
-	*x = Data_Redis{}
-	mi := &file_conf_conf_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Data_Redis) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Data_Redis) ProtoMessage() {}
-
-func (x *Data_Redis) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Data_Redis.ProtoReflect.Descriptor instead.
-func (*Data_Redis) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{2, 1}
-}
-
-func (x *Data_Redis) GetDsn() string {
-	if x != nil {
-		return x.Dsn
-	}
-	return ""
-}
-
-func (x *Data_Redis) GetMaxActiveConnections() uint32 {
-	if x != nil && x.MaxActiveConnections != nil {
-		return *x.MaxActiveConnections
-	}
-	return 0
-}
-
 type Data_S3 struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Endpoint        string                 `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
@@ -532,7 +396,7 @@ type Data_S3 struct {
 
 func (x *Data_S3) Reset() {
 	*x = Data_S3{}
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -544,7 +408,7 @@ func (x *Data_S3) String() string {
 func (*Data_S3) ProtoMessage() {}
 
 func (x *Data_S3) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -557,7 +421,7 @@ func (x *Data_S3) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Data_S3.ProtoReflect.Descriptor instead.
 func (*Data_S3) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{2, 2}
+	return file_conf_conf_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *Data_S3) GetEndpoint() string {
@@ -600,7 +464,7 @@ type Observability_Tracing struct {
 
 func (x *Observability_Tracing) Reset() {
 	*x = Observability_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -612,7 +476,7 @@ func (x *Observability_Tracing) String() string {
 func (*Observability_Tracing) ProtoMessage() {}
 
 func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -668,7 +532,7 @@ type Observability_Metrics struct {
 
 func (x *Observability_Metrics) Reset() {
 	*x = Observability_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -680,7 +544,7 @@ func (x *Observability_Metrics) String() string {
 func (*Observability_Metrics) ProtoMessage() {}
 
 func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -742,23 +606,9 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xb4\a\n" +
-	"\x04Data\x124\n" +
-	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12,\n" +
-	"\x05redis\x18\x02 \x01(\v2\x16.kratos.api.Data.RedisR\x05redis\x12+\n" +
-	"\x02s3\x18\x03 \x01(\v2\x13.kratos.api.Data.S3B\x06\xbaH\x03\xc8\x01\x01R\x02s3\x1a\xf1\x03\n" +
-	"\x05MySQL\x12\x19\n" +
-	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x125\n" +
-	"\x14max_open_connections\x18\x02 \x01(\rH\x00R\x12maxOpenConnections\x88\x01\x01\x125\n" +
-	"\x14max_idle_connections\x18\x03 \x01(\rH\x01R\x12maxIdleConnections\x88\x01\x01\x12[\n" +
-	"\x17max_connection_lifetime\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x022\x00R\x15maxConnectionLifetime:\xcf\x01\xbaH\xcb\x01\x1a\xc8\x01\n" +
-	"\x11mysql.pool_limits\x12Xmax_idle_connections cannot exceed max_open_connections unless max_open_connections is 0\x1aYthis.max_open_connections == 0u || this.max_idle_connections <= this.max_open_connectionsB\x17\n" +
-	"\x15_max_open_connectionsB\x17\n" +
-	"\x15_max_idle_connections\x1ax\n" +
-	"\x05Redis\x12\x19\n" +
-	"\x03dsn\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x03dsn\x129\n" +
-	"\x16max_active_connections\x18\x02 \x01(\rH\x00R\x14maxActiveConnections\x88\x01\x01B\x19\n" +
-	"\x17_max_active_connections\x1a\xac\x01\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\"\xe2\x01\n" +
+	"\x04Data\x12+\n" +
+	"\x02s3\x18\x01 \x01(\v2\x13.kratos.api.Data.S3B\x06\xbaH\x03\xc8\x01\x01R\x02s3\x1a\xac\x01\n" +
 	"\x02S3\x12#\n" +
 	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12+\n" +
 	"\raccess_key_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vaccessKeyId\x123\n" +
@@ -800,7 +650,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_conf_conf_proto_goTypes = []any{
 	(Observability_Protocol)(0),   // 0: kratos.api.Observability.Protocol
 	(*Bootstrap)(nil),             // 1: kratos.api.Bootstrap
@@ -809,12 +659,10 @@ var file_conf_conf_proto_goTypes = []any{
 	(*Observability)(nil),         // 4: kratos.api.Observability
 	(*Transport_HTTP)(nil),        // 5: kratos.api.Transport.HTTP
 	(*Transport_GRPC)(nil),        // 6: kratos.api.Transport.GRPC
-	(*Data_MySQL)(nil),            // 7: kratos.api.Data.MySQL
-	(*Data_Redis)(nil),            // 8: kratos.api.Data.Redis
-	(*Data_S3)(nil),               // 9: kratos.api.Data.S3
-	(*Observability_Tracing)(nil), // 10: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil), // 11: kratos.api.Observability.Metrics
-	(*durationpb.Duration)(nil),   // 12: google.protobuf.Duration
+	(*Data_S3)(nil),               // 7: kratos.api.Data.S3
+	(*Observability_Tracing)(nil), // 8: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil), // 9: kratos.api.Observability.Metrics
+	(*durationpb.Duration)(nil),   // 10: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
@@ -822,22 +670,19 @@ var file_conf_conf_proto_depIdxs = []int32{
 	4,  // 2: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
 	5,  // 3: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	6,  // 4: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
-	7,  // 5: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
-	8,  // 6: kratos.api.Data.redis:type_name -> kratos.api.Data.Redis
-	9,  // 7: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
-	10, // 8: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	11, // 9: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	12, // 10: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	12, // 11: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	12, // 12: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	0,  // 13: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
-	0,  // 14: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
-	12, // 15: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	7,  // 5: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
+	8,  // 6: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	9,  // 7: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	10, // 8: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	10, // 9: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	0,  // 10: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
+	0,  // 11: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
+	10, // 12: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -845,17 +690,15 @@ func file_conf_conf_proto_init() {
 	if File_conf_conf_proto != nil {
 		return
 	}
-	file_conf_conf_proto_msgTypes[6].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[7].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[9].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[10].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

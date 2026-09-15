@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetService_PrepareImage_FullMethodName  = "/velony.asset.api.v1.AssetService/PrepareImage"
-	AssetService_FinalizeImage_FullMethodName = "/velony.asset.api.v1.AssetService/FinalizeImage"
+	AssetService_PresignImage_FullMethodName = "/velony.asset.api.v1.AssetService/PresignImage"
+	AssetService_UploadImage_FullMethodName  = "/velony.asset.api.v1.AssetService/UploadImage"
+	AssetService_RemoveImage_FullMethodName  = "/velony.asset.api.v1.AssetService/RemoveImage"
 )
 
 // AssetServiceClient is the client API for AssetService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AssetServiceClient interface {
-	PrepareImage(ctx context.Context, in *PrepareImageRequest, opts ...grpc.CallOption) (*PrepareImageResponse, error)
-	FinalizeImage(ctx context.Context, in *FinalizeImageRequest, opts ...grpc.CallOption) (*Image, error)
+	PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error)
+	UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error)
+	RemoveImage(ctx context.Context, in *RemoveImageRequest, opts ...grpc.CallOption) (*RemoveImageResponse, error)
 }
 
 type assetServiceClient struct {
@@ -39,20 +41,30 @@ func NewAssetServiceClient(cc grpc.ClientConnInterface) AssetServiceClient {
 	return &assetServiceClient{cc}
 }
 
-func (c *assetServiceClient) PrepareImage(ctx context.Context, in *PrepareImageRequest, opts ...grpc.CallOption) (*PrepareImageResponse, error) {
+func (c *assetServiceClient) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PrepareImageResponse)
-	err := c.cc.Invoke(ctx, AssetService_PrepareImage_FullMethodName, in, out, cOpts...)
+	out := new(PresignImageResponse)
+	err := c.cc.Invoke(ctx, AssetService_PresignImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetServiceClient) FinalizeImage(ctx context.Context, in *FinalizeImageRequest, opts ...grpc.CallOption) (*Image, error) {
+func (c *assetServiceClient) UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Image)
-	err := c.cc.Invoke(ctx, AssetService_FinalizeImage_FullMethodName, in, out, cOpts...)
+	out := new(UploadImageResponse)
+	err := c.cc.Invoke(ctx, AssetService_UploadImage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetServiceClient) RemoveImage(ctx context.Context, in *RemoveImageRequest, opts ...grpc.CallOption) (*RemoveImageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RemoveImageResponse)
+	err := c.cc.Invoke(ctx, AssetService_RemoveImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +75,9 @@ func (c *assetServiceClient) FinalizeImage(ctx context.Context, in *FinalizeImag
 // All implementations must embed UnimplementedAssetServiceServer
 // for forward compatibility.
 type AssetServiceServer interface {
-	PrepareImage(context.Context, *PrepareImageRequest) (*PrepareImageResponse, error)
-	FinalizeImage(context.Context, *FinalizeImageRequest) (*Image, error)
+	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
+	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
+	RemoveImage(context.Context, *RemoveImageRequest) (*RemoveImageResponse, error)
 	mustEmbedUnimplementedAssetServiceServer()
 }
 
@@ -75,11 +88,14 @@ type AssetServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAssetServiceServer struct{}
 
-func (UnimplementedAssetServiceServer) PrepareImage(context.Context, *PrepareImageRequest) (*PrepareImageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method PrepareImage not implemented")
+func (UnimplementedAssetServiceServer) PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PresignImage not implemented")
 }
-func (UnimplementedAssetServiceServer) FinalizeImage(context.Context, *FinalizeImageRequest) (*Image, error) {
-	return nil, status.Error(codes.Unimplemented, "method FinalizeImage not implemented")
+func (UnimplementedAssetServiceServer) UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UploadImage not implemented")
+}
+func (UnimplementedAssetServiceServer) RemoveImage(context.Context, *RemoveImageRequest) (*RemoveImageResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveImage not implemented")
 }
 func (UnimplementedAssetServiceServer) mustEmbedUnimplementedAssetServiceServer() {}
 func (UnimplementedAssetServiceServer) testEmbeddedByValue()                      {}
@@ -102,38 +118,56 @@ func RegisterAssetServiceServer(s grpc.ServiceRegistrar, srv AssetServiceServer)
 	s.RegisterService(&AssetService_ServiceDesc, srv)
 }
 
-func _AssetService_PrepareImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PrepareImageRequest)
+func _AssetService_PresignImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PresignImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetServiceServer).PrepareImage(ctx, in)
+		return srv.(AssetServiceServer).PresignImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetService_PrepareImage_FullMethodName,
+		FullMethod: AssetService_PresignImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).PrepareImage(ctx, req.(*PrepareImageRequest))
+		return srv.(AssetServiceServer).PresignImage(ctx, req.(*PresignImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetService_FinalizeImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FinalizeImageRequest)
+func _AssetService_UploadImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetServiceServer).FinalizeImage(ctx, in)
+		return srv.(AssetServiceServer).UploadImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetService_FinalizeImage_FullMethodName,
+		FullMethod: AssetService_UploadImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).FinalizeImage(ctx, req.(*FinalizeImageRequest))
+		return srv.(AssetServiceServer).UploadImage(ctx, req.(*UploadImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetService_RemoveImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServiceServer).RemoveImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetService_RemoveImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServiceServer).RemoveImage(ctx, req.(*RemoveImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -146,12 +180,16 @@ var AssetService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AssetServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PrepareImage",
-			Handler:    _AssetService_PrepareImage_Handler,
+			MethodName: "PresignImage",
+			Handler:    _AssetService_PresignImage_Handler,
 		},
 		{
-			MethodName: "FinalizeImage",
-			Handler:    _AssetService_FinalizeImage_Handler,
+			MethodName: "UploadImage",
+			Handler:    _AssetService_UploadImage_Handler,
+		},
+		{
+			MethodName: "RemoveImage",
+			Handler:    _AssetService_RemoveImage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

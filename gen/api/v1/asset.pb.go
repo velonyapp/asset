@@ -8,9 +8,10 @@ package apiv1
 
 import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
+	httpbody "google.golang.org/genproto/googleapis/api/httpbody"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -72,146 +73,6 @@ func (ImageResizeFit) EnumDescriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
 }
 
-type Image struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Key           string                 `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Image) Reset() {
-	*x = Image{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Image) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Image) ProtoMessage() {}
-
-func (x *Image) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Image.ProtoReflect.Descriptor instead.
-func (*Image) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *Image) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Image) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-type PrepareImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PrepareImageRequest) Reset() {
-	*x = PrepareImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PrepareImageRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PrepareImageRequest) ProtoMessage() {}
-
-func (x *PrepareImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PrepareImageRequest.ProtoReflect.Descriptor instead.
-func (*PrepareImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *PrepareImageRequest) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-type PrepareImageResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UploadUrl     string                 `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PrepareImageResponse) Reset() {
-	*x = PrepareImageResponse{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PrepareImageResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PrepareImageResponse) ProtoMessage() {}
-
-func (x *PrepareImageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PrepareImageResponse.ProtoReflect.Descriptor instead.
-func (*PrepareImageResponse) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *PrepareImageResponse) GetUploadUrl() string {
-	if x != nil {
-		return x.UploadUrl
-	}
-	return ""
-}
-
 type ImageResizeOptions struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Width         uint32                 `protobuf:"varint,1,opt,name=width,proto3" json:"width,omitempty"`
@@ -223,7 +84,7 @@ type ImageResizeOptions struct {
 
 func (x *ImageResizeOptions) Reset() {
 	*x = ImageResizeOptions{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -235,7 +96,7 @@ func (x *ImageResizeOptions) String() string {
 func (*ImageResizeOptions) ProtoMessage() {}
 
 func (x *ImageResizeOptions) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,7 +109,7 @@ func (x *ImageResizeOptions) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImageResizeOptions.ProtoReflect.Descriptor instead.
 func (*ImageResizeOptions) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{3}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ImageResizeOptions) GetWidth() uint32 {
@@ -272,28 +133,183 @@ func (x *ImageResizeOptions) GetFit() ImageResizeFit {
 	return ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED
 }
 
-type FinalizeImageRequest struct {
+type PresignImageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	StorageKey    string                 `protobuf:"bytes,1,opt,name=storage_key,json=storageKey,proto3" json:"storage_key,omitempty"`
 	ResizeOptions *ImageResizeOptions    `protobuf:"bytes,2,opt,name=resize_options,json=resizeOptions,proto3" json:"resize_options,omitempty"`
+	ExpireTime    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FinalizeImageRequest) Reset() {
-	*x = FinalizeImageRequest{}
+func (x *PresignImageRequest) Reset() {
+	*x = PresignImageRequest{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PresignImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PresignImageRequest) ProtoMessage() {}
+
+func (x *PresignImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PresignImageRequest.ProtoReflect.Descriptor instead.
+func (*PresignImageRequest) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PresignImageRequest) GetStorageKey() string {
+	if x != nil {
+		return x.StorageKey
+	}
+	return ""
+}
+
+func (x *PresignImageRequest) GetResizeOptions() *ImageResizeOptions {
+	if x != nil {
+		return x.ResizeOptions
+	}
+	return nil
+}
+
+func (x *PresignImageRequest) GetExpireTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpireTime
+	}
+	return nil
+}
+
+type PresignImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadUrl     string                 `protobuf:"bytes,1,opt,name=upload_url,json=uploadUrl,proto3" json:"upload_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PresignImageResponse) Reset() {
+	*x = PresignImageResponse{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PresignImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PresignImageResponse) ProtoMessage() {}
+
+func (x *PresignImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PresignImageResponse.ProtoReflect.Descriptor instead.
+func (*PresignImageResponse) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PresignImageResponse) GetUploadUrl() string {
+	if x != nil {
+		return x.UploadUrl
+	}
+	return ""
+}
+
+type UploadImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Image         *httpbody.HttpBody     `protobuf:"bytes,2,opt,name=image,proto3" json:"image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadImageRequest) Reset() {
+	*x = UploadImageRequest{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadImageRequest) ProtoMessage() {}
+
+func (x *UploadImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadImageRequest.ProtoReflect.Descriptor instead.
+func (*UploadImageRequest) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UploadImageRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *UploadImageRequest) GetImage() *httpbody.HttpBody {
+	if x != nil {
+		return x.Image
+	}
+	return nil
+}
+
+type UploadImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StorageKey    string                 `protobuf:"bytes,1,opt,name=storage_key,json=storageKey,proto3" json:"storage_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadImageResponse) Reset() {
+	*x = UploadImageResponse{}
 	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FinalizeImageRequest) String() string {
+func (x *UploadImageResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FinalizeImageRequest) ProtoMessage() {}
+func (*UploadImageResponse) ProtoMessage() {}
 
-func (x *FinalizeImageRequest) ProtoReflect() protoreflect.Message {
+func (x *UploadImageResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -305,53 +321,134 @@ func (x *FinalizeImageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FinalizeImageRequest.ProtoReflect.Descriptor instead.
-func (*FinalizeImageRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadImageResponse.ProtoReflect.Descriptor instead.
+func (*UploadImageResponse) Descriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *FinalizeImageRequest) GetKey() string {
+func (x *UploadImageResponse) GetStorageKey() string {
 	if x != nil {
-		return x.Key
+		return x.StorageKey
 	}
 	return ""
 }
 
-func (x *FinalizeImageRequest) GetResizeOptions() *ImageResizeOptions {
+type RemoveImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StorageKey    string                 `protobuf:"bytes,1,opt,name=storage_key,json=storageKey,proto3" json:"storage_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveImageRequest) Reset() {
+	*x = RemoveImageRequest{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveImageRequest) ProtoMessage() {}
+
+func (x *RemoveImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
 	if x != nil {
-		return x.ResizeOptions
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return nil
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveImageRequest.ProtoReflect.Descriptor instead.
+func (*RemoveImageRequest) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RemoveImageRequest) GetStorageKey() string {
+	if x != nil {
+		return x.StorageKey
+	}
+	return ""
+}
+
+type RemoveImageResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveImageResponse) Reset() {
+	*x = RemoveImageResponse{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveImageResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveImageResponse) ProtoMessage() {}
+
+func (x *RemoveImageResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveImageResponse.ProtoReflect.Descriptor instead.
+func (*RemoveImageResponse) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{6}
 }
 
 var File_velony_asset_api_v1_asset_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\n" +
-	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"s\n" +
-	"\x05Image\x12\x17\n" +
-	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x15\n" +
-	"\x03key\x18\x02 \x01(\tB\x03\xe0A\x03R\x03key::\xeaA7\n" +
-	"\x16asset.velony.app/Image\x12\x0eimages/{image}*\x06images2\x05image\",\n" +
-	"\x13PrepareImageRequest\x12\x15\n" +
-	"\x03key\x18\x01 \x01(\tB\x03\xe0A\x02R\x03key\"5\n" +
-	"\x14PrepareImageResponse\x12\x1d\n" +
-	"\n" +
-	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"\x88\x01\n" +
+	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/httpbody.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x88\x01\n" +
 	"\x12ImageResizeOptions\x12\x19\n" +
 	"\x05width\x18\x01 \x01(\rB\x03\xe0A\x02R\x05width\x12\x1b\n" +
 	"\x06height\x18\x02 \x01(\rB\x03\xe0A\x02R\x06height\x12:\n" +
-	"\x03fit\x18\x03 \x01(\x0e2#.velony.asset.api.v1.ImageResizeFitB\x03\xe0A\x02R\x03fit\"\x82\x01\n" +
-	"\x14FinalizeImageRequest\x12\x15\n" +
-	"\x03key\x18\x01 \x01(\tB\x03\xe0A\x02R\x03key\x12S\n" +
-	"\x0eresize_options\x18\x02 \x01(\v2'.velony.asset.api.v1.ImageResizeOptionsB\x03\xe0A\x01R\rresizeOptions*l\n" +
+	"\x03fit\x18\x03 \x01(\x0e2#.velony.asset.api.v1.ImageResizeFitB\x03\xe0A\x02R\x03fit\"\xd2\x01\n" +
+	"\x13PresignImageRequest\x12$\n" +
+	"\vstorage_key\x18\x01 \x01(\tB\x03\xe0A\x02R\n" +
+	"storageKey\x12S\n" +
+	"\x0eresize_options\x18\x02 \x01(\v2'.velony.asset.api.v1.ImageResizeOptionsB\x03\xe0A\x01R\rresizeOptions\x12@\n" +
+	"\vexpire_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x02R\n" +
+	"expireTime\"5\n" +
+	"\x14PresignImageResponse\x12\x1d\n" +
+	"\n" +
+	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"`\n" +
+	"\x12UploadImageRequest\x12\x19\n" +
+	"\x05token\x18\x01 \x01(\tB\x03\xe0A\x02R\x05token\x12/\n" +
+	"\x05image\x18\x02 \x01(\v2\x14.google.api.HttpBodyB\x03\xe0A\x02R\x05image\"6\n" +
+	"\x13UploadImageResponse\x12\x1f\n" +
+	"\vstorage_key\x18\x01 \x01(\tR\n" +
+	"storageKey\":\n" +
+	"\x12RemoveImageRequest\x12$\n" +
+	"\vstorage_key\x18\x01 \x01(\tB\x03\xe0A\x02R\n" +
+	"storageKey\"\x15\n" +
+	"\x13RemoveImageResponse*l\n" +
 	"\x0eImageResizeFit\x12 \n" +
 	"\x1cIMAGE_RESIZE_FIT_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18IMAGE_RESIZE_FIT_CONTAIN\x10\x01\x12\x1a\n" +
-	"\x16IMAGE_RESIZE_FIT_COVER\x10\x022\x8b\x02\n" +
-	"\fAssetService\x12\x82\x01\n" +
-	"\fPrepareImage\x12(.velony.asset.api.v1.PrepareImageRequest\x1a).velony.asset.api.v1.PrepareImageResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/v1/images:prepare\x12v\n" +
-	"\rFinalizeImage\x12).velony.asset.api.v1.FinalizeImageRequest\x1a\x1a.velony.asset.api.v1.Image\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/v1/images:finalizeB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\x16IMAGE_RESIZE_FIT_COVER\x10\x022\x94\x03\n" +
+	"\fAssetService\x12\x80\x01\n" +
+	"\fPresignImage\x12(.velony.asset.api.v1.PresignImageRequest\x1a).velony.asset.api.v1.PresignImageResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1:presignImage\x12\x82\x01\n" +
+	"\vUploadImage\x12'.velony.asset.api.v1.UploadImageRequest\x1a(.velony.asset.api.v1.UploadImageResponse\" \x82\xd3\xe4\x93\x02\x1a:\x05image\"\x11/v1/images:upload\x12|\n" +
+	"\vRemoveImage\x12'.velony.asset.api.v1.RemoveImageRequest\x1a(.velony.asset.api.v1.RemoveImageResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1:removeImageB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_asset_proto_rawDescOnce sync.Once
@@ -366,27 +463,35 @@ func file_velony_asset_api_v1_asset_proto_rawDescGZIP() []byte {
 }
 
 var file_velony_asset_api_v1_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_velony_asset_api_v1_asset_proto_goTypes = []any{
-	(ImageResizeFit)(0),          // 0: velony.asset.api.v1.ImageResizeFit
-	(*Image)(nil),                // 1: velony.asset.api.v1.Image
-	(*PrepareImageRequest)(nil),  // 2: velony.asset.api.v1.PrepareImageRequest
-	(*PrepareImageResponse)(nil), // 3: velony.asset.api.v1.PrepareImageResponse
-	(*ImageResizeOptions)(nil),   // 4: velony.asset.api.v1.ImageResizeOptions
-	(*FinalizeImageRequest)(nil), // 5: velony.asset.api.v1.FinalizeImageRequest
+	(ImageResizeFit)(0),           // 0: velony.asset.api.v1.ImageResizeFit
+	(*ImageResizeOptions)(nil),    // 1: velony.asset.api.v1.ImageResizeOptions
+	(*PresignImageRequest)(nil),   // 2: velony.asset.api.v1.PresignImageRequest
+	(*PresignImageResponse)(nil),  // 3: velony.asset.api.v1.PresignImageResponse
+	(*UploadImageRequest)(nil),    // 4: velony.asset.api.v1.UploadImageRequest
+	(*UploadImageResponse)(nil),   // 5: velony.asset.api.v1.UploadImageResponse
+	(*RemoveImageRequest)(nil),    // 6: velony.asset.api.v1.RemoveImageRequest
+	(*RemoveImageResponse)(nil),   // 7: velony.asset.api.v1.RemoveImageResponse
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*httpbody.HttpBody)(nil),     // 9: google.api.HttpBody
 }
 var file_velony_asset_api_v1_asset_proto_depIdxs = []int32{
 	0, // 0: velony.asset.api.v1.ImageResizeOptions.fit:type_name -> velony.asset.api.v1.ImageResizeFit
-	4, // 1: velony.asset.api.v1.FinalizeImageRequest.resize_options:type_name -> velony.asset.api.v1.ImageResizeOptions
-	2, // 2: velony.asset.api.v1.AssetService.PrepareImage:input_type -> velony.asset.api.v1.PrepareImageRequest
-	5, // 3: velony.asset.api.v1.AssetService.FinalizeImage:input_type -> velony.asset.api.v1.FinalizeImageRequest
-	3, // 4: velony.asset.api.v1.AssetService.PrepareImage:output_type -> velony.asset.api.v1.PrepareImageResponse
-	1, // 5: velony.asset.api.v1.AssetService.FinalizeImage:output_type -> velony.asset.api.v1.Image
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 1: velony.asset.api.v1.PresignImageRequest.resize_options:type_name -> velony.asset.api.v1.ImageResizeOptions
+	8, // 2: velony.asset.api.v1.PresignImageRequest.expire_time:type_name -> google.protobuf.Timestamp
+	9, // 3: velony.asset.api.v1.UploadImageRequest.image:type_name -> google.api.HttpBody
+	2, // 4: velony.asset.api.v1.AssetService.PresignImage:input_type -> velony.asset.api.v1.PresignImageRequest
+	4, // 5: velony.asset.api.v1.AssetService.UploadImage:input_type -> velony.asset.api.v1.UploadImageRequest
+	6, // 6: velony.asset.api.v1.AssetService.RemoveImage:input_type -> velony.asset.api.v1.RemoveImageRequest
+	3, // 7: velony.asset.api.v1.AssetService.PresignImage:output_type -> velony.asset.api.v1.PresignImageResponse
+	5, // 8: velony.asset.api.v1.AssetService.UploadImage:output_type -> velony.asset.api.v1.UploadImageResponse
+	7, // 9: velony.asset.api.v1.AssetService.RemoveImage:output_type -> velony.asset.api.v1.RemoveImageResponse
+	7, // [7:10] is the sub-list for method output_type
+	4, // [4:7] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_api_v1_asset_proto_init() }
@@ -400,7 +505,7 @@ func file_velony_asset_api_v1_asset_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_api_v1_asset_proto_rawDesc), len(file_velony_asset_api_v1_asset_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

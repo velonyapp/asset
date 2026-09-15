@@ -1,5 +1,10 @@
 FROM golang:1.25 AS builder
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libvips-dev \
+        pkg-config \
+        && rm -rf /var/lib/apt/lists/
+
 COPY . /src
 WORKDIR /src
 
@@ -8,8 +13,9 @@ RUN GOPROXY=https://goproxy.cn make build
 FROM debian:stable-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
+        ca-certificates \
         netbase \
+        libvips42t64 \
         && rm -rf /var/lib/apt/lists/ \
         && apt-get autoremove -y && apt-get autoclean -y
 

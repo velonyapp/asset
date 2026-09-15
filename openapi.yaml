@@ -6,16 +6,21 @@ info:
     title: AssetService API
     version: 0.0.1
 paths:
-    /v1/images:finalize:
+    /v1/images:upload:
         post:
             tags:
                 - AssetService
-            operationId: AssetService_FinalizeImage
+            operationId: AssetService_UploadImage
+            parameters:
+                - name: token
+                  in: query
+                  schema:
+                    type: string
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.FinalizeImageRequest'
+                            type: string
                 required: true
             responses:
                 "200":
@@ -23,17 +28,17 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
-    /v1/images:prepare:
+                                $ref: '#/components/schemas/velony.asset.api.v1.UploadImageResponse'
+    /v1:presignImage:
         post:
             tags:
                 - AssetService
-            operationId: AssetService_PrepareImage
+            operationId: AssetService_PresignImage
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.PrepareImageRequest'
+                            $ref: '#/components/schemas/velony.asset.api.v1.PresignImageRequest'
                 required: true
             responses:
                 "200":
@@ -41,26 +46,27 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.PrepareImageResponse'
+                                $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
+    /v1:removeImage:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_RemoveImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageResponse'
 components:
     schemas:
-        velony.asset.api.v1.FinalizeImageRequest:
-            required:
-                - key
-            type: object
-            properties:
-                key:
-                    type: string
-                resizeOptions:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResizeOptions'
-        velony.asset.api.v1.Image:
-            type: object
-            properties:
-                name:
-                    type: string
-                key:
-                    readOnly: true
-                    type: string
         velony.asset.api.v1.ImageResizeOptions:
             required:
                 - width
@@ -77,17 +83,38 @@ components:
                 fit:
                     type: integer
                     format: enum
-        velony.asset.api.v1.PrepareImageRequest:
+        velony.asset.api.v1.PresignImageRequest:
             required:
-                - key
+                - storageKey
+                - expireTime
             type: object
             properties:
-                key:
+                storageKey:
                     type: string
-        velony.asset.api.v1.PrepareImageResponse:
+                resizeOptions:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResizeOptions'
+                expireTime:
+                    type: string
+                    format: date-time
+        velony.asset.api.v1.PresignImageResponse:
             type: object
             properties:
                 uploadUrl:
+                    type: string
+        velony.asset.api.v1.RemoveImageRequest:
+            required:
+                - storageKey
+            type: object
+            properties:
+                storageKey:
+                    type: string
+        velony.asset.api.v1.RemoveImageResponse:
+            type: object
+            properties: {}
+        velony.asset.api.v1.UploadImageResponse:
+            type: object
+            properties:
+                storageKey:
                     type: string
 tags:
     - name: AssetService

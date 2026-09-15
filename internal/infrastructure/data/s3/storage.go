@@ -3,7 +3,7 @@ package s3
 import (
 	"context"
 	"errors"
-	"net/http"
+	"io"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/aws/smithy-go"
-	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
 type Storage struct {
@@ -36,11 +35,6 @@ func (storage *Storage) Exists(ctx context.Context, key string) (bool, error) {
 		Key:    aws.String(key),
 	})
 	if err != nil {
-		var responseError *smithyhttp.ResponseError
-		if errors.As(err, &responseError) && responseError.HTTPStatusCode() == http.StatusNotFound {
-			return false, nil
-		}
-
 		var apiError smithy.APIError
 		if errors.As(err, &apiError) {
 			switch apiError.ErrorCode() {
@@ -53,6 +47,30 @@ func (storage *Storage) Exists(ctx context.Context, key string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (storage *Storage) Get(ctx context.Context, key string) (io.ReadCloser, error) {
+	result, err := storage.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(storage.c.S3.Bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Body, nil
+}
+
+func (storage *Storage) Put(ctx context.Context, key string, body io.Reader) error {
+	if _, err := storage.client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket: aws.String(storage.c.S3.Bucket),
+		Key:    aws.String(key),
+		Body:   body,
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (storage *Storage) Delete(ctx context.Context, key string) error {

@@ -3,48 +3,34 @@ syntax = "proto3";
 package velony.asset.api.v1;
 
 import "google/api/annotations.proto";
-import "google/api/client.proto";
 import "google/api/field_behavior.proto";
-import "google/api/resource.proto";
+import "google/api/httpbody.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
 service AssetService {
-  rpc PrepareImage(PrepareImageRequest) returns (PrepareImageResponse) {
+  rpc PresignImage(PresignImageRequest)
+  returns (PresignImageResponse) {
     option (google.api.http) = {
-      post: "/v1/images:prepare"
+      post: "/v1:presignImage"
       body: "*"
     };
   }
 
-  rpc FinalizeImage(FinalizeImageRequest) returns (Image) {
+  rpc UploadImage(UploadImageRequest) returns (UploadImageResponse) {
     option (google.api.http) = {
-      post: "/v1/images:finalize"
+      post: "/v1/images:upload"
+      body: "image"
+    };
+  }
+
+  rpc RemoveImage(RemoveImageRequest) returns (RemoveImageResponse) {
+    option (google.api.http) = {
+      post: "/v1:removeImage"
       body: "*"
     };
   }
-}
-
-message Image {
-  option (google.api.resource) = {
-    type    : "asset.velony.app/Image"
-    pattern : "images/{image}"
-    singular: "image"
-    plural  : "images"
-  };
-
-  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
-
-  string key = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
-}
-
-message PrepareImageRequest {
-  string key = 1 [(google.api.field_behavior) = REQUIRED];
-}
-
-message PrepareImageResponse {
-  string upload_url = 1;
 }
 
 enum ImageResizeFit {
@@ -60,8 +46,30 @@ message ImageResizeOptions {
   ImageResizeFit fit = 3 [(google.api.field_behavior) = REQUIRED];
 }
 
-message FinalizeImageRequest {
-  string key = 1 [(google.api.field_behavior) = REQUIRED];
+message PresignImageRequest {
+  string storage_key = 1 [(google.api.field_behavior) = REQUIRED];
 
   ImageResizeOptions resize_options = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  google.protobuf.Timestamp expire_time = 3 [(google.api.field_behavior) = REQUIRED];
 }
+
+message PresignImageResponse {
+  string upload_url = 1;
+}
+
+message UploadImageRequest {
+  string token = 1 [(google.api.field_behavior) = REQUIRED];
+
+  google.api.HttpBody image = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UploadImageResponse {
+  string storage_key = 1;
+}
+
+message RemoveImageRequest {
+  string storage_key = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message RemoveImageResponse {}
