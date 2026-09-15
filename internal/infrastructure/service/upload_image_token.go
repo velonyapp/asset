@@ -1,4 +1,4 @@
-package image
+package service
 
 import (
 	"crypto/hmac"
@@ -12,15 +12,15 @@ import (
 	"github.com/velonyapp/asset/internal/conf"
 )
 
-type UploadToken struct {
+type UploadImageToken struct {
 	c *conf.Service
 }
 
-func NewUploadToken(c *conf.Service) port.UploadImageToken {
-	return &UploadToken{c: c}
+func NewUploadImageToken(c *conf.Service) port.UploadImageToken {
+	return &UploadImageToken{c: c}
 }
 
-func (t *UploadToken) Sign(payload port.UploadImageTokenPayload) (string, error) {
+func (t *UploadImageToken) Sign(payload port.UploadImageTokenPayload) (string, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return "", err
@@ -39,7 +39,7 @@ func (t *UploadToken) Sign(payload port.UploadImageTokenPayload) (string, error)
 	return encodedPayload + "." + signature, nil
 }
 
-func (t *UploadToken) Verify(value string) (port.UploadImageTokenPayload, error) {
+func (t *UploadImageToken) Verify(value string) (port.UploadImageTokenPayload, error) {
 	parts := strings.Split(value, ".")
 	if len(parts) != 2 {
 		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
