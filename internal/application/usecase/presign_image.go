@@ -11,7 +11,7 @@ import (
 type PresignImage struct {
 	StorageKey string
 
-	ResizeOptions *port.ImageResizeOptions
+	Transform *port.ImageTransform
 
 	ExpireTime time.Time
 }
@@ -37,9 +37,9 @@ func (h *PresignImageHandler) Execute(
 	uc *PresignImage,
 ) (*PresignImageResult, error) {
 	token, err := h.uploadImageToken.Sign(port.UploadImageTokenPayload{
-		StorageKey:    uc.StorageKey,
-		ResizeOptions: uc.ResizeOptions,
-		ExpireTime:    uc.ExpireTime,
+		StorageKey: uc.StorageKey,
+		Transform:  uc.Transform,
+		ExpireTime: uc.ExpireTime,
 	})
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (h *PresignImageHandler) Execute(
 	uploadURL := url.URL{
 		Scheme: "http",
 		Host:   "localhost:8010",
-		Path:   "/v1/images:upload",
+		Path:   "/v1:uploadImage",
 	}
 
 	query := uploadURL.Query()

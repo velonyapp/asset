@@ -103,6 +103,7 @@ func main() {
 	app, cleanup, err := wireApp(
 		context.Background(),
 		bi.Service,
+		bc.Service,
 		bc.Data,
 		bc.Transport,
 		bc.Observability,

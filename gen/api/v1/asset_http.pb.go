@@ -30,7 +30,7 @@ type AssetServiceHTTPServer interface {
 func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) {
 	r := s.Route("/")
 	r.Handle("POST", "/v1:presignImage", _AssetService_PresignImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/images:upload", _AssetService_UploadImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1:uploadImage", _AssetService_UploadImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1:removeImage", _AssetService_RemoveImage0_HTTP_Handler(srv))
 }
 
@@ -144,7 +144,7 @@ func (c *AssetServiceHTTPClientImpl) RemoveImage(ctx context.Context, in *Remove
 
 func (c *AssetServiceHTTPClientImpl) UploadImage(ctx context.Context, in *UploadImageRequest, opts ...http.CallOption) (*UploadImageResponse, error) {
 	var out UploadImageResponse
-	pattern := "/v1/images:upload"
+	pattern := "/v1:uploadImage"
 	path := http.BuildPath(pattern, in, http.WithQueryParams(), http.WithOmitFields("image"))
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),

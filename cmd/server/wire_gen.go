@@ -27,14 +27,14 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, service *info.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, service *info.Service, confService *conf.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
 	imageProcessor := image.NewProcessor()
-	uploadImageToken := image.NewUploadToken()
+	uploadImageToken := image.NewUploadToken(confService)
 	uploadImageHandler := usecase.NewUploadImageHandler(storage, imageProcessor, uploadImageToken)
 	presignImageHandler := usecase.NewPresignImageHandler(uploadImageToken)
 	apiService := api.NewService(uploadImageHandler, presignImageHandler)

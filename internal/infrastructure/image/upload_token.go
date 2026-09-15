@@ -9,19 +9,18 @@ import (
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
+	"github.com/velonyapp/asset/internal/conf"
 )
 
-const uploadTokenSecret = "dev-asset-upload-token-secret-change-me"
-
-type UploadToken struct{}
-
-func NewUploadToken() port.UploadImageToken {
-	return &UploadToken{}
+type UploadToken struct {
+	c *conf.Service
 }
 
-func (token *UploadToken) Sign(
-	payload port.UploadImageTokenPayload,
-) (string, error) {
+func NewUploadToken(c *conf.Service) port.UploadImageToken {
+	return &UploadToken{c: c}
+}
+
+func (t *UploadToken) Sign(payload port.UploadImageTokenPayload) (string, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return "", err
@@ -29,7 +28,7 @@ func (token *UploadToken) Sign(
 
 	encodedPayload := base64.RawURLEncoding.EncodeToString(data)
 
-	hash := hmac.New(sha256.New, []byte(uploadTokenSecret))
+	hash := hmac.New(sha256.New, []byte(t.c.UploadTokenSecret))
 
 	if _, err := hash.Write([]byte(encodedPayload)); err != nil {
 		return "", err
@@ -40,9 +39,7 @@ func (token *UploadToken) Sign(
 	return encodedPayload + "." + signature, nil
 }
 
-func (token *UploadToken) Verify(
-	value string,
-) (port.UploadImageTokenPayload, error) {
+func (t *UploadToken) Verify(value string) (port.UploadImageTokenPayload, error) {
 	parts := strings.Split(value, ".")
 	if len(parts) != 2 {
 		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
@@ -55,7 +52,7 @@ func (token *UploadToken) Verify(
 		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
 	}
 
-	hash := hmac.New(sha256.New, []byte(uploadTokenSecret))
+	hash := hmac.New(sha256.New, []byte(t.c.UploadTokenSecret))
 
 	if _, err := hash.Write([]byte(encodedPayload)); err != nil {
 		return port.UploadImageTokenPayload{}, err

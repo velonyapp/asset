@@ -13,7 +13,7 @@ var (
 type UploadImageTokenPayload struct {
 	StorageKey string
 
-	ResizeOptions *ImageResizeOptions
+	Transform *ImageTransform
 
 	ExpireTime time.Time
 }

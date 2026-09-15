@@ -69,14 +69,15 @@ func (x Observability_Protocol) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Observability_Protocol.Descriptor instead.
 func (Observability_Protocol) EnumDescriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
 }
 
 type Bootstrap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Transport     *Transport             `protobuf:"bytes,1,opt,name=transport,proto3" json:"transport,omitempty"`
-	Data          *Data                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Observability *Observability         `protobuf:"bytes,3,opt,name=observability,proto3" json:"observability,omitempty"`
+	Service       *Service               `protobuf:"bytes,1,opt,name=service,proto3" json:"service,omitempty"`
+	Transport     *Transport             `protobuf:"bytes,2,opt,name=transport,proto3" json:"transport,omitempty"`
+	Data          *Data                  `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Observability *Observability         `protobuf:"bytes,4,opt,name=observability,proto3" json:"observability,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +112,13 @@ func (*Bootstrap) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *Bootstrap) GetService() *Service {
+	if x != nil {
+		return x.Service
+	}
+	return nil
+}
+
 func (x *Bootstrap) GetTransport() *Transport {
 	if x != nil {
 		return x.Transport
@@ -132,6 +140,58 @@ func (x *Bootstrap) GetObservability() *Observability {
 	return nil
 }
 
+type Service struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	PublicUrl         string                 `protobuf:"bytes,1,opt,name=public_url,json=publicUrl,proto3" json:"public_url,omitempty"`
+	UploadTokenSecret string                 `protobuf:"bytes,2,opt,name=upload_token_secret,json=uploadTokenSecret,proto3" json:"upload_token_secret,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *Service) Reset() {
+	*x = Service{}
+	mi := &file_conf_conf_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Service) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Service) ProtoMessage() {}
+
+func (x *Service) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Service.ProtoReflect.Descriptor instead.
+func (*Service) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Service) GetPublicUrl() string {
+	if x != nil {
+		return x.PublicUrl
+	}
+	return ""
+}
+
+func (x *Service) GetUploadTokenSecret() string {
+	if x != nil {
+		return x.UploadTokenSecret
+	}
+	return ""
+}
+
 type Transport struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Http          *Transport_HTTP        `protobuf:"bytes,1,opt,name=http,proto3" json:"http,omitempty"`
@@ -142,7 +202,7 @@ type Transport struct {
 
 func (x *Transport) Reset() {
 	*x = Transport{}
-	mi := &file_conf_conf_proto_msgTypes[1]
+	mi := &file_conf_conf_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -154,7 +214,7 @@ func (x *Transport) String() string {
 func (*Transport) ProtoMessage() {}
 
 func (x *Transport) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[1]
+	mi := &file_conf_conf_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -167,7 +227,7 @@ func (x *Transport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Transport.ProtoReflect.Descriptor instead.
 func (*Transport) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{1}
+	return file_conf_conf_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Transport) GetHttp() *Transport_HTTP {
@@ -193,7 +253,7 @@ type Data struct {
 
 func (x *Data) Reset() {
 	*x = Data{}
-	mi := &file_conf_conf_proto_msgTypes[2]
+	mi := &file_conf_conf_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -205,7 +265,7 @@ func (x *Data) String() string {
 func (*Data) ProtoMessage() {}
 
 func (x *Data) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[2]
+	mi := &file_conf_conf_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -218,7 +278,7 @@ func (x *Data) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Data.ProtoReflect.Descriptor instead.
 func (*Data) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{2}
+	return file_conf_conf_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Data) GetS3() *Data_S3 {
@@ -238,7 +298,7 @@ type Observability struct {
 
 func (x *Observability) Reset() {
 	*x = Observability{}
-	mi := &file_conf_conf_proto_msgTypes[3]
+	mi := &file_conf_conf_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -250,7 +310,7 @@ func (x *Observability) String() string {
 func (*Observability) ProtoMessage() {}
 
 func (x *Observability) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[3]
+	mi := &file_conf_conf_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -263,7 +323,7 @@ func (x *Observability) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability.ProtoReflect.Descriptor instead.
 func (*Observability) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Observability) GetTracing() *Observability_Tracing {
@@ -290,7 +350,7 @@ type Transport_HTTP struct {
 
 func (x *Transport_HTTP) Reset() {
 	*x = Transport_HTTP{}
-	mi := &file_conf_conf_proto_msgTypes[4]
+	mi := &file_conf_conf_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -302,7 +362,7 @@ func (x *Transport_HTTP) String() string {
 func (*Transport_HTTP) ProtoMessage() {}
 
 func (x *Transport_HTTP) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[4]
+	mi := &file_conf_conf_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,7 +375,7 @@ func (x *Transport_HTTP) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Transport_HTTP.ProtoReflect.Descriptor instead.
 func (*Transport_HTTP) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{1, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *Transport_HTTP) GetAddress() string {
@@ -342,7 +402,7 @@ type Transport_GRPC struct {
 
 func (x *Transport_GRPC) Reset() {
 	*x = Transport_GRPC{}
-	mi := &file_conf_conf_proto_msgTypes[5]
+	mi := &file_conf_conf_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +414,7 @@ func (x *Transport_GRPC) String() string {
 func (*Transport_GRPC) ProtoMessage() {}
 
 func (x *Transport_GRPC) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[5]
+	mi := &file_conf_conf_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +427,7 @@ func (x *Transport_GRPC) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Transport_GRPC.ProtoReflect.Descriptor instead.
 func (*Transport_GRPC) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{1, 1}
+	return file_conf_conf_proto_rawDescGZIP(), []int{2, 1}
 }
 
 func (x *Transport_GRPC) GetAddress() string {
@@ -396,7 +456,7 @@ type Data_S3 struct {
 
 func (x *Data_S3) Reset() {
 	*x = Data_S3{}
-	mi := &file_conf_conf_proto_msgTypes[6]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -408,7 +468,7 @@ func (x *Data_S3) String() string {
 func (*Data_S3) ProtoMessage() {}
 
 func (x *Data_S3) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[6]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -421,7 +481,7 @@ func (x *Data_S3) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Data_S3.ProtoReflect.Descriptor instead.
 func (*Data_S3) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{2, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
 }
 
 func (x *Data_S3) GetEndpoint() string {
@@ -464,7 +524,7 @@ type Observability_Tracing struct {
 
 func (x *Observability_Tracing) Reset() {
 	*x = Observability_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[7]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -476,7 +536,7 @@ func (x *Observability_Tracing) String() string {
 func (*Observability_Tracing) ProtoMessage() {}
 
 func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[7]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -489,7 +549,7 @@ func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability_Tracing.ProtoReflect.Descriptor instead.
 func (*Observability_Tracing) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 0}
 }
 
 func (x *Observability_Tracing) GetProtocol() Observability_Protocol {
@@ -532,7 +592,7 @@ type Observability_Metrics struct {
 
 func (x *Observability_Metrics) Reset() {
 	*x = Observability_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -544,7 +604,7 @@ func (x *Observability_Metrics) String() string {
 func (*Observability_Metrics) ProtoMessage() {}
 
 func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -557,7 +617,7 @@ func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Observability_Metrics.ProtoReflect.Descriptor instead.
 func (*Observability_Metrics) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{3, 1}
+	return file_conf_conf_proto_rawDescGZIP(), []int{4, 1}
 }
 
 func (x *Observability_Metrics) GetProtocol() Observability_Protocol {
@@ -593,11 +653,16 @@ var File_conf_conf_proto protoreflect.FileDescriptor
 const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"\x0fconf/conf.proto\x12\n" +
-	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xb7\x01\n" +
-	"\tBootstrap\x12;\n" +
-	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12?\n" +
-	"\robservability\x18\x03 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\"\xd1\x02\n" +
+	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xee\x01\n" +
+	"\tBootstrap\x125\n" +
+	"\aservice\x18\x01 \x01(\v2\x13.kratos.api.ServiceB\x06\xbaH\x03\xc8\x01\x01R\aservice\x12;\n" +
+	"\ttransport\x18\x02 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
+	"\x04data\x18\x03 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12?\n" +
+	"\robservability\x18\x04 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\"k\n" +
+	"\aService\x12'\n" +
+	"\n" +
+	"public_url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\tpublicUrl\x127\n" +
+	"\x13upload_token_secret\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10 R\x11uploadTokenSecret\"\xd1\x02\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x1ai\n" +
@@ -650,39 +715,41 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_conf_conf_proto_goTypes = []any{
 	(Observability_Protocol)(0),   // 0: kratos.api.Observability.Protocol
 	(*Bootstrap)(nil),             // 1: kratos.api.Bootstrap
-	(*Transport)(nil),             // 2: kratos.api.Transport
-	(*Data)(nil),                  // 3: kratos.api.Data
-	(*Observability)(nil),         // 4: kratos.api.Observability
-	(*Transport_HTTP)(nil),        // 5: kratos.api.Transport.HTTP
-	(*Transport_GRPC)(nil),        // 6: kratos.api.Transport.GRPC
-	(*Data_S3)(nil),               // 7: kratos.api.Data.S3
-	(*Observability_Tracing)(nil), // 8: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil), // 9: kratos.api.Observability.Metrics
-	(*durationpb.Duration)(nil),   // 10: google.protobuf.Duration
+	(*Service)(nil),               // 2: kratos.api.Service
+	(*Transport)(nil),             // 3: kratos.api.Transport
+	(*Data)(nil),                  // 4: kratos.api.Data
+	(*Observability)(nil),         // 5: kratos.api.Observability
+	(*Transport_HTTP)(nil),        // 6: kratos.api.Transport.HTTP
+	(*Transport_GRPC)(nil),        // 7: kratos.api.Transport.GRPC
+	(*Data_S3)(nil),               // 8: kratos.api.Data.S3
+	(*Observability_Tracing)(nil), // 9: kratos.api.Observability.Tracing
+	(*Observability_Metrics)(nil), // 10: kratos.api.Observability.Metrics
+	(*durationpb.Duration)(nil),   // 11: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
-	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
-	3,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
-	4,  // 2: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
-	5,  // 3: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
-	6,  // 4: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
-	7,  // 5: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
-	8,  // 6: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	9,  // 7: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
-	10, // 8: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	10, // 9: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	0,  // 10: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
-	0,  // 11: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
-	10, // 12: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
-	13, // [13:13] is the sub-list for method output_type
-	13, // [13:13] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	2,  // 0: kratos.api.Bootstrap.service:type_name -> kratos.api.Service
+	3,  // 1: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
+	4,  // 2: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
+	5,  // 3: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
+	6,  // 4: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
+	7,  // 5: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
+	8,  // 6: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
+	9,  // 7: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
+	10, // 8: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	11, // 9: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	11, // 10: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	0,  // 11: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
+	0,  // 12: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
+	11, // 13: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -690,15 +757,15 @@ func file_conf_conf_proto_init() {
 	if File_conf_conf_proto != nil {
 		return
 	}
-	file_conf_conf_proto_msgTypes[7].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

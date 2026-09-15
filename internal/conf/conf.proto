@@ -7,13 +7,26 @@ import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
-  Transport     transport     = 1 [
+  Service service = 1 [
     (buf.validate.field).required = true
   ];
-  Data          data          = 2 [
+  Transport     transport     = 2 [
     (buf.validate.field).required = true
   ];
-  Observability observability = 3;
+  Data          data          = 3 [
+    (buf.validate.field).required = true
+  ];
+  Observability observability = 4;
+}
+
+message Service {
+  string public_url = 1 [
+    (buf.validate.field).string.uri = true
+  ];
+
+  string upload_token_secret = 2 [
+    (buf.validate.field).string.min_len = 32
+  ];
 }
 
 message Transport {
@@ -61,7 +74,6 @@ message Data {
       (buf.validate.field).string.min_len = 1
     ];
   }
-
 
   S3 s3 = 1 [
     (buf.validate.field).required = true

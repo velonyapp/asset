@@ -45,8 +45,8 @@ func (h *UploadImageHandler) Execute(
 
 	image := uc.Image
 
-	if payload.ResizeOptions != nil {
-		image, err = h.imageProcessor.Process(image, payload.ResizeOptions)
+	if payload.Transform != nil {
+		image, err = h.imageProcessor.Process(image, payload.Transform)
 		if err != nil {
 			return nil, err
 		}
