@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
+	"github.com/velonyapp/asset/internal/conf"
 )
 
 type PresignImage struct {
@@ -21,13 +22,16 @@ type PresignImageResult struct {
 }
 
 type PresignImageHandler struct {
+	c                *conf.Service
 	uploadImageToken port.UploadImageToken
 }
 
 func NewPresignImageHandler(
+	c *conf.Service,
 	uploadImageToken port.UploadImageToken,
 ) *PresignImageHandler {
 	return &PresignImageHandler{
+		c:                c,
 		uploadImageToken: uploadImageToken,
 	}
 }
@@ -36,6 +40,11 @@ func (h *PresignImageHandler) Execute(
 	ctx context.Context,
 	uc *PresignImage,
 ) (*PresignImageResult, error) {
+	publicURL, err := url.Parse(h.c.PublicUrl)
+	if err != nil {
+		return nil, err
+	}
+
 	token, err := h.uploadImageToken.Sign(port.UploadImageTokenPayload{
 		StorageKey: uc.StorageKey,
 		Transform:  uc.Transform,
@@ -45,11 +54,7 @@ func (h *PresignImageHandler) Execute(
 		return nil, err
 	}
 
-	uploadURL := url.URL{
-		Scheme: "http",
-		Host:   "localhost:8010",
-		Path:   "/v1:uploadImage",
-	}
+	uploadURL := publicURL.JoinPath("v1:uploadImage")
 
 	query := uploadURL.Query()
 	query.Set("token", token)
