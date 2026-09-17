@@ -1,0 +1,139 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: AssetService API
+    version: 0.0.1
+paths:
+    /v1:presignImage:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_PresignImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.PresignImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
+    /v1:removeImage:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_RemoveImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageResponse'
+    /v1:uploadImage:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_UploadImage
+            parameters:
+                - name: token
+                  in: query
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.UploadImageResponse'
+components:
+    schemas:
+        velony.asset.api.v1.ImageEncoding:
+            type: object
+            properties:
+                format:
+                    type: integer
+                    format: enum
+                quality:
+                    type: integer
+                    format: uint32
+        velony.asset.api.v1.ImageResize:
+            type: object
+            properties:
+                width:
+                    type: integer
+                    format: uint32
+                height:
+                    type: integer
+                    format: uint32
+                fit:
+                    type: integer
+                    format: enum
+                gravity:
+                    type: integer
+                    format: enum
+                backgroundColor:
+                    type: string
+                allowUpscale:
+                    type: boolean
+        velony.asset.api.v1.ImageTransform:
+            type: object
+            properties:
+                resize:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResize'
+                encoding:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageEncoding'
+        velony.asset.api.v1.PresignImageRequest:
+            required:
+                - storageKey
+                - expireTime
+            type: object
+            properties:
+                storageKey:
+                    type: string
+                transform:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageTransform'
+                expireTime:
+                    type: string
+                    format: date-time
+        velony.asset.api.v1.PresignImageResponse:
+            type: object
+            properties:
+                uploadUrl:
+                    type: string
+        velony.asset.api.v1.RemoveImageRequest:
+            required:
+                - storageKey
+            type: object
+            properties:
+                storageKey:
+                    type: string
+        velony.asset.api.v1.RemoveImageResponse:
+            type: object
+            properties: {}
+        velony.asset.api.v1.UploadImageResponse:
+            type: object
+            properties:
+                storageKey:
+                    type: string
+tags:
+    - name: AssetService

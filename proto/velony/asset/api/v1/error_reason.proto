@@ -6,4 +6,8 @@ option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
 enum ErrorReason {
   ERROR_REASON_UNSPECIFIED = 0;
+
+  INVALID_IMAGE_RESIZE   = 1;
+  INVALID_IMAGE_ENCODING = 2;
+  INVALID_UPLOAD_TOKEN   = 3;
 }
