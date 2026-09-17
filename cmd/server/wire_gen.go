@@ -37,7 +37,8 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 	uploadImageToken := service.NewUploadImageToken(confService)
 	uploadImageHandler := usecase.NewUploadImageHandler(storage, imageProcessor, uploadImageToken)
 	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageToken)
-	apiService := api.NewService(uploadImageHandler, presignImageHandler)
+	removeImageHandler := usecase.NewRemoveImageHandler(storage)
+	apiService := api.NewService(uploadImageHandler, presignImageHandler, removeImageHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {

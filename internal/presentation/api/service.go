@@ -14,15 +14,18 @@ type Service struct {
 
 	uploadImageHandler  *usecase.UploadImageHandler
 	presignImageHandler *usecase.PresignImageHandler
+	removeImageHandler  *usecase.RemoveImageHandler
 }
 
 func NewService(
 	uploadImageHandler *usecase.UploadImageHandler,
 	presignImageHandler *usecase.PresignImageHandler,
+	removeImageHandler *usecase.RemoveImageHandler,
 ) *Service {
 	return &Service{
 		uploadImageHandler:  uploadImageHandler,
 		presignImageHandler: presignImageHandler,
+		removeImageHandler:  removeImageHandler,
 	}
 }
 
@@ -135,4 +138,14 @@ func (s *Service) UploadImage(ctx context.Context, req *v1.UploadImageRequest) (
 	return &v1.UploadImageResponse{
 		StorageKey: result.StorageKey,
 	}, nil
+}
+
+func (s *Service) RemoveImage(ctx context.Context, req *v1.RemoveImageRequest) (*v1.RemoveImageResponse, error) {
+	if err := s.removeImageHandler.Execute(ctx, &usecase.RemoveImage{
+		StorageKey: req.StorageKey,
+	}); err != nil {
+		return nil, mapError(err)
+	}
+
+	return &v1.RemoveImageResponse{}, nil
 }
