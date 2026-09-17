@@ -23,13 +23,13 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 		return nil, err
 	}
 
-	thing, err := vips.NewImageFromBuffer(data)
+	imageRef, err := vips.NewImageFromBuffer(data)
 	if err != nil {
 		return nil, err
 	}
-	defer thing.Close()
+	defer imageRef.Close()
 
-	if err := thing.AutoRotate(); err != nil {
+	if err := imageRef.AutoRotate(); err != nil {
 		return nil, err
 	}
 
@@ -59,7 +59,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 					return nil, port.ErrInvalidResizeDimensions
 				}
 
-				scale = float64(*resize.Width) / float64(thing.Width())
+				scale = float64(*resize.Width) / float64(imageRef.Width())
 			}
 
 			if resize.Height != nil {
@@ -67,7 +67,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 					return nil, port.ErrInvalidResizeDimensions
 				}
 
-				heightScale := float64(*resize.Height) / float64(thing.Height())
+				heightScale := float64(*resize.Height) / float64(imageRef.Height())
 
 				if scale == 0 || heightScale < scale {
 					scale = heightScale
@@ -79,7 +79,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			}
 
 			if scale != 1 {
-				if err := thing.Resize(scale, vips.KernelLanczos3); err != nil {
+				if err := imageRef.Resize(scale, vips.KernelLanczos3); err != nil {
 					return nil, err
 				}
 			}
@@ -93,8 +93,8 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			width := int(*resize.Width)
 			height := int(*resize.Height)
 
-			widthScale := float64(width) / float64(thing.Width())
-			heightScale := float64(height) / float64(thing.Height())
+			widthScale := float64(width) / float64(imageRef.Width())
+			heightScale := float64(height) / float64(imageRef.Height())
 
 			scale := widthScale
 			if heightScale > scale {
@@ -106,13 +106,13 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			}
 
 			if scale != 1 {
-				if err := thing.Resize(scale, vips.KernelLanczos3); err != nil {
+				if err := imageRef.Resize(scale, vips.KernelLanczos3); err != nil {
 					return nil, err
 				}
 			}
 
-			maxX := thing.Width() - width
-			maxY := thing.Height() - height
+			maxX := imageRef.Width() - width
+			maxY := imageRef.Height() - height
 
 			x := maxX / 2
 			y := maxY / 2
@@ -143,7 +143,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 				return nil, port.ErrUnsupportedImageGravity
 			}
 
-			if err := thing.Crop(x, y, width, height); err != nil {
+			if err := imageRef.Crop(x, y, width, height); err != nil {
 				return nil, err
 			}
 
@@ -156,8 +156,8 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			width := int(*resize.Width)
 			height := int(*resize.Height)
 
-			widthScale := float64(width) / float64(thing.Width())
-			heightScale := float64(height) / float64(thing.Height())
+			widthScale := float64(width) / float64(imageRef.Width())
+			heightScale := float64(height) / float64(imageRef.Height())
 
 			scale := widthScale
 			if heightScale < scale {
@@ -169,13 +169,13 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			}
 
 			if scale != 1 {
-				if err := thing.Resize(scale, vips.KernelLanczos3); err != nil {
+				if err := imageRef.Resize(scale, vips.KernelLanczos3); err != nil {
 					return nil, err
 				}
 			}
 
-			maxX := width - thing.Width()
-			maxY := height - thing.Height()
+			maxX := width - imageRef.Width()
+			maxY := height - imageRef.Height()
 
 			x := maxX / 2
 			y := maxY / 2
@@ -252,7 +252,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 				}
 			}
 
-			if err := thing.EmbedBackgroundRGBA(
+			if err := imageRef.EmbedBackgroundRGBA(
 				x,
 				y,
 				width,
@@ -272,11 +272,11 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			height := int(*resize.Height)
 
 			if !resize.AllowUpscale &&
-				(width > thing.Width() || height > thing.Height()) {
+				(width > imageRef.Width() || height > imageRef.Height()) {
 				return nil, port.ErrImageUpscaleNotAllowed
 			}
 
-			if err := thing.ThumbnailWithSize(
+			if err := imageRef.ThumbnailWithSize(
 				width,
 				height,
 				vips.InterestingNone,
@@ -290,14 +290,14 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 		}
 	}
 
-	if err := thing.RemoveMetadata(); err != nil {
+	if err := imageRef.RemoveMetadata(); err != nil {
 		return nil, err
 	}
 
 	if transform == nil ||
 		transform.Encoding == nil ||
 		transform.Encoding.Format == "" {
-		result, _, err := thing.ExportNative()
+		result, _, err := imageRef.ExportNative()
 		if err != nil {
 			return nil, err
 		}
@@ -323,7 +323,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			params.Quality = int(*encoding.Quality)
 		}
 
-		result, _, err = thing.ExportJpeg(params)
+		result, _, err = imageRef.ExportJpeg(params)
 
 	case port.ImageFormatPNG:
 		params := vips.NewPngExportParams()
@@ -332,7 +332,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			params.Quality = int(*encoding.Quality)
 		}
 
-		result, _, err = thing.ExportPng(params)
+		result, _, err = imageRef.ExportPng(params)
 
 	case port.ImageFormatWebP:
 		params := vips.NewWebpExportParams()
@@ -341,7 +341,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			params.Quality = int(*encoding.Quality)
 		}
 
-		result, _, err = thing.ExportWebp(params)
+		result, _, err = imageRef.ExportWebp(params)
 
 	case port.ImageFormatAVIF:
 		params := vips.NewAvifExportParams()
@@ -350,7 +350,7 @@ func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform
 			params.Quality = int(*encoding.Quality)
 		}
 
-		result, _, err = thing.ExportAvif(params)
+		result, _, err = imageRef.ExportAvif(params)
 
 	default:
 		return nil, port.ErrUnsupportedImageFormat
