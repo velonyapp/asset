@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
+	"github.com/velonyapp/asset/internal/infrastructure/messaging/event"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/service"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
@@ -16,6 +17,7 @@ var ProviderSet = wire.NewSet(
 	mysql.NewConnection,
 	mysql.NewUnitOfWork,
 	mysql.NewImageRepo,
+	mysql.NewOutboxPublisher,
 	s3.NewConnection,
 	s3.NewStorage,
 	transport.NewGRPCServer,
@@ -25,4 +27,5 @@ var ProviderSet = wire.NewSet(
 	transport.NewValidationMiddleware,
 	observability.NewServerMetrics,
 	observability.NewOpenTelemetry,
+	event.NewEncoder,
 )

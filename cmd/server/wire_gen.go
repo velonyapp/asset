@@ -9,11 +9,13 @@ package main
 import (
 	"context"
 	"github.com/go-kratos/kratos/v3"
+	"github.com/velonyapp/asset/internal/application/domainevent"
 	"github.com/velonyapp/asset/internal/application/usecase"
 	"github.com/velonyapp/asset/internal/conf"
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
+	"github.com/velonyapp/asset/internal/infrastructure/messaging/event"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/service"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
@@ -33,7 +35,12 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 	if err != nil {
 		return nil, nil, err
 	}
-	image := mysql.NewImageRepo(db)
+	encoder := event.NewEncoder()
+	outboxPublisher := mysql.NewOutboxPublisher(db, encoder)
+	imageCreatedHandler := domainevent.NewImageCreatedHandler(outboxPublisher)
+	imageDeletedHandler := domainevent.NewImageDeletedHandler(outboxPublisher)
+	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageDeletedHandler)
+	image := mysql.NewImageRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	client, err := s3.NewConnection(data)
 	if err != nil {

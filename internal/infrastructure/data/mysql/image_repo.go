@@ -6,20 +6,24 @@ import (
 	"errors"
 	"time"
 
+	"github.com/velonyapp/asset/internal/application/domainevent"
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
 type ImageRepo struct {
-	db *sql.DB
+	db         *sql.DB
+	dispatcher *domainevent.Dispatcher
 }
 
 func NewImageRepo(
 	db *sql.DB,
+	dispatcher *domainevent.Dispatcher,
 ) repo.Image {
 	return &ImageRepo{
-		db: db,
+		db:         db,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -116,6 +120,12 @@ func (repo *ImageRepo) Save(ctx context.Context, image *entity.Image) error {
 		deleteTime,
 	); err != nil {
 		return err
+	}
+
+	for _, domainEvent := range image.PullEvents() {
+		if err := repo.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package velony.asset.event.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/velonyapp/asset/gen/event/v1;eventv1";
+
+message ImageDeletedPayload {
+  google.protobuf.Timestamp delete_time = 1;
+}

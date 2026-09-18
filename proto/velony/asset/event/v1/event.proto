@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package velony.asset.event.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/velonyapp/asset/gen/event/v1;eventv1";
+
+message Event {
+  string                    id             = 1;
+  string                    type           = 2;
+  string                    aggregate_id   = 3;
+  string                    aggregate_type = 4;
+  google.protobuf.Timestamp occur_time     = 5;
+  google.protobuf.Any       payload        = 6;
+}
