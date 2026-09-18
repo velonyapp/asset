@@ -6,7 +6,7 @@ info:
     title: AssetService API
     version: 0.0.1
 paths:
-    /v1:presignImage:
+    /v1/images:presign:
         post:
             tags:
                 - AssetService
@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
-    /v1:removeImage:
+    /v1/images:remove:
         post:
             tags:
                 - AssetService
@@ -42,7 +42,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageResponse'
-    /v1:uploadImage:
+    /v1/images:upload:
         post:
             tags:
                 - AssetService

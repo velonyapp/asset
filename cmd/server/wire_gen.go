@@ -12,6 +12,7 @@ import (
 	"github.com/velonyapp/asset/internal/application/usecase"
 	"github.com/velonyapp/asset/internal/conf"
 	"github.com/velonyapp/asset/internal/info"
+	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/service"
@@ -28,6 +29,12 @@ import (
 
 // wireApp init kratos application.
 func wireApp(contextContext context.Context, infoService *info.Service, confService *conf.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+	db, err := mysql.NewConnection(data)
+	if err != nil {
+		return nil, nil, err
+	}
+	image := mysql.NewImageRepo(db)
+	unitOfWork := mysql.NewUnitOfWork(db)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -35,9 +42,9 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 	storage := s3.NewStorage(client, data)
 	imageProcessor := service.NewImageProcessor()
 	uploadImageToken := service.NewUploadImageToken(confService)
-	uploadImageHandler := usecase.NewUploadImageHandler(storage, imageProcessor, uploadImageToken)
+	uploadImageHandler := usecase.NewUploadImageHandler(image, unitOfWork, storage, imageProcessor, uploadImageToken)
 	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageToken)
-	removeImageHandler := usecase.NewRemoveImageHandler(storage)
+	removeImageHandler := usecase.NewRemoveImageHandler(image, unitOfWork, storage)
 	apiService := api.NewService(uploadImageHandler, presignImageHandler, removeImageHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()

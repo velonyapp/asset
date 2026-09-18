@@ -736,11 +736,11 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x11IMAGE_FORMAT_JPEG\x10\x01\x12\x14\n" +
 	"\x10IMAGE_FORMAT_PNG\x10\x02\x12\x15\n" +
 	"\x11IMAGE_FORMAT_WEBP\x10\x03\x12\x15\n" +
-	"\x11IMAGE_FORMAT_AVIF\x10\x042\x92\x03\n" +
-	"\fAssetService\x12\x80\x01\n" +
-	"\fPresignImage\x12(.velony.asset.api.v1.PresignImageRequest\x1a).velony.asset.api.v1.PresignImageResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1:presignImage\x12\x80\x01\n" +
-	"\vUploadImage\x12'.velony.asset.api.v1.UploadImageRequest\x1a(.velony.asset.api.v1.UploadImageResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x05image\"\x0f/v1:uploadImage\x12|\n" +
-	"\vRemoveImage\x12'.velony.asset.api.v1.RemoveImageRequest\x1a(.velony.asset.api.v1.RemoveImageResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1:removeImageB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\x11IMAGE_FORMAT_AVIF\x10\x042\x98\x03\n" +
+	"\fAssetService\x12\x82\x01\n" +
+	"\fPresignImage\x12(.velony.asset.api.v1.PresignImageRequest\x1a).velony.asset.api.v1.PresignImageResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/v1/images:presign\x12\x82\x01\n" +
+	"\vUploadImage\x12'.velony.asset.api.v1.UploadImageRequest\x1a(.velony.asset.api.v1.UploadImageResponse\" \x82\xd3\xe4\x93\x02\x1a:\x05image\"\x11/v1/images:upload\x12~\n" +
+	"\vRemoveImage\x12'.velony.asset.api.v1.RemoveImageRequest\x1a(.velony.asset.api.v1.RemoveImageResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/images:removeB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_asset_proto_rawDescOnce sync.Once

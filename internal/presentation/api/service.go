@@ -141,7 +141,7 @@ func (s *Service) UploadImage(ctx context.Context, req *v1.UploadImageRequest) (
 }
 
 func (s *Service) RemoveImage(ctx context.Context, req *v1.RemoveImageRequest) (*v1.RemoveImageResponse, error) {
-	if err := s.removeImageHandler.Execute(ctx, &usecase.RemoveImage{
+	if _, err := s.removeImageHandler.Execute(ctx, &usecase.RemoveImage{
 		StorageKey: req.StorageKey,
 	}); err != nil {
 		return nil, mapError(err)

@@ -13,7 +13,7 @@ service AssetService {
   rpc PresignImage(PresignImageRequest)
   returns (PresignImageResponse) {
     option (google.api.http) = {
-      post: "/v1:presignImage"
+      post: "/v1/images:presign"
       body: "*"
     };
   }
@@ -21,7 +21,7 @@ service AssetService {
   rpc UploadImage(UploadImageRequest)
   returns (UploadImageResponse) {
     option (google.api.http) = {
-      post: "/v1:uploadImage"
+      post: "/v1/images:upload"
       body: "image"
     };
   }
@@ -29,7 +29,7 @@ service AssetService {
   rpc RemoveImage(RemoveImageRequest)
   returns (RemoveImageResponse) {
     option (google.api.http) = {
-      post: "/v1:removeImage"
+      post: "/v1/images:remove"
       body: "*"
     };
   }

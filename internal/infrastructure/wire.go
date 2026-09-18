@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/service"
@@ -12,6 +13,9 @@ import (
 var ProviderSet = wire.NewSet(
 	service.NewImageProcessor,
 	service.NewUploadImageToken,
+	mysql.NewConnection,
+	mysql.NewUnitOfWork,
+	mysql.NewImageRepo,
 	s3.NewConnection,
 	s3.NewStorage,
 	transport.NewGRPCServer,

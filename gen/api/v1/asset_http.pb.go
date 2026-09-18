@@ -29,9 +29,9 @@ type AssetServiceHTTPServer interface {
 
 func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) {
 	r := s.Route("/")
-	r.Handle("POST", "/v1:presignImage", _AssetService_PresignImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1:uploadImage", _AssetService_UploadImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1:removeImage", _AssetService_RemoveImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/images:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/images:upload", _AssetService_UploadImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/images:remove", _AssetService_RemoveImage0_HTTP_Handler(srv))
 }
 
 func _AssetService_PresignImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
@@ -110,7 +110,7 @@ func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 
 func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...http.CallOption) (*PresignImageResponse, error) {
 	var out PresignImageResponse
-	pattern := "/v1:presignImage"
+	pattern := "/v1/images:presign"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
@@ -127,7 +127,7 @@ func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *Presi
 
 func (c *AssetServiceHTTPClientImpl) RemoveImage(ctx context.Context, in *RemoveImageRequest, opts ...http.CallOption) (*RemoveImageResponse, error) {
 	var out RemoveImageResponse
-	pattern := "/v1:removeImage"
+	pattern := "/v1/images:remove"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
@@ -144,7 +144,7 @@ func (c *AssetServiceHTTPClientImpl) RemoveImage(ctx context.Context, in *Remove
 
 func (c *AssetServiceHTTPClientImpl) UploadImage(ctx context.Context, in *UploadImageRequest, opts ...http.CallOption) (*UploadImageResponse, error) {
 	var out UploadImageResponse
-	pattern := "/v1:uploadImage"
+	pattern := "/v1/images:upload"
 	path := http.BuildPath(pattern, in, http.WithQueryParams(), http.WithOmitFields("image"))
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
