@@ -42,16 +42,18 @@ func (h *RemoveImageHandler) Execute(
 		return nil, err
 	}
 
-	image, err := h.imageRepo.FindByStorageKey(ctx, storageKey)
-	if err != nil {
-		return nil, err
-	}
+	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+		image, err := h.imageRepo.FindByStorageKey(ctx, storageKey)
+		if err != nil {
+			return err
+		}
 
-	if image == nil {
-		return &RemoveImageResult{}, nil
-	}
+		if image == nil {
+			return nil
+		}
 
-	if err := image.Delete(); err != nil {
+		return image.Delete()
+	}); err != nil {
 		return nil, err
 	}
 

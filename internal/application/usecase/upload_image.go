@@ -68,6 +68,12 @@ func (h *UploadImageHandler) Execute(
 
 	createdImage := entity.NewImage(storageKey)
 
+	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+		return h.imageRepo.Save(ctx, createdImage)
+	}); err != nil {
+		return nil, err
+	}
+
 	if err := h.storage.Put(ctx, storageKey.Value(), imageObject); err != nil {
 		return nil, err
 	}
