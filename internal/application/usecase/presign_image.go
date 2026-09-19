@@ -54,7 +54,7 @@ func (h *PresignImageHandler) Execute(
 		return nil, err
 	}
 
-	uploadURL := publicURL.JoinPath("v1:uploadImage")
+	uploadURL := publicURL.JoinPath("v1/images:upload")
 
 	query := uploadURL.Query()
 	query.Set("token", token)
