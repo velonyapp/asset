@@ -5,14 +5,12 @@ import (
 	"unicode/utf8"
 )
 
-const MaxStorageKeySize = 1024
-
 var (
 	ErrStorageKeyEmpty = errors.New(
 		"storage key must not be empty",
 	)
 	ErrStorageKeyTooLong = errors.New(
-		"storage key must not exceed 1024 bytes",
+		"storage key must not exceed 128 bytes",
 	)
 	ErrStorageKeyInvalidUTF8 = errors.New(
 		"storage key must contain valid UTF-8",
@@ -28,7 +26,7 @@ func NewStorageKey(value string) (StorageKey, error) {
 		return StorageKey{}, ErrStorageKeyEmpty
 	}
 
-	if len(value) > MaxStorageKeySize {
+	if len(value) > 128 {
 		return StorageKey{}, ErrStorageKeyTooLong
 	}
 
