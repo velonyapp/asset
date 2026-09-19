@@ -3,7 +3,7 @@ CREATE TABLE images (
     storage_key VARCHAR(128) NOT NULL UNIQUE,
     ready       BOOLEAN NOT NULL,
     create_time TIMESTAMP(6) NOT NULL,
-    update_time TIMESTAMP(6) NOT NULL
+    delete_time TIMESTAMP(6)
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_messages (
