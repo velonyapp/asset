@@ -69,6 +69,24 @@ func mapError(err error) error {
 			applicationport.ErrInvalidUploadToken.Error(),
 		)
 
+	case errors.Is(err, vo.ErrStorageKeyEmpty):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
+			vo.ErrStorageKeyEmpty.Error(),
+		)
+
+	case errors.Is(err, vo.ErrStorageKeyTooLong):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
+			vo.ErrStorageKeyTooLong.Error(),
+		)
+
+	case errors.Is(err, vo.ErrStorageKeyInvalidUTF8):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
+			vo.ErrStorageKeyInvalidUTF8.Error(),
+		)
+
 	default:
 		return err // debug
 

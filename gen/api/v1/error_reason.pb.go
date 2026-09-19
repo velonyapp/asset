@@ -28,6 +28,7 @@ const (
 	ErrorReason_INVALID_IMAGE_RESIZE     ErrorReason = 1
 	ErrorReason_INVALID_IMAGE_ENCODING   ErrorReason = 2
 	ErrorReason_INVALID_UPLOAD_TOKEN     ErrorReason = 3
+	ErrorReason_INVALID_STORAGE_KEY      ErrorReason = 4
 )
 
 // Enum value maps for ErrorReason.
@@ -37,12 +38,14 @@ var (
 		1: "INVALID_IMAGE_RESIZE",
 		2: "INVALID_IMAGE_ENCODING",
 		3: "INVALID_UPLOAD_TOKEN",
+		4: "INVALID_STORAGE_KEY",
 	}
 	ErrorReason_value = map[string]int32{
 		"ERROR_REASON_UNSPECIFIED": 0,
 		"INVALID_IMAGE_RESIZE":     1,
 		"INVALID_IMAGE_ENCODING":   2,
 		"INVALID_UPLOAD_TOKEN":     3,
+		"INVALID_STORAGE_KEY":      4,
 	}
 )
 
@@ -77,12 +80,13 @@ var File_velony_asset_api_v1_error_reason_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_error_reason_proto_rawDesc = "" +
 	"\n" +
-	"&velony/asset/api/v1/error_reason.proto\x12\x13velony.asset.api.v1*{\n" +
+	"&velony/asset/api/v1/error_reason.proto\x12\x13velony.asset.api.v1*\x94\x01\n" +
 	"\vErrorReason\x12\x1c\n" +
 	"\x18ERROR_REASON_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14INVALID_IMAGE_RESIZE\x10\x01\x12\x1a\n" +
 	"\x16INVALID_IMAGE_ENCODING\x10\x02\x12\x18\n" +
-	"\x14INVALID_UPLOAD_TOKEN\x10\x03B-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\x14INVALID_UPLOAD_TOKEN\x10\x03\x12\x17\n" +
+	"\x13INVALID_STORAGE_KEY\x10\x04B-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_error_reason_proto_rawDescOnce sync.Once
