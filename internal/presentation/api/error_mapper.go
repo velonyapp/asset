@@ -5,6 +5,7 @@ import (
 
 	apiv1 "github.com/velonyapp/asset/gen/api/v1"
 	applicationport "github.com/velonyapp/asset/internal/application/port"
+	domainvo "github.com/velonyapp/asset/internal/domain/vo"
 
 	kerrors "github.com/go-kratos/kratos/v3/errors"
 )
@@ -69,22 +70,22 @@ func mapError(err error) error {
 			applicationport.ErrInvalidUploadToken.Error(),
 		)
 
-	case errors.Is(err, vo.ErrStorageKeyEmpty):
+	case errors.Is(err, domainvo.ErrStorageKeyEmpty):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			vo.ErrStorageKeyEmpty.Error(),
+			domainvo.ErrStorageKeyEmpty.Error(),
 		)
 
-	case errors.Is(err, vo.ErrStorageKeyTooLong):
+	case errors.Is(err, domainvo.ErrStorageKeyTooLong):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			vo.ErrStorageKeyTooLong.Error(),
+			domainvo.ErrStorageKeyTooLong.Error(),
 		)
 
-	case errors.Is(err, vo.ErrStorageKeyInvalidUTF8):
+	case errors.Is(err, domainvo.ErrStorageKeyInvalidUTF8):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			vo.ErrStorageKeyInvalidUTF8.Error(),
+			domainvo.ErrStorageKeyInvalidUTF8.Error(),
 		)
 
 	default:
