@@ -36,9 +36,9 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 		return nil, nil, err
 	}
 	encoder := event.NewEncoder()
-	outboxPublisher := mysql.NewOutboxPublisher(db, encoder)
-	imageCreatedHandler := domainevent.NewImageCreatedHandler(outboxPublisher)
-	imageDeletedHandler := domainevent.NewImageDeletedHandler(outboxPublisher)
+	eventPublisher := mysql.NewEventPublisher(db, encoder)
+	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
+	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageDeletedHandler)
 	image := mysql.NewImageRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)

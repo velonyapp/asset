@@ -17,7 +17,7 @@ var ProviderSet = wire.NewSet(
 	mysql.NewConnection,
 	mysql.NewUnitOfWork,
 	mysql.NewImageRepo,
-	mysql.NewOutboxPublisher,
+	mysql.NewEventPublisher,
 	s3.NewConnection,
 	s3.NewStorage,
 	transport.NewGRPCServer,

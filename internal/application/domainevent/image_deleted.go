@@ -9,14 +9,14 @@ import (
 )
 
 type ImageDeletedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewImageDeletedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *ImageDeletedHandler {
 	return &ImageDeletedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -26,10 +26,5 @@ func (h *ImageDeletedHandler) Execute(ctx context.Context, domainEvent event.Ima
 		domainEvent.DeleteTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx,
-		port.OutboxMessage{
-			PartitionKey: domainEvent.AggregateID(),
-			Event:        integrationEvent,
-		},
-	)
+	return h.eventPublisher.Publish(ctx, &integrationEvent)
 }

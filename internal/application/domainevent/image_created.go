@@ -9,14 +9,14 @@ import (
 )
 
 type ImageCreatedHandler struct {
-	outboxPublisher port.OutboxPublisher
+	eventPublisher port.EventPublisher
 }
 
 func NewImageCreatedHandler(
-	outboxPublisher port.OutboxPublisher,
+	eventPublisher port.EventPublisher,
 ) *ImageCreatedHandler {
 	return &ImageCreatedHandler{
-		outboxPublisher: outboxPublisher,
+		eventPublisher: eventPublisher,
 	}
 }
 
@@ -27,10 +27,5 @@ func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent event.Ima
 		domainEvent.CreateTime.Value(),
 	)
 
-	return h.outboxPublisher.PublishMessage(ctx,
-		port.OutboxMessage{
-			PartitionKey: domainEvent.AggregateID(),
-			Event:        &integrationEvent,
-		},
-	)
+	return h.eventPublisher.Publish(ctx, &integrationEvent)
 }

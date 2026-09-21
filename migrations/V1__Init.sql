@@ -6,9 +6,8 @@ CREATE TABLE images (
     delete_time TIMESTAMP(6)
 ) ENGINE = InnoDB;
 
-CREATE TABLE outbox_messages (
+CREATE TABLE outbox_events (
     id             CHAR(36) PRIMARY KEY,
-    partition_key  TEXT,
     aggregate_id   TEXT NOT NULL,
     aggregate_type TEXT NOT NULL,
     type           TEXT NOT NULL,

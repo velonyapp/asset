@@ -5,29 +5,30 @@ import (
 	"database/sql"
 	"strings"
 
+	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/event"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type outboxPublisher struct {
+type eventPublisher struct {
 	db      *sql.DB
 	encoder *event.Encoder
 }
 
-func NewOutboxPublisher(
+func NewEventPublisher(
 	db *sql.DB,
 	encoder *event.Encoder,
-) port.OutboxPublisher {
-	return &outboxPublisher{
+) port.EventPublisher {
+	return &eventPublisher{
 		db:      db,
 		encoder: encoder,
 	}
 }
 
-func (pub *outboxPublisher) PublishMessage(ctx context.Context, message port.OutboxMessage) error {
-	event, err := pub.encoder.Encode(message.Event)
+func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integrationevent.IntegrationEvent) error {
+	event, err := pub.encoder.Encode(integrationEvent)
 	if err != nil {
 		return err
 	}
@@ -38,16 +39,15 @@ func (pub *outboxPublisher) PublishMessage(ctx context.Context, message port.Out
 	}
 
 	const query = `
-		INSERT INTO outbox_messages (
+		INSERT INTO outbox_events (
 			id,
 			type,
 			aggregate_id,
 			aggregate_type,
 			occur_time,
-			payload,
-			partition_key
+			payload
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
@@ -57,26 +57,24 @@ func (pub *outboxPublisher) PublishMessage(ctx context.Context, message port.Out
 		event.AggregateType,
 		event.OccurTime.AsTime(),
 		string(payload),
-		message.PartitionKey,
 	)
 
 	return err
 }
 
-func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port.OutboxMessage) error {
-	if len(messages) == 0 {
+func (pub *eventPublisher) PublishBatch(ctx context.Context, integrationEvents []integrationevent.IntegrationEvent) error {
+	if len(integrationEvents) == 0 {
 		return nil
 	}
 
 	const prefix = `
-		INSERT INTO outbox_messages (
+		INSERT INTO outbox_events (
 			id,
 			type,
 			aggregate_id,
 			aggregate_type,
 			occur_time,
-			payload,
-			partition_key
+			payload
 		)
 		VALUES
 	`
@@ -84,10 +82,10 @@ func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port
 	var query strings.Builder
 	query.WriteString(prefix)
 
-	args := make([]any, 0, len(messages)*7)
+	args := make([]any, 0, len(integrationEvents)*7)
 
-	for i, message := range messages {
-		event, err := pub.encoder.Encode(message.Event)
+	for i, integrationEvent := range integrationEvents {
+		event, err := pub.encoder.Encode(integrationEvent)
 		if err != nil {
 			return err
 		}
@@ -100,7 +98,7 @@ func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port
 		if i > 0 {
 			query.WriteString(",")
 		}
-		query.WriteString("(?, ?, ?, ?, ?, ?, ?)")
+		query.WriteString("(?, ?, ?, ?, ?, ?)")
 
 		args = append(args,
 			event.Id,
@@ -109,7 +107,6 @@ func (pub *outboxPublisher) PublishMessages(ctx context.Context, messages []port
 			event.AggregateType,
 			event.OccurTime.AsTime(),
 			string(payload),
-			message.PartitionKey,
 		)
 	}
 
