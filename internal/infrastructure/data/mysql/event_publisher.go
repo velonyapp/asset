@@ -7,7 +7,7 @@ import (
 
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/infrastructure/messaging/event"
+	"github.com/velonyapp/asset/internal/infrastructure/event"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -82,7 +82,7 @@ func (pub *eventPublisher) PublishBatch(ctx context.Context, integrationEvents [
 	var query strings.Builder
 	query.WriteString(prefix)
 
-	args := make([]any, 0, len(integrationEvents)*7)
+	args := make([]any, 0, len(integrationEvents)*6)
 
 	for i, integrationEvent := range integrationEvents {
 		event, err := pub.encoder.Encode(integrationEvent)
