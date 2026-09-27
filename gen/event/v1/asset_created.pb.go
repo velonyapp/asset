@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -25,7 +25,6 @@ const (
 type ImageCreatedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StorageKey    string                 `protobuf:"bytes,1,opt,name=storage_key,json=storageKey,proto3" json:"storage_key,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,23 +66,14 @@ func (x *ImageCreatedPayload) GetStorageKey() string {
 	return ""
 }
 
-func (x *ImageCreatedPayload) GetCreateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreateTime
-	}
-	return nil
-}
-
 var File_velony_asset_event_v1_asset_created_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_asset_created_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/asset_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"s\n" +
+	")velony/asset/event/v1/asset_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"6\n" +
 	"\x13ImageCreatedPayload\x12\x1f\n" +
 	"\vstorage_key\x18\x01 \x01(\tR\n" +
-	"storageKey\x12;\n" +
-	"\vcreate_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"createTimeB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"storageKeyB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_asset_created_proto_rawDescOnce sync.Once
@@ -99,16 +89,14 @@ func file_velony_asset_event_v1_asset_created_proto_rawDescGZIP() []byte {
 
 var file_velony_asset_event_v1_asset_created_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_event_v1_asset_created_proto_goTypes = []any{
-	(*ImageCreatedPayload)(nil),   // 0: velony.asset.event.v1.ImageCreatedPayload
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
+	(*ImageCreatedPayload)(nil), // 0: velony.asset.event.v1.ImageCreatedPayload
 }
 var file_velony_asset_event_v1_asset_created_proto_depIdxs = []int32{
-	1, // 0: velony.asset.event.v1.ImageCreatedPayload.create_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_event_v1_asset_created_proto_init() }

@@ -4,16 +4,16 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/event"
+	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
-	"github.com/velonyapp/asset/internal/infrastructure/service"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
 
 	"github.com/google/wire"
 )
 
 var ProviderSet = wire.NewSet(
-	service.NewImageProcessor,
-	service.NewUploadImageToken,
+	image.NewProcessor,
+	image.NewUploadTokenManager,
 	mysql.NewConnection,
 	mysql.NewUnitOfWork,
 	mysql.NewImageRepo,

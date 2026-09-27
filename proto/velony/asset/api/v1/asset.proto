@@ -4,12 +4,23 @@ package velony.asset.api.v1;
 
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
 import "google/api/httpbody.proto";
+import "google/api/client.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
 service AssetService {
+  option (google.api.default_host) = "asset.velony.app";
+
+  rpc GetImage(GetImageRequest) returns (Image) {
+    option (google.api.http) = {
+      get: "/v1/{name=images/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
   rpc PresignImage(PresignImageRequest)
   returns (PresignImageResponse) {
     option (google.api.http) = {
@@ -65,6 +76,31 @@ enum ImageFormat {
   IMAGE_FORMAT_PNG  = 2;
   IMAGE_FORMAT_WEBP = 3;
   IMAGE_FORMAT_AVIF = 4;
+}
+
+message Image {
+  option (google.api.resource) = {
+    type    : "asset.velony.app/Image"
+    pattern : "images/{image}"
+    singular: "image"
+    plural  : "images"
+  };
+
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  bool   ready       = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string storage_key = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message GetImageRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
+  ];
 }
 
 message ImageResize {
@@ -141,7 +177,12 @@ message UploadImageRequest {
 }
 
 message UploadImageResponse {
-  string storage_key = 1;
+  string image = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
+  ];
 }
 
 message RemoveImageRequest {

@@ -2,30 +2,34 @@ package integrationevent
 
 import "time"
 
+var _ IntegrationEvent = (*ImageCreated)(nil)
+
 type ImageCreated struct {
 	BaseIntegrationEvent
 
-	StorageKey string
-	CreateTime time.Time
+	storageKey string
 }
 
 func NewImageCreated(
 	imageID string,
 	storageKey string,
-	createTime time.Time,
-) ImageCreated {
-	return ImageCreated{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID),
+	occurTime time.Time,
+) *ImageCreated {
+	return &ImageCreated{
+		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime),
 
-		StorageKey: storageKey,
-		CreateTime: createTime,
+		storageKey: storageKey,
 	}
 }
 
-func (e ImageCreated) Type() string {
+func (e *ImageCreated) Type() string {
 	return "image.created"
 }
 
-func (e ImageCreated) AggregateType() string {
+func (e *ImageCreated) AggregateType() string {
 	return "image"
+}
+
+func (e *ImageCreated) StorageKey() string {
+	return e.storageKey
 }

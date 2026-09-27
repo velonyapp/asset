@@ -7,26 +7,58 @@ import (
 	v1 "github.com/velonyapp/asset/gen/api/v1"
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/application/usecase"
+
+	"go.einride.tech/aip/resourcename"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+const (
+	imageResourcePattern = "images/{image}"
 )
 
 type Service struct {
 	v1.UnimplementedAssetServiceServer
 
+	getImageHandler     *usecase.GetImageHandler
 	uploadImageHandler  *usecase.UploadImageHandler
 	presignImageHandler *usecase.PresignImageHandler
 	removeImageHandler  *usecase.RemoveImageHandler
 }
 
 func NewService(
+	getImageHandler *usecase.GetImageHandler,
 	uploadImageHandler *usecase.UploadImageHandler,
 	presignImageHandler *usecase.PresignImageHandler,
 	removeImageHandler *usecase.RemoveImageHandler,
 ) *Service {
 	return &Service{
+		getImageHandler:     getImageHandler,
 		uploadImageHandler:  uploadImageHandler,
 		presignImageHandler: presignImageHandler,
 		removeImageHandler:  removeImageHandler,
 	}
+}
+
+func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image, error) {
+	var imageID string
+
+	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	result, err := s.getImageHandler.Execute(ctx, &usecase.GetImage{ImageID: imageID})
+	if err != nil {
+		return nil, mapError(err)
+	}
+
+	return &v1.Image{
+		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		StorageKey: result.Image.StorageKey,
+		Ready:      result.Image.Ready,
+		CreateTime: timestamppb.New(result.Image.CreateTime),
+	}, nil
 }
 
 func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest) (*v1.PresignImageResponse, error) {
@@ -136,7 +168,7 @@ func (s *Service) UploadImage(ctx context.Context, req *v1.UploadImageRequest) (
 	}
 
 	return &v1.UploadImageResponse{
-		StorageKey: result.StorageKey,
+		Image: resourcename.Sprint(imageResourcePattern, result.ImageID),
 	}, nil
 }
 

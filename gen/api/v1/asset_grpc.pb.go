@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	AssetService_GetImage_FullMethodName     = "/velony.asset.api.v1.AssetService/GetImage"
 	AssetService_PresignImage_FullMethodName = "/velony.asset.api.v1.AssetService/PresignImage"
 	AssetService_UploadImage_FullMethodName  = "/velony.asset.api.v1.AssetService/UploadImage"
 	AssetService_RemoveImage_FullMethodName  = "/velony.asset.api.v1.AssetService/RemoveImage"
@@ -28,6 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AssetServiceClient interface {
+	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
 	PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error)
 	UploadImage(ctx context.Context, in *UploadImageRequest, opts ...grpc.CallOption) (*UploadImageResponse, error)
 	RemoveImage(ctx context.Context, in *RemoveImageRequest, opts ...grpc.CallOption) (*RemoveImageResponse, error)
@@ -39,6 +41,16 @@ type assetServiceClient struct {
 
 func NewAssetServiceClient(cc grpc.ClientConnInterface) AssetServiceClient {
 	return &assetServiceClient{cc}
+}
+
+func (c *assetServiceClient) GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Image)
+	err := c.cc.Invoke(ctx, AssetService_GetImage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *assetServiceClient) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error) {
@@ -75,6 +87,7 @@ func (c *assetServiceClient) RemoveImage(ctx context.Context, in *RemoveImageReq
 // All implementations must embed UnimplementedAssetServiceServer
 // for forward compatibility.
 type AssetServiceServer interface {
+	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
 	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
 	RemoveImage(context.Context, *RemoveImageRequest) (*RemoveImageResponse, error)
@@ -88,6 +101,9 @@ type AssetServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAssetServiceServer struct{}
 
+func (UnimplementedAssetServiceServer) GetImage(context.Context, *GetImageRequest) (*Image, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetImage not implemented")
+}
 func (UnimplementedAssetServiceServer) PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PresignImage not implemented")
 }
@@ -116,6 +132,24 @@ func RegisterAssetServiceServer(s grpc.ServiceRegistrar, srv AssetServiceServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AssetService_ServiceDesc, srv)
+}
+
+func _AssetService_GetImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServiceServer).GetImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetService_GetImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServiceServer).GetImage(ctx, req.(*GetImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetService_PresignImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,6 +213,10 @@ var AssetService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "velony.asset.api.v1.AssetService",
 	HandlerType: (*AssetServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetImage",
+			Handler:    _AssetService_GetImage_Handler,
+		},
 		{
 			MethodName: "PresignImage",
 			Handler:    _AssetService_PresignImage_Handler,

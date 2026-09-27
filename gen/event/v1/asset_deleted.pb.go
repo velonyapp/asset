@@ -9,7 +9,7 @@ package eventv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -24,7 +24,6 @@ const (
 
 type ImageDeletedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeleteTime    *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=delete_time,json=deleteTime,proto3" json:"delete_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -59,21 +58,12 @@ func (*ImageDeletedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_event_v1_asset_deleted_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ImageDeletedPayload) GetDeleteTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DeleteTime
-	}
-	return nil
-}
-
 var File_velony_asset_event_v1_asset_deleted_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_asset_deleted_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/asset_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"R\n" +
-	"\x13ImageDeletedPayload\x12;\n" +
-	"\vdelete_time\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"deleteTimeB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	")velony/asset/event/v1/asset_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x15\n" +
+	"\x13ImageDeletedPayloadB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_asset_deleted_proto_rawDescOnce sync.Once
@@ -89,16 +79,14 @@ func file_velony_asset_event_v1_asset_deleted_proto_rawDescGZIP() []byte {
 
 var file_velony_asset_event_v1_asset_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_event_v1_asset_deleted_proto_goTypes = []any{
-	(*ImageDeletedPayload)(nil),   // 0: velony.asset.event.v1.ImageDeletedPayload
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
+	(*ImageDeletedPayload)(nil), // 0: velony.asset.event.v1.ImageDeletedPayload
 }
 var file_velony_asset_event_v1_asset_deleted_proto_depIdxs = []int32{
-	1, // 0: velony.asset.event.v1.ImageDeletedPayload.delete_time:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_event_v1_asset_deleted_proto_init() }

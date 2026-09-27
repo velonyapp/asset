@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"io"
+	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/entity"
@@ -16,7 +17,7 @@ type UploadImage struct {
 }
 
 type UploadImageResult struct {
-	StorageKey string
+	ImageID string
 }
 
 type UploadImageHandler struct {
@@ -24,7 +25,7 @@ type UploadImageHandler struct {
 	unitOfWork       port.UnitOfWork
 	storage          port.Storage
 	imageProcessor   port.ImageProcessor
-	uploadImageToken port.UploadImageToken
+	uploadImageToken port.UploadImageTokenManager
 }
 
 func NewUploadImageHandler(
@@ -32,7 +33,7 @@ func NewUploadImageHandler(
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
 	imageProcessor port.ImageProcessor,
-	uploadImageToken port.UploadImageToken,
+	uploadImageToken port.UploadImageTokenManager,
 ) *UploadImageHandler {
 	return &UploadImageHandler{
 		imageRepo:        imageRepo,
@@ -47,6 +48,8 @@ func (h *UploadImageHandler) Execute(
 	ctx context.Context,
 	uc *UploadImage,
 ) (*UploadImageResult, error) {
+	now := time.Now()
+
 	payload, err := h.uploadImageToken.Verify(uc.Token)
 	if err != nil {
 		return nil, err
@@ -66,7 +69,7 @@ func (h *UploadImageHandler) Execute(
 		return nil, err
 	}
 
-	createdImage := entity.NewImage(storageKey)
+	createdImage := entity.NewImage(storageKey, now)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, createdImage)
@@ -74,11 +77,13 @@ func (h *UploadImageHandler) Execute(
 		return nil, err
 	}
 
-	if err := h.storage.Put(ctx, storageKey.Value(), imageObject); err != nil {
+	if err := h.storage.Put(ctx, storageKey, imageObject); err != nil {
 		return nil, err
 	}
 
-	createdImage.Finalize()
+	if err := createdImage.Finalize(now); err != nil {
+		return nil, err
+	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, createdImage)
@@ -87,6 +92,6 @@ func (h *UploadImageHandler) Execute(
 	}
 
 	return &UploadImageResult{
-		StorageKey: payload.StorageKey,
+		ImageID: createdImage.ID().Value(),
 	}, nil
 }

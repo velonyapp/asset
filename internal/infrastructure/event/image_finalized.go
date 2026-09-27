@@ -5,6 +5,6 @@ import (
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 )
 
-func imageDeletedPayload(event integrationevent.ImageDeleted) *eventv1.ImageDeletedPayload {
-	return &eventv1.ImageDeletedPayload{}
+func imageFinalizedPayload(event integrationevent.ImageFinalized) *eventv1.ImageFinalizedPayload {
+	return &eventv1.ImageFinalizedPayload{}
 }

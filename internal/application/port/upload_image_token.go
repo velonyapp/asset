@@ -18,7 +18,7 @@ type UploadImageTokenPayload struct {
 	ExpireTime time.Time
 }
 
-type UploadImageToken interface {
+type UploadImageTokenManager interface {
 	Sign(payload UploadImageTokenPayload) (string, error)
 	Verify(token string) (UploadImageTokenPayload, error)
 }

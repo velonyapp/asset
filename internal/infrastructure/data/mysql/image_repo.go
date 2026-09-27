@@ -12,7 +12,9 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-type ImageRepo struct {
+var _ repo.Image = (*imageRepo)(nil)
+
+type imageRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
 }
@@ -21,7 +23,7 @@ func NewImageRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
 ) repo.Image {
-	return &ImageRepo{
+	return &imageRepo{
 		db:         db,
 		dispatcher: dispatcher,
 	}
@@ -31,7 +33,7 @@ type imageScanner interface {
 	Scan(dest ...any) error
 }
 
-func (repo *ImageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error) {
+func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error) {
 	const query = `
 		SELECT
 			id,
@@ -58,7 +60,7 @@ func (repo *ImageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 	return image, nil
 }
 
-func (repo *ImageRepo) FindByStorageKey(ctx context.Context, storageKey vo.StorageKey) (*entity.Image, error) {
+func (repo *imageRepo) FindByStorageKey(ctx context.Context, storageKey vo.StorageKey) (*entity.Image, error) {
 	const query = `
 		SELECT
 			id,
@@ -85,7 +87,7 @@ func (repo *ImageRepo) FindByStorageKey(ctx context.Context, storageKey vo.Stora
 	return image, nil
 }
 
-func (repo *ImageRepo) Save(ctx context.Context, image *entity.Image) error {
+func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	const query = `
 		INSERT INTO images (
 			id,
@@ -98,25 +100,23 @@ func (repo *ImageRepo) Save(ctx context.Context, image *entity.Image) error {
 		ON DUPLICATE KEY UPDATE
 			storage_key = ?,
 			ready = ?,
-			create_time = ?,
 			delete_time = ?
 	`
 
 	var deleteTime any
 	if image.DeleteTime != nil {
-		deleteTime = image.DeleteTime.Value()
+		deleteTime = image.DeleteTime()
 	}
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
-		image.ID.Value(),
-		image.StorageKey.Value(),
-		image.Ready,
-		image.CreateTime.Value(),
+		image.ID().Value(),
+		image.StorageKey().Value(),
+		image.IsReady(),
+		image.CreateTime(),
 		deleteTime,
 
-		image.StorageKey.Value(),
-		image.Ready,
-		image.CreateTime.Value(),
+		image.StorageKey().Value(),
+		image.IsReady(),
 		deleteTime,
 	); err != nil {
 		return err
@@ -155,17 +155,17 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		return nil, err
 	}
 
-	var deleteTimeVO *vo.Time
+	var deleteTimeVO *time.Time
 	if deleteTime.Valid {
-		value := vo.NewTime(deleteTime.Time)
+		value := deleteTime.Time
 		deleteTimeVO = &value
 	}
 
-	return &entity.Image{
-		ID:         vo.NewImageID(id),
-		StorageKey: storageKeyVO,
-		Ready:      ready,
-		CreateTime: vo.NewTime(createTime),
-		DeleteTime: deleteTimeVO,
-	}, nil
+	return entity.ReconstituteImage(
+		vo.NewImageID(id),
+		storageKeyVO,
+		ready,
+		createTime,
+		deleteTimeVO,
+	), nil
 }

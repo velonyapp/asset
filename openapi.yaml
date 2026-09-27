@@ -5,7 +5,28 @@ openapi: 3.0.3
 info:
     title: AssetService API
     version: 0.0.1
+servers:
+    - url: https://asset.velony.app
 paths:
+    /v1/images/{image}:
+        get:
+            tags:
+                - AssetService
+            operationId: AssetService_GetImage
+            parameters:
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
     /v1/images:presign:
         post:
             tags:
@@ -67,6 +88,21 @@ paths:
                                 $ref: '#/components/schemas/velony.asset.api.v1.UploadImageResponse'
 components:
     schemas:
+        velony.asset.api.v1.Image:
+            type: object
+            properties:
+                name:
+                    type: string
+                ready:
+                    readOnly: true
+                    type: boolean
+                storageKey:
+                    readOnly: true
+                    type: string
+                createTime:
+                    readOnly: true
+                    type: string
+                    format: date-time
         velony.asset.api.v1.ImageEncoding:
             type: object
             properties:
@@ -131,9 +167,11 @@ components:
             type: object
             properties: {}
         velony.asset.api.v1.UploadImageResponse:
+            required:
+                - image
             type: object
             properties:
-                storageKey:
+                image:
                     type: string
 tags:
     - name: AssetService

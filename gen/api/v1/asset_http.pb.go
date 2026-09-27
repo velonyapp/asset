@@ -17,11 +17,13 @@ var _ = new(context.Context)
 
 const _ = http.SupportPackageIsVersion3
 
+const OperationAssetServiceGetImage = "/velony.asset.api.v1.AssetService/GetImage"
 const OperationAssetServicePresignImage = "/velony.asset.api.v1.AssetService/PresignImage"
 const OperationAssetServiceRemoveImage = "/velony.asset.api.v1.AssetService/RemoveImage"
 const OperationAssetServiceUploadImage = "/velony.asset.api.v1.AssetService/UploadImage"
 
 type AssetServiceHTTPServer interface {
+	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
 	RemoveImage(context.Context, *RemoveImageRequest) (*RemoveImageResponse, error)
 	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
@@ -29,9 +31,32 @@ type AssetServiceHTTPServer interface {
 
 func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) {
 	r := s.Route("/")
+	r.Handle("GET", "/v1/{name:images/[^/]+}", _AssetService_GetImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images:upload", _AssetService_UploadImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images:remove", _AssetService_RemoveImage0_HTTP_Handler(srv))
+}
+
+func _AssetService_GetImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetImageRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAssetServiceGetImage)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetImage(ctx, req.(*GetImageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*Image)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _AssetService_PresignImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
@@ -95,6 +120,7 @@ func _AssetService_RemoveImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ct
 }
 
 type AssetServiceHTTPClient interface {
+	GetImage(ctx context.Context, req *GetImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	PresignImage(ctx context.Context, req *PresignImageRequest, opts ...http.CallOption) (rsp *PresignImageResponse, err error)
 	RemoveImage(ctx context.Context, req *RemoveImageRequest, opts ...http.CallOption) (rsp *RemoveImageResponse, err error)
 	UploadImage(ctx context.Context, req *UploadImageRequest, opts ...http.CallOption) (rsp *UploadImageResponse, err error)
@@ -106,6 +132,22 @@ type AssetServiceHTTPClientImpl struct {
 
 func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 	return &AssetServiceHTTPClientImpl{client}
+}
+
+func (c *AssetServiceHTTPClientImpl) GetImage(ctx context.Context, in *GetImageRequest, opts ...http.CallOption) (*Image, error) {
+	var out Image
+	pattern := "/v1/{name=images/*}"
+	path := http.BuildPath(pattern, in, http.WithQueryParams())
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.Operation(OperationAssetServiceGetImage),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...http.CallOption) (*PresignImageResponse, error) {

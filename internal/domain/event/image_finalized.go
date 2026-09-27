@@ -6,17 +6,17 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-var _ DomainEvent = (*ImageDeleted)(nil)
+var _ DomainEvent = (*ImageFinalized)(nil)
 
-type ImageDeleted struct {
+type ImageFinalized struct {
 	BaseDomainEvent
 }
 
-func NewImageDeleted(
+func NewImageFinalized(
 	imageID vo.ImageID,
 	occurTime time.Time,
-) *ImageDeleted {
-	return &ImageDeleted{
+) *ImageFinalized {
+	return &ImageFinalized{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.Value(), occurTime),
 	}
 }

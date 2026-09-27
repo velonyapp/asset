@@ -44,9 +44,6 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*eventv1.Even
 
 func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Message, error) {
 	switch event := event.(type) {
-	case integrationevent.ImageCreated:
-		return imageCreatedPayload(event), nil
-
 	case *integrationevent.ImageCreated:
 		if event == nil {
 			return nil, fmt.Errorf("ImageCreated event is nil")
@@ -54,8 +51,12 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return imageCreatedPayload(*event), nil
 
-	case integrationevent.ImageDeleted:
-		return imageDeletedPayload(event), nil
+	case *integrationevent.ImageFinalized:
+		if event == nil {
+			return nil, fmt.Errorf("ImageFinalized event is nil")
+		}
+
+		return imageFinalizedPayload(*event), nil
 
 	case *integrationevent.ImageDeleted:
 		if event == nil {

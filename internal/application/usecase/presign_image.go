@@ -23,12 +23,12 @@ type PresignImageResult struct {
 
 type PresignImageHandler struct {
 	c                *conf.Service
-	uploadImageToken port.UploadImageToken
+	uploadImageToken port.UploadImageTokenManager
 }
 
 func NewPresignImageHandler(
 	c *conf.Service,
-	uploadImageToken port.UploadImageToken,
+	uploadImageToken port.UploadImageTokenManager,
 ) *PresignImageHandler {
 	return &PresignImageHandler{
 		c:                c,

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/repo"
@@ -37,6 +38,8 @@ func (h *RemoveImageHandler) Execute(
 	ctx context.Context,
 	uc *RemoveImage,
 ) (*RemoveImageResult, error) {
+	now := time.Now()
+
 	storageKey, err := vo.NewStorageKey(uc.StorageKey)
 	if err != nil {
 		return nil, err
@@ -48,16 +51,20 @@ func (h *RemoveImageHandler) Execute(
 			return err
 		}
 
-		if image == nil {
+		if image == nil || image.IsDeleted() {
 			return nil
 		}
 
-		return image.Delete()
-	}); err != nil {
-		return nil, err
-	}
+		if err := image.Delete(now); err != nil {
+			return err
+		}
 
-	if err := h.storage.Delete(ctx, uc.StorageKey); err != nil {
+		if err := h.storage.Delete(ctx, storageKey); err != nil {
+			return err
+		}
+
+		return h.imageRepo.Save(ctx, image)
+	}); err != nil {
 		return nil, err
 	}
 

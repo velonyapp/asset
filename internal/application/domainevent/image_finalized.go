@@ -8,22 +8,22 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[*event.ImageDeleted] = (*ImageDeletedHandler)(nil)
+var _ Handler[*event.ImageFinalized] = (*ImageFinalizedHandler)(nil)
 
-type ImageDeletedHandler struct {
+type ImageFinalizedHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewImageDeletedHandler(
+func NewImageFinalizedHandler(
 	eventPublisher port.EventPublisher,
-) *ImageDeletedHandler {
-	return &ImageDeletedHandler{
+) *ImageFinalizedHandler {
+	return &ImageFinalizedHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *ImageDeletedHandler) Execute(ctx context.Context, domainEvent *event.ImageDeleted) error {
-	integrationEvent := integrationevent.NewImageDeleted(
+func (h *ImageFinalizedHandler) Execute(ctx context.Context, domainEvent *event.ImageFinalized) error {
+	integrationEvent := integrationevent.NewImageFinalized(
 		domainEvent.AggregateID(),
 		domainEvent.OccurTime(),
 	)

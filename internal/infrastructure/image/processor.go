@@ -1,4 +1,4 @@
-package service
+package image
 
 import (
 	"bytes"
@@ -11,13 +11,15 @@ import (
 	"github.com/davidbyttow/govips/v2/vips"
 )
 
-type ImageProcessor struct{}
+var _ port.ImageProcessor = (*processor)(nil)
 
-func NewImageProcessor() port.ImageProcessor {
-	return &ImageProcessor{}
+type processor struct{}
+
+func NewProcessor() port.ImageProcessor {
+	return &processor{}
 }
 
-func (p *ImageProcessor) Process(image io.Reader, transform *port.ImageTransform) (io.Reader, error) {
+func (p *processor) Process(image io.Reader, transform *port.ImageTransform) (io.Reader, error) {
 	data, err := io.ReadAll(image)
 	if err != nil {
 		return nil, err

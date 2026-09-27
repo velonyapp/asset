@@ -1,4 +1,4 @@
-package service
+package image
 
 import (
 	"crypto/hmac"
@@ -12,15 +12,17 @@ import (
 	"github.com/velonyapp/asset/internal/conf"
 )
 
-type UploadImageToken struct {
+var _ port.UploadImageTokenManager = (*uploadTokenManager)(nil)
+
+type uploadTokenManager struct {
 	c *conf.Service
 }
 
-func NewUploadImageToken(c *conf.Service) port.UploadImageToken {
-	return &UploadImageToken{c: c}
+func NewUploadTokenManager(c *conf.Service) port.UploadImageTokenManager {
+	return &uploadTokenManager{c: c}
 }
 
-func (t *UploadImageToken) Sign(payload port.UploadImageTokenPayload) (string, error) {
+func (t *uploadTokenManager) Sign(payload port.UploadImageTokenMPayload) (string, error) {
 	data, err := json.Marshal(payload)
 	if err != nil {
 		return "", err
@@ -39,42 +41,42 @@ func (t *UploadImageToken) Sign(payload port.UploadImageTokenPayload) (string, e
 	return encodedPayload + "." + signature, nil
 }
 
-func (t *UploadImageToken) Verify(value string) (port.UploadImageTokenPayload, error) {
+func (t *uploadTokenManager) Verify(value string) (port.UploadImageTokenMPayload, error) {
 	parts := strings.Split(value, ".")
 	if len(parts) != 2 {
-		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrInvalidUploadToken
 	}
 
 	encodedPayload := parts[0]
 
 	signature, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
-		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrInvalidUploadToken
 	}
 
 	hash := hmac.New(sha256.New, []byte(t.c.UploadTokenSecret))
 
 	if _, err := hash.Write([]byte(encodedPayload)); err != nil {
-		return port.UploadImageTokenPayload{}, err
+		return port.UploadImageTokenMPayload{}, err
 	}
 
 	if !hmac.Equal(signature, hash.Sum(nil)) {
-		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrInvalidUploadToken
 	}
 
 	data, err := base64.RawURLEncoding.DecodeString(encodedPayload)
 	if err != nil {
-		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrInvalidUploadToken
 	}
 
-	var payload port.UploadImageTokenPayload
+	var payload port.UploadImageTokenMPayload
 
 	if err := json.Unmarshal(data, &payload); err != nil {
-		return port.UploadImageTokenPayload{}, port.ErrInvalidUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrInvalidUploadToken
 	}
 
 	if time.Now().After(payload.ExpireTime) {
-		return port.UploadImageTokenPayload{}, port.ErrExpiredUploadToken
+		return port.UploadImageTokenMPayload{}, port.ErrExpiredUploadToken
 	}
 
 	return payload, nil

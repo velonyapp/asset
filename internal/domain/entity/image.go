@@ -2,73 +2,128 @@ package entity
 
 import (
 	"errors"
+	"time"
 
 	"github.com/velonyapp/asset/internal/domain/event"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
 var (
-	ErrImageDeleted = errors.New(
-		"image is deleted",
-	)
+	ErrImageDeleted = errors.New("image is deleted")
 )
 
 type Image struct {
-	ID         vo.ImageID
-	StorageKey vo.StorageKey
-	Ready      bool
-	CreateTime vo.Time
-	DeleteTime *vo.Time
+	id         vo.ImageID
+	storageKey vo.StorageKey
+	ready      bool
+	createTime time.Time
+	deleteTime *time.Time
 
 	domainEvents []event.DomainEvent
 }
 
 func NewImage(
 	storageKey vo.StorageKey,
+	now time.Time,
 ) *Image {
-	now := vo.NewTimeNow()
 	imageID := vo.NewImageIDRandom()
 
-	image := &Image{
-		ID:         imageID,
-		StorageKey: storageKey,
-		Ready:      false,
-		CreateTime: now,
+	i := &Image{
+		id:         imageID,
+		storageKey: storageKey,
+		ready:      false,
+		createTime: now,
 	}
 
-	image.recordEvent(
+	i.recordEvent(
 		event.NewImageCreated(
-			imageID,
-			storageKey,
+			i.id,
+			i.storageKey,
 			now,
 		),
 	)
 
-	return image
+	return i
 }
 
-func (img *Image) Finalize() error {
-	if img.DeleteTime != nil {
+func ReconstituteImage(
+	id vo.ImageID,
+	storageKey vo.StorageKey,
+	ready bool,
+	createTime time.Time,
+	deleteTime *time.Time,
+) *Image {
+	i := &Image{
+		id:         id,
+		storageKey: storageKey,
+		ready:      ready,
+		createTime: createTime,
+	}
+
+	if deleteTime != nil {
+		value := *deleteTime
+		i.deleteTime = &value
+	}
+
+	return i
+}
+
+func (i *Image) ID() vo.ImageID {
+	return i.id
+}
+
+func (i *Image) StorageKey() vo.StorageKey {
+	return i.storageKey
+}
+
+func (i *Image) CreateTime() time.Time {
+	return i.createTime
+}
+
+func (i *Image) DeleteTime() *time.Time {
+	if i.deleteTime == nil {
+		return nil
+	}
+
+	value := *i.deleteTime
+	return &value
+}
+
+func (i *Image) IsReady() bool {
+	return i.ready
+}
+
+func (i *Image) IsDeleted() bool {
+	return i.deleteTime != nil
+}
+
+func (i *Image) Finalize(now time.Time) error {
+	if i.IsDeleted() {
 		return ErrImageDeleted
 	}
 
-	img.Ready = true
+	i.ready = true
+
+	i.recordEvent(
+		event.NewImageFinalized(
+			i.id,
+			now,
+		),
+	)
 
 	return nil
 }
 
-func (img *Image) Delete() error {
-	if img.DeleteTime != nil {
+func (i *Image) Delete(now time.Time) error {
+	if i.IsDeleted() {
 		return ErrImageDeleted
 	}
 
-	now := vo.NewTimeNow()
+	i.deleteTime = &now
 
-	img.DeleteTime = &now
-
-	img.recordEvent(
+	i.recordEvent(
 		event.NewImageDeleted(
-			img.ID,
+			i.id,
 			now,
 		),
 	)
@@ -76,12 +131,12 @@ func (img *Image) Delete() error {
 	return nil
 }
 
-func (img *Image) PullEvents() []event.DomainEvent {
-	pulled := img.domainEvents
-	img.domainEvents = nil
+func (i *Image) PullEvents() []event.DomainEvent {
+	pulled := i.domainEvents
+	i.domainEvents = nil
 	return pulled
 }
 
-func (img *Image) recordEvent(domainEvent event.DomainEvent) {
-	img.domainEvents = append(img.domainEvents, domainEvent)
+func (i *Image) recordEvent(domainEvent event.DomainEvent) {
+	i.domainEvents = append(i.domainEvents, domainEvent)
 }

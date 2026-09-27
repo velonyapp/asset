@@ -16,8 +16,8 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/event"
+	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
-	"github.com/velonyapp/asset/internal/infrastructure/service"
 	"github.com/velonyapp/asset/internal/infrastructure/transport"
 	"github.com/velonyapp/asset/internal/presentation/api"
 	"log/slog"
@@ -30,7 +30,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, infoService *info.Service, confService *conf.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, service *info.Service, confService *conf.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -38,21 +38,23 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 	encoder := event.NewEncoder()
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
+	imageFinalizedHandler := domainevent.NewImageFinalizedHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageDeletedHandler)
-	image := mysql.NewImageRepo(db, dispatcher)
+	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageFinalizedHandler, imageDeletedHandler)
+	repoImage := mysql.NewImageRepo(db, dispatcher)
+	getImageHandler := usecase.NewGetImageHandler(repoImage)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
-	imageProcessor := service.NewImageProcessor()
-	uploadImageToken := service.NewUploadImageToken(confService)
-	uploadImageHandler := usecase.NewUploadImageHandler(image, unitOfWork, storage, imageProcessor, uploadImageToken)
-	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageToken)
-	removeImageHandler := usecase.NewRemoveImageHandler(image, unitOfWork, storage)
-	apiService := api.NewService(uploadImageHandler, presignImageHandler, removeImageHandler)
+	imageProcessor := image.NewProcessor()
+	uploadImageTokenManager := image.NewUploadTokenManager(confService)
+	uploadImageHandler := usecase.NewUploadImageHandler(repoImage, unitOfWork, storage, imageProcessor, uploadImageTokenManager)
+	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageTokenManager)
+	removeImageHandler := usecase.NewRemoveImageHandler(repoImage, unitOfWork, storage)
+	apiService := api.NewService(getImageHandler, uploadImageHandler, presignImageHandler, removeImageHandler)
 	tracesMiddleware := transport.NewTracesMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
@@ -62,7 +64,7 @@ func wireApp(contextContext context.Context, infoService *info.Service, confServ
 	validationMiddleware := transport.NewValidationMiddleware()
 	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, validationMiddleware)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, validationMiddleware)
-	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, infoService)
+	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
 		return nil, nil, err
 	}
