@@ -104,7 +104,7 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	`
 
 	var deleteTime any
-	if image.DeleteTime != nil {
+	if image.DeleteTime() != nil {
 		deleteTime = image.DeleteTime()
 	}
 
