@@ -22,6 +22,7 @@ var ProviderSet = wire.NewSet(
 	s3.NewStorage,
 	transport.NewGRPCServer,
 	transport.NewHTTPServer,
+	transport.NewRabbitMQConsumer,
 	transport.NewTracesMiddleware,
 	transport.NewMetricsMiddleware,
 	transport.NewValidationMiddleware,

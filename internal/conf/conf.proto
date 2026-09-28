@@ -50,10 +50,39 @@ message Transport {
     ];
   }
 
+  message RabbitMQ {
+    message Image {
+      string queue = 1 [
+        (buf.validate.field).string.min_len = 1
+      ];
+
+      string remove_routing_key = 2 [
+        (buf.validate.field).string.min_len = 1
+      ];
+    }
+
+    string address = 1 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    string username = 2 [
+      (buf.validate.field).string.min_len = 1
+    ];
+    string password = 3 [
+      (buf.validate.field).string.min_len = 1
+    ];
+
+    Image image = 4 [
+      (buf.validate.field).required = true
+    ];
+  }
+
   HTTP http = 1 [
     (buf.validate.field).required = true
   ];
   GRPC grpc = 2 [
+    (buf.validate.field).required = true
+  ];
+  RabbitMQ rabbitmq = 3 [
     (buf.validate.field).required = true
   ];
 }

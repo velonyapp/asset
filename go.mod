@@ -5,6 +5,7 @@ go 1.25.7
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260709200747-435963d16310.1
 	buf.build/go/protovalidate v1.3.0
+	github.com/Azure/go-amqp v1.7.0
 	github.com/XSAM/otelsql v0.44.0
 	github.com/aws/aws-sdk-go-v2 v1.47.0
 	github.com/aws/aws-sdk-go-v2/config v1.33.4
@@ -14,6 +15,7 @@ require (
 	github.com/davidbyttow/govips/v2 v2.18.0
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/google/wire v0.6.0
+	github.com/rabbitmq/rabbitmq-amqp-go-client v1.4.0
 	go.einride.tech/aip v0.86.3
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.46.0
