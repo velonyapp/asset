@@ -465,7 +465,7 @@ type Transport_RabbitMQ struct {
 	Address       string                    `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	Username      string                    `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                    `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	Image         *Transport_RabbitMQ_Image `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	Queue         *Transport_RabbitMQ_Queue `protobuf:"bytes,4,opt,name=queue,proto3" json:"queue,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -521,35 +521,34 @@ func (x *Transport_RabbitMQ) GetPassword() string {
 	return ""
 }
 
-func (x *Transport_RabbitMQ) GetImage() *Transport_RabbitMQ_Image {
+func (x *Transport_RabbitMQ) GetQueue() *Transport_RabbitMQ_Queue {
 	if x != nil {
-		return x.Image
+		return x.Queue
 	}
 	return nil
 }
 
-type Transport_RabbitMQ_Image struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Queue            string                 `protobuf:"bytes,1,opt,name=queue,proto3" json:"queue,omitempty"`
-	RemoveRoutingKey string                 `protobuf:"bytes,2,opt,name=remove_routing_key,json=removeRoutingKey,proto3" json:"remove_routing_key,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+type Transport_RabbitMQ_Queue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RemoveImage   string                 `protobuf:"bytes,1,opt,name=remove_image,json=removeImage,proto3" json:"remove_image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Transport_RabbitMQ_Image) Reset() {
-	*x = Transport_RabbitMQ_Image{}
+func (x *Transport_RabbitMQ_Queue) Reset() {
+	*x = Transport_RabbitMQ_Queue{}
 	mi := &file_conf_conf_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Transport_RabbitMQ_Image) String() string {
+func (x *Transport_RabbitMQ_Queue) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Transport_RabbitMQ_Image) ProtoMessage() {}
+func (*Transport_RabbitMQ_Queue) ProtoMessage() {}
 
-func (x *Transport_RabbitMQ_Image) ProtoReflect() protoreflect.Message {
+func (x *Transport_RabbitMQ_Queue) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -561,21 +560,14 @@ func (x *Transport_RabbitMQ_Image) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Transport_RabbitMQ_Image.ProtoReflect.Descriptor instead.
-func (*Transport_RabbitMQ_Image) Descriptor() ([]byte, []int) {
+// Deprecated: Use Transport_RabbitMQ_Queue.ProtoReflect.Descriptor instead.
+func (*Transport_RabbitMQ_Queue) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{2, 2, 0}
 }
 
-func (x *Transport_RabbitMQ_Image) GetQueue() string {
+func (x *Transport_RabbitMQ_Queue) GetRemoveImage() string {
 	if x != nil {
-		return x.Queue
-	}
-	return ""
-}
-
-func (x *Transport_RabbitMQ_Image) GetRemoveRoutingKey() string {
-	if x != nil {
-		return x.RemoveRoutingKey
+		return x.RemoveImage
 	}
 	return ""
 }
@@ -866,7 +858,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\aService\x12'\n" +
 	"\n" +
 	"public_url\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x88\x01\x01R\tpublicUrl\x127\n" +
-	"\x13upload_token_secret\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10 R\x11uploadTokenSecret\"\xb2\x05\n" +
+	"\x13upload_token_secret\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10 R\x11uploadTokenSecret\"\x88\x05\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x12B\n" +
@@ -876,15 +868,14 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\x9a\x02\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xf0\x01\n" +
 	"\bRabbitMQ\x12!\n" +
 	"\aaddress\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\aaddress\x12#\n" +
 	"\busername\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\busername\x12#\n" +
 	"\bpassword\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bpassword\x12B\n" +
-	"\x05image\x18\x04 \x01(\v2$.kratos.api.Transport.RabbitMQ.ImageB\x06\xbaH\x03\xc8\x01\x01R\x05image\x1a]\n" +
-	"\x05Image\x12\x1d\n" +
-	"\x05queue\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05queue\x125\n" +
-	"\x12remove_routing_key\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x10removeRoutingKey\"\x8c\x06\n" +
+	"\x05queue\x18\x04 \x01(\v2$.kratos.api.Transport.RabbitMQ.QueueB\x06\xbaH\x03\xc8\x01\x01R\x05queue\x1a3\n" +
+	"\x05Queue\x12*\n" +
+	"\fremove_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vremoveImage\"\x8c\x06\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12+\n" +
 	"\x02s3\x18\x02 \x01(\v2\x13.kratos.api.Data.S3B\x06\xbaH\x03\xc8\x01\x01R\x02s3\x1a\xf1\x03\n" +
@@ -948,7 +939,7 @@ var file_conf_conf_proto_goTypes = []any{
 	(*Transport_HTTP)(nil),           // 6: kratos.api.Transport.HTTP
 	(*Transport_GRPC)(nil),           // 7: kratos.api.Transport.GRPC
 	(*Transport_RabbitMQ)(nil),       // 8: kratos.api.Transport.RabbitMQ
-	(*Transport_RabbitMQ_Image)(nil), // 9: kratos.api.Transport.RabbitMQ.Image
+	(*Transport_RabbitMQ_Queue)(nil), // 9: kratos.api.Transport.RabbitMQ.Queue
 	(*Data_MySQL)(nil),               // 10: kratos.api.Data.MySQL
 	(*Data_S3)(nil),                  // 11: kratos.api.Data.S3
 	(*Observability_Tracing)(nil),    // 12: kratos.api.Observability.Tracing
@@ -969,7 +960,7 @@ var file_conf_conf_proto_depIdxs = []int32{
 	13, // 10: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
 	14, // 11: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
 	14, // 12: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	9,  // 13: kratos.api.Transport.RabbitMQ.image:type_name -> kratos.api.Transport.RabbitMQ.Image
+	9,  // 13: kratos.api.Transport.RabbitMQ.queue:type_name -> kratos.api.Transport.RabbitMQ.Queue
 	14, // 14: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
 	0,  // 15: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
 	0,  // 16: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol

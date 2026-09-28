@@ -51,12 +51,8 @@ message Transport {
   }
 
   message RabbitMQ {
-    message Image {
-      string queue = 1 [
-        (buf.validate.field).string.min_len = 1
-      ];
-
-      string remove_routing_key = 2 [
+    message Queue {
+      string remove_image = 1 [
         (buf.validate.field).string.min_len = 1
       ];
     }
@@ -71,7 +67,7 @@ message Transport {
       (buf.validate.field).string.min_len = 1
     ];
 
-    Image image = 4 [
+    Queue queue = 4 [
       (buf.validate.field).required = true
     ];
   }
