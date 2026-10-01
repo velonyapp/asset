@@ -1,12 +1,12 @@
 package event
 
 import (
-	eventv1 "github.com/velonyapp/asset/gen/event/v1"
+	v1 "github.com/velonyapp/asset/gen/event/v1"
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 )
 
-func imageCreatedPayload(event integrationevent.ImageCreated) *eventv1.ImageCreatedPayload {
-	return &eventv1.ImageCreatedPayload{
+func imageCreatedPayload(event integrationevent.ImageCreated) *v1.ImageCreatedPayload {
+	return &v1.ImageCreatedPayload{
 		Tags:       event.Tags(),
 		StorageKey: event.StorageKey(),
 	}

@@ -3,7 +3,7 @@ package event
 import (
 	"fmt"
 
-	eventv1 "github.com/velonyapp/asset/gen/event/v1"
+	v1 "github.com/velonyapp/asset/gen/event/v1"
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 
 	"google.golang.org/protobuf/proto"
@@ -17,7 +17,7 @@ func NewEncoder() *Encoder {
 	return &Encoder{}
 }
 
-func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*eventv1.Event, error) {
+func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, error) {
 	if event == nil {
 		return nil, fmt.Errorf("integration event is nil")
 	}
@@ -32,7 +32,7 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*eventv1.Even
 		return nil, err
 	}
 
-	return &eventv1.Event{
+	return &v1.Event{
 		Id:            event.ID(),
 		Type:          event.Type(),
 		AggregateId:   event.AggregateID(),
