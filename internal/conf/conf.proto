@@ -52,7 +52,7 @@ message Transport {
 
   message RabbitMQ {
     message Queue {
-      string remove_image = 1 [
+      string delete_image = 1 [
         (buf.validate.field).string.min_len = 1
       ];
     }

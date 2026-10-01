@@ -64,12 +64,22 @@ func (h *UploadImageHandler) Execute(
 		}
 	}
 
+	tags := make([]vo.Tag, 0)
+	for _, tagRaw := range payload.Tags {
+		tag, err := vo.NewTag(tagRaw)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
+	}
+
 	storageKey, err := vo.NewStorageKey(payload.StorageKey)
 	if err != nil {
 		return nil, err
 	}
 
-	createdImage := entity.NewImage(storageKey, now)
+	createdImage := entity.NewImage(tags, storageKey, now)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, createdImage)

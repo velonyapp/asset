@@ -23,8 +23,15 @@ func NewImageCreatedHandler(
 }
 
 func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent *event.ImageCreated) error {
+	tags := domainEvent.Tags()
+	tagValues := make([]string, len(tags))
+	for i, tag := range tags {
+		tagValues[i] = tag.Value()
+	}
+
 	integrationEvent := integrationevent.NewImageCreated(
 		domainEvent.AggregateID(),
+		tagValues,
 		domainEvent.StorageKey().Value(),
 		domainEvent.OccurTime(),
 	)

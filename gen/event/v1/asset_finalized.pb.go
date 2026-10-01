@@ -24,6 +24,7 @@ const (
 
 type ImageFinalizedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tags          []string               `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,12 +59,20 @@ func (*ImageFinalizedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_event_v1_asset_finalized_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *ImageFinalizedPayload) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
 var File_velony_asset_event_v1_asset_finalized_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_asset_finalized_proto_rawDesc = "" +
 	"\n" +
-	"+velony/asset/event/v1/asset_finalized.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x17\n" +
-	"\x15ImageFinalizedPayloadB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"+velony/asset/event/v1/asset_finalized.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"+\n" +
+	"\x15ImageFinalizedPayload\x12\x12\n" +
+	"\x04tags\x18\x01 \x03(\tR\x04tagsB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_asset_finalized_proto_rawDescOnce sync.Once

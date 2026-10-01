@@ -14,6 +14,7 @@ var (
 
 type Image struct {
 	id         vo.ImageID
+	tags       []vo.Tag
 	storageKey vo.StorageKey
 	ready      bool
 	createTime time.Time
@@ -23,6 +24,7 @@ type Image struct {
 }
 
 func NewImage(
+	tags []vo.Tag,
 	storageKey vo.StorageKey,
 	now time.Time,
 ) *Image {
@@ -30,6 +32,7 @@ func NewImage(
 
 	i := &Image{
 		id:         imageID,
+		tags:       tags,
 		storageKey: storageKey,
 		ready:      false,
 		createTime: now,
@@ -37,8 +40,9 @@ func NewImage(
 
 	i.recordEvent(
 		event.NewImageCreated(
-			i.id,
-			i.storageKey,
+			imageID,
+			tags,
+			storageKey,
 			now,
 		),
 	)
@@ -48,6 +52,7 @@ func NewImage(
 
 func ReconstituteImage(
 	id vo.ImageID,
+	tags []vo.Tag,
 	storageKey vo.StorageKey,
 	ready bool,
 	createTime time.Time,
@@ -55,6 +60,7 @@ func ReconstituteImage(
 ) *Image {
 	i := &Image{
 		id:         id,
+		tags:       tags,
 		storageKey: storageKey,
 		ready:      ready,
 		createTime: createTime,
@@ -70,6 +76,10 @@ func ReconstituteImage(
 
 func (i *Image) ID() vo.ImageID {
 	return i.id
+}
+
+func (i *Image) Tags() []vo.Tag {
+	return append([]vo.Tag(nil), i.tags...)
 }
 
 func (i *Image) StorageKey() vo.StorageKey {
@@ -102,11 +112,16 @@ func (i *Image) Finalize(now time.Time) error {
 		return ErrImageDeleted
 	}
 
+	if i.IsReady() {
+		return nil
+	}
+
 	i.ready = true
 
 	i.recordEvent(
 		event.NewImageFinalized(
 			i.id,
+			i.tags,
 			now,
 		),
 	)
@@ -116,7 +131,7 @@ func (i *Image) Finalize(now time.Time) error {
 
 func (i *Image) Delete(now time.Time) error {
 	if i.IsDeleted() {
-		return ErrImageDeleted
+		return nil
 	}
 
 	i.deleteTime = &now
@@ -124,6 +139,7 @@ func (i *Image) Delete(now time.Time) error {
 	i.recordEvent(
 		event.NewImageDeleted(
 			i.id,
+			i.tags,
 			now,
 		),
 	)

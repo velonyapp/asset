@@ -23,8 +23,15 @@ func NewImageFinalizedHandler(
 }
 
 func (h *ImageFinalizedHandler) Execute(ctx context.Context, domainEvent *event.ImageFinalized) error {
+	tags := domainEvent.Tags()
+	tagValues := make([]string, len(tags))
+	for i, tag := range tags {
+		tagValues[i] = tag.Value()
+	}
+
 	integrationEvent := integrationevent.NewImageFinalized(
 		domainEvent.AggregateID(),
+		tagValues,
 		domainEvent.OccurTime(),
 	)
 

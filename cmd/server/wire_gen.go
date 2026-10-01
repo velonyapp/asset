@@ -17,9 +17,10 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/event"
 	"github.com/velonyapp/asset/internal/infrastructure/image"
-	"github.com/velonyapp/asset/internal/infrastructure/observability"
-	"github.com/velonyapp/asset/internal/infrastructure/transport"
+	observability2 "github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/presentation/api"
+	"github.com/velonyapp/asset/internal/presentation/observability"
+	"github.com/velonyapp/asset/internal/presentation/transport"
 	"log/slog"
 )
 
@@ -53,18 +54,15 @@ func wireApp(contextContext context.Context, service *info.Service, confService 
 	uploadImageTokenManager := image.NewUploadTokenManager(confService)
 	uploadImageHandler := usecase.NewUploadImageHandler(repoImage, unitOfWork, storage, imageProcessor, uploadImageTokenManager)
 	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageTokenManager)
-	removeImageHandler := usecase.NewRemoveImageHandler(repoImage, unitOfWork, storage)
-	apiService := api.NewService(getImageHandler, uploadImageHandler, presignImageHandler, removeImageHandler)
-	tracesMiddleware := transport.NewTracesMiddleware()
+	deleteImageHandler := usecase.NewDeleteImageHandler(repoImage, unitOfWork, storage)
+	apiService := api.NewService(getImageHandler, uploadImageHandler, presignImageHandler, deleteImageHandler)
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
-	metricsMiddleware := transport.NewMetricsMiddleware(serverMetrics)
-	validationMiddleware := transport.NewValidationMiddleware()
-	server := transport.NewGRPCServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, validationMiddleware)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, tracesMiddleware, metricsMiddleware, validationMiddleware)
-	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, service)
+	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
+	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
+	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
 		return nil, nil, err
 	}

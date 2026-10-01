@@ -11,6 +11,7 @@ import (
 	"go.einride.tech/aip/resourcename"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -24,20 +25,20 @@ type Service struct {
 	getImageHandler     *usecase.GetImageHandler
 	uploadImageHandler  *usecase.UploadImageHandler
 	presignImageHandler *usecase.PresignImageHandler
-	removeImageHandler  *usecase.RemoveImageHandler
+	deleteImageHandler  *usecase.DeleteImageHandler
 }
 
 func NewService(
 	getImageHandler *usecase.GetImageHandler,
 	uploadImageHandler *usecase.UploadImageHandler,
 	presignImageHandler *usecase.PresignImageHandler,
-	removeImageHandler *usecase.RemoveImageHandler,
+	deleteImageHandler *usecase.DeleteImageHandler,
 ) *Service {
 	return &Service{
 		getImageHandler:     getImageHandler,
 		uploadImageHandler:  uploadImageHandler,
 		presignImageHandler: presignImageHandler,
-		removeImageHandler:  removeImageHandler,
+		deleteImageHandler:  deleteImageHandler,
 	}
 }
 
@@ -172,12 +173,18 @@ func (s *Service) UploadImage(ctx context.Context, req *v1.UploadImageRequest) (
 	}, nil
 }
 
-func (s *Service) RemoveImage(ctx context.Context, req *v1.RemoveImageRequest) (*v1.RemoveImageResponse, error) {
-	if _, err := s.removeImageHandler.Execute(ctx, &usecase.RemoveImage{
-		StorageKey: req.StorageKey,
+func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (*emptypb.Empty, error) {
+	var imageID string
+
+	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if _, err := s.deleteImageHandler.Execute(ctx, &usecase.DeleteImage{
+		ImageID: imageID,
 	}); err != nil {
 		return nil, mapError(err)
 	}
 
-	return &v1.RemoveImageResponse{}, nil
+	return &emptypb.Empty{}, nil
 }

@@ -8,6 +8,7 @@ import "google/api/resource.proto";
 import "google/api/httpbody.proto";
 import "google/api/client.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
@@ -37,12 +38,11 @@ service AssetService {
     };
   }
 
-  rpc RemoveImage(RemoveImageRequest)
-  returns (RemoveImageResponse) {
+  rpc DeleteImage(DeleteImageRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1/images:remove"
-      body: "*"
+      delete: "/v1/{name=images/*}"
     };
+    option (google.api.method_signature) = "name";
   }
 }
 
@@ -88,10 +88,13 @@ message Image {
 
   string name = 1 [(google.api.field_behavior) = IDENTIFIER];
 
-  bool   ready       = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  repeated string tags = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+
   string storage_key = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
 
-  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  bool ready = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
 }
 
 message GetImageRequest {
@@ -185,10 +188,11 @@ message UploadImageResponse {
   ];
 }
 
-message RemoveImageRequest {
-  string storage_key = 1 [
-    (google.api.field_behavior) = REQUIRED
+message DeleteImageRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
   ];
 }
-
-message RemoveImageResponse {}

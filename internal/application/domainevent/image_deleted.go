@@ -23,8 +23,15 @@ func NewImageDeletedHandler(
 }
 
 func (h *ImageDeletedHandler) Execute(ctx context.Context, domainEvent *event.ImageDeleted) error {
+	tags := domainEvent.Tags()
+	tagValues := make([]string, len(tags))
+	for i, tag := range tags {
+		tagValues[i] = tag.Value()
+	}
+
 	integrationEvent := integrationevent.NewImageDeleted(
 		domainEvent.AggregateID(),
+		tagValues,
 		domainEvent.OccurTime(),
 	)
 

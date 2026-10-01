@@ -7,5 +7,6 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/velonyapp/asset/gen/event/v1;eventv1";
 
 message ImageCreatedPayload {
-  string storage_key = 1;
+  repeated string tags        = 1;
+  string          storage_key = 2;
 }

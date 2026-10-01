@@ -27,6 +27,21 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.Image'
+        delete:
+            tags:
+                - AssetService
+            operationId: AssetService_DeleteImage
+            parameters:
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /v1/images:presign:
         post:
             tags:
@@ -45,24 +60,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
-    /v1/images:remove:
-        post:
-            tags:
-                - AssetService
-            operationId: AssetService_RemoveImage
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.RemoveImageResponse'
     /v1/images:upload:
         post:
             tags:
@@ -93,12 +90,17 @@ components:
             properties:
                 name:
                     type: string
-                ready:
+                tags:
                     readOnly: true
-                    type: boolean
+                    type: array
+                    items:
+                        type: string
                 storageKey:
                     readOnly: true
                     type: string
+                ready:
+                    readOnly: true
+                    type: boolean
                 createTime:
                     readOnly: true
                     type: string
@@ -156,16 +158,6 @@ components:
             properties:
                 uploadUrl:
                     type: string
-        velony.asset.api.v1.RemoveImageRequest:
-            required:
-                - storageKey
-            type: object
-            properties:
-                storageKey:
-                    type: string
-        velony.asset.api.v1.RemoveImageResponse:
-            type: object
-            properties: {}
         velony.asset.api.v1.UploadImageResponse:
             required:
                 - image

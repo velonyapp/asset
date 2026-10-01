@@ -11,7 +11,7 @@ var ProviderSet = wire.NewSet(
 	usecase.NewGetImageHandler,
 	usecase.NewUploadImageHandler,
 	usecase.NewPresignImageHandler,
-	usecase.NewRemoveImageHandler,
+	usecase.NewDeleteImageHandler,
 	domainevent.NewDispatcher,
 	domainevent.NewImageCreatedHandler,
 	domainevent.NewImageFinalizedHandler,

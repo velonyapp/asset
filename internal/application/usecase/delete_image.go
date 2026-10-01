@@ -9,44 +9,41 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-type RemoveImage struct {
-	StorageKey string
+type DeleteImage struct {
+	ImageID string
 }
 
-type RemoveImageResult struct {
+type DeleteImageResult struct {
 }
 
-type RemoveImageHandler struct {
+type DeleteImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
 	storage    port.Storage
 }
 
-func NewRemoveImageHandler(
+func NewDeleteImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
-) *RemoveImageHandler {
-	return &RemoveImageHandler{
+) *DeleteImageHandler {
+	return &DeleteImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
 		storage:    storage,
 	}
 }
 
-func (h *RemoveImageHandler) Execute(
+func (h *DeleteImageHandler) Execute(
 	ctx context.Context,
-	uc *RemoveImage,
-) (*RemoveImageResult, error) {
+	uc *DeleteImage,
+) (*DeleteImageResult, error) {
 	now := time.Now()
 
-	storageKey, err := vo.NewStorageKey(uc.StorageKey)
-	if err != nil {
-		return nil, err
-	}
+	imageID := vo.NewImageID(uc.ImageID)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		image, err := h.imageRepo.FindByStorageKey(ctx, storageKey)
+		image, err := h.imageRepo.FindByID(ctx, imageID)
 		if err != nil {
 			return err
 		}
@@ -59,7 +56,7 @@ func (h *RemoveImageHandler) Execute(
 			return err
 		}
 
-		if err := h.storage.Delete(ctx, storageKey); err != nil {
+		if err := h.storage.Delete(ctx, image.StorageKey()); err != nil {
 			return err
 		}
 
@@ -68,5 +65,5 @@ func (h *RemoveImageHandler) Execute(
 		return nil, err
 	}
 
-	return &RemoveImageResult{}, nil
+	return &DeleteImageResult{}, nil
 }

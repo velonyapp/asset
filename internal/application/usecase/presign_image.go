@@ -10,6 +10,8 @@ import (
 )
 
 type PresignImage struct {
+	Tags []string
+
 	StorageKey string
 
 	Transform *port.ImageTransform
@@ -46,6 +48,7 @@ func (h *PresignImageHandler) Execute(
 	}
 
 	token, err := h.uploadImageToken.Sign(port.UploadImageTokenPayload{
+		Tags:       uc.Tags,
 		StorageKey: uc.StorageKey,
 		Transform:  uc.Transform,
 		ExpireTime: uc.ExpireTime,

@@ -6,15 +6,9 @@ import (
 )
 
 var (
-	ErrStorageKeyEmpty = errors.New(
-		"storage key must not be empty",
-	)
-	ErrStorageKeyTooLong = errors.New(
-		"storage key must not exceed 128 bytes",
-	)
-	ErrStorageKeyInvalidUTF8 = errors.New(
-		"storage key must contain valid UTF-8",
-	)
+	ErrStorageKeyEmpty       = errors.New("storage key must not be empty")
+	ErrStorageKeyTooLong     = errors.New("storage key must not exceed 128 bytes")
+	ErrStorageKeyInvalidUTF8 = errors.New("storage key must contain valid UTF-8")
 )
 
 type StorageKey struct {

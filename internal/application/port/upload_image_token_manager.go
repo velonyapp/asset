@@ -11,6 +11,8 @@ var (
 )
 
 type UploadImageTokenPayload struct {
+	Tags []string
+
 	StorageKey string
 
 	Transform *ImageTransform

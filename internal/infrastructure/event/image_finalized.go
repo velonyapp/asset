@@ -6,5 +6,7 @@ import (
 )
 
 func imageFinalizedPayload(event integrationevent.ImageFinalized) *eventv1.ImageFinalizedPayload {
-	return &eventv1.ImageFinalizedPayload{}
+	return &eventv1.ImageFinalizedPayload{
+		Tags: event.Tags(),
+	}
 }

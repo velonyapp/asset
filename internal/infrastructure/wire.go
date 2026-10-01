@@ -6,7 +6,6 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/event"
 	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
-	"github.com/velonyapp/asset/internal/infrastructure/transport"
 
 	"github.com/google/wire"
 )
@@ -20,13 +19,6 @@ var ProviderSet = wire.NewSet(
 	mysql.NewEventPublisher,
 	s3.NewConnection,
 	s3.NewStorage,
-	transport.NewGRPCServer,
-	transport.NewHTTPServer,
-	transport.NewRabbitMQConsumer,
-	transport.NewTracesMiddleware,
-	transport.NewMetricsMiddleware,
-	transport.NewValidationMiddleware,
-	observability.NewServerMetrics,
 	observability.NewOpenTelemetry,
 	event.NewEncoder,
 )

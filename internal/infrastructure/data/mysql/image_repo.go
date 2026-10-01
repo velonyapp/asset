@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -37,6 +38,7 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 	const query = `
 		SELECT
 			id,
+			tags,
 			storage_key,
 			ready,
 			create_time,
@@ -64,6 +66,7 @@ func (repo *imageRepo) FindByStorageKey(ctx context.Context, storageKey vo.Stora
 	const query = `
 		SELECT
 			id,
+			tags,
 			storage_key,
 			ready,
 			create_time,
@@ -91,17 +94,31 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	const query = `
 		INSERT INTO images (
 			id,
+			tags,
 			storage_key,
 			ready,
 			create_time,
 			delete_time
 		)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
+			tags = ?,
 			storage_key = ?,
 			ready = ?,
 			delete_time = ?
 	`
+
+	imageTags := image.Tags()
+
+	tags := make([]string, len(imageTags))
+	for i, tag := range imageTags {
+		tags[i] = tag.Value()
+	}
+
+	tagsJSON, err := json.Marshal(tags)
+	if err != nil {
+		return err
+	}
 
 	var deleteTime any
 	if image.DeleteTime() != nil {
@@ -110,11 +127,13 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		image.ID().Value(),
+		tagsJSON,
 		image.StorageKey().Value(),
 		image.IsReady(),
 		image.CreateTime(),
 		deleteTime,
 
+		tagsJSON,
 		image.StorageKey().Value(),
 		image.IsReady(),
 		deleteTime,
@@ -134,6 +153,7 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 func scanImage(scanner imageScanner) (*entity.Image, error) {
 	var (
 		id         string
+		tagsJSON   []byte
 		storageKey string
 		ready      bool
 		createTime time.Time
@@ -142,12 +162,28 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 
 	if err := scanner.Scan(
 		&id,
+		&tagsJSON,
 		&storageKey,
 		&ready,
 		&createTime,
 		&deleteTime,
 	); err != nil {
 		return nil, err
+	}
+
+	var tagValues []string
+	if err := json.Unmarshal(tagsJSON, &tagValues); err != nil {
+		return nil, err
+	}
+
+	tags := make([]vo.Tag, 0, len(tagValues))
+	for _, value := range tagValues {
+		tag, err := vo.NewTag(value)
+		if err != nil {
+			return nil, err
+		}
+
+		tags = append(tags, tag)
 	}
 
 	storageKeyVO, err := vo.NewStorageKey(storageKey)
@@ -163,6 +199,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 
 	return entity.ReconstituteImage(
 		vo.NewImageID(id),
+		tags,
 		storageKeyVO,
 		ready,
 		createTime,

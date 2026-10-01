@@ -9,6 +9,7 @@ package apiv1
 import (
 	context "context"
 	http "github.com/go-kratos/kratos/v3/transport/http"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -17,15 +18,15 @@ var _ = new(context.Context)
 
 const _ = http.SupportPackageIsVersion3
 
+const OperationAssetServiceDeleteImage = "/velony.asset.api.v1.AssetService/DeleteImage"
 const OperationAssetServiceGetImage = "/velony.asset.api.v1.AssetService/GetImage"
 const OperationAssetServicePresignImage = "/velony.asset.api.v1.AssetService/PresignImage"
-const OperationAssetServiceRemoveImage = "/velony.asset.api.v1.AssetService/RemoveImage"
 const OperationAssetServiceUploadImage = "/velony.asset.api.v1.AssetService/UploadImage"
 
 type AssetServiceHTTPServer interface {
+	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
-	RemoveImage(context.Context, *RemoveImageRequest) (*RemoveImageResponse, error)
 	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
 }
 
@@ -34,7 +35,7 @@ func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) 
 	r.Handle("GET", "/v1/{name:images/[^/]+}", _AssetService_GetImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images:upload", _AssetService_UploadImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/images:remove", _AssetService_RemoveImage0_HTTP_Handler(srv))
+	r.Handle("DELETE", "/v1/{name:images/[^/]+}", _AssetService_DeleteImage0_HTTP_Handler(srv))
 }
 
 func _AssetService_GetImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
@@ -100,29 +101,32 @@ func _AssetService_UploadImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ct
 	}
 }
 
-func _AssetService_RemoveImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+func _AssetService_DeleteImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in RemoveImageRequest
-		if err := ctx.Bind(&in); err != nil {
+		var in DeleteImageRequest
+		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAssetServiceRemoveImage)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAssetServiceDeleteImage)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.RemoveImage(ctx, req.(*RemoveImageRequest))
+			return srv.DeleteImage(ctx, req.(*DeleteImageRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*RemoveImageResponse)
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
 
 type AssetServiceHTTPClient interface {
+	DeleteImage(ctx context.Context, req *DeleteImageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetImage(ctx context.Context, req *GetImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	PresignImage(ctx context.Context, req *PresignImageRequest, opts ...http.CallOption) (rsp *PresignImageResponse, err error)
-	RemoveImage(ctx context.Context, req *RemoveImageRequest, opts ...http.CallOption) (rsp *RemoveImageResponse, err error)
 	UploadImage(ctx context.Context, req *UploadImageRequest, opts ...http.CallOption) (rsp *UploadImageResponse, err error)
 }
 
@@ -132,6 +136,22 @@ type AssetServiceHTTPClientImpl struct {
 
 func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 	return &AssetServiceHTTPClientImpl{client}
+}
+
+func (c *AssetServiceHTTPClientImpl) DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/v1/{name=images/*}"
+	path := http.BuildPath(pattern, in, http.WithQueryParams())
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.Operation(OperationAssetServiceDeleteImage),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AssetServiceHTTPClientImpl) GetImage(ctx context.Context, in *GetImageRequest, opts ...http.CallOption) (*Image, error) {
@@ -158,23 +178,6 @@ func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *Presi
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
 		http.Operation(OperationAssetServicePresignImage),
-		http.PathTemplate(pattern),
-	}, opts...)
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *AssetServiceHTTPClientImpl) RemoveImage(ctx context.Context, in *RemoveImageRequest, opts ...http.CallOption) (*RemoveImageResponse, error) {
-	var out RemoveImageResponse
-	pattern := "/v1/images:remove"
-	path := http.BuildPath(pattern, in)
-	opts = append([]http.CallOption{
-		http.Accept("application/protojson"),
-		http.ContentType("application/protojson"),
-		http.Operation(OperationAssetServiceRemoveImage),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

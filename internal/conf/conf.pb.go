@@ -530,7 +530,7 @@ func (x *Transport_RabbitMQ) GetQueue() *Transport_RabbitMQ_Queue {
 
 type Transport_RabbitMQ_Queue struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RemoveImage   string                 `protobuf:"bytes,1,opt,name=remove_image,json=removeImage,proto3" json:"remove_image,omitempty"`
+	DeleteImage   string                 `protobuf:"bytes,1,opt,name=delete_image,json=deleteImage,proto3" json:"delete_image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -565,9 +565,9 @@ func (*Transport_RabbitMQ_Queue) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{2, 2, 0}
 }
 
-func (x *Transport_RabbitMQ_Queue) GetRemoveImage() string {
+func (x *Transport_RabbitMQ_Queue) GetDeleteImage() string {
 	if x != nil {
-		return x.RemoveImage
+		return x.DeleteImage
 	}
 	return ""
 }
@@ -875,7 +875,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\bpassword\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bpassword\x12B\n" +
 	"\x05queue\x18\x04 \x01(\v2$.kratos.api.Transport.RabbitMQ.QueueB\x06\xbaH\x03\xc8\x01\x01R\x05queue\x1a3\n" +
 	"\x05Queue\x12*\n" +
-	"\fremove_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vremoveImage\"\x8c\x06\n" +
+	"\fdelete_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vdeleteImage\"\x8c\x06\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12+\n" +
 	"\x02s3\x18\x02 \x01(\v2\x13.kratos.api.Data.S3B\x06\xbaH\x03\xc8\x01\x01R\x02s3\x1a\xf1\x03\n" +
