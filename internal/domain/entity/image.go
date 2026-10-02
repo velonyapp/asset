@@ -116,11 +116,13 @@ func (i *Image) UpdateObjectExistence(value bool, now time.Time) error {
 		return nil
 	}
 
+	i.objectExists = value
+
 	i.recordEvent(
 		event.NewImageObjectExistenceUpdated(
 			i.id,
 			i.tags,
-			i.objectExists,
+			value,
 			now,
 		),
 	)
