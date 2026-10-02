@@ -133,7 +133,7 @@ func (s *storage) PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Dur
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
 	}, func(options *s3.PresignOptions) {
-		options.Expires = ttl,
+		options.Expires = ttl
 	})
 	if err != nil {
 		return "", err
@@ -147,7 +147,7 @@ func (s *storage) PresignPut(ctx context.Context, key vo.ObjectKey, ttl time.Dur
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
 	}, func(options *s3.PresignOptions) {
-		options.Expires = ttl,
+		options.Expires = ttl
 	})
 	if err != nil {
 		return "", err
