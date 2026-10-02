@@ -32,7 +32,10 @@ func (h *GetImageHandler) Execute(
 	ctx context.Context,
 	uc *GetImage,
 ) (*GetImageResult, error) {
-	imageID := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(uc.ImageID)
+	if err != nil {
+		return nil, err
+	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
@@ -44,7 +47,7 @@ func (h *GetImageHandler) Execute(
 
 	return &GetImageResult{
 		Image: &common.ImageResult{
-			ID:           image.ID().Value(),
+			ID:           image.ID().String(),
 			ObjectKey:    image.ObjectKey().Value(),
 			ObjectExists: image.ObjectExists(),
 			CreateTime:   image.CreateTime(),

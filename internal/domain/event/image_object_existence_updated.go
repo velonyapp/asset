@@ -22,7 +22,7 @@ func NewImageObjectExistenceUpdated(
 	occurTime time.Time,
 ) *ImageObjectExistenceUpdated {
 	return &ImageObjectExistenceUpdated{
-		BaseDomainEvent: NewBaseDomainEvent(imageID.Value(), occurTime),
+		BaseDomainEvent: NewBaseDomainEvent(imageID.String(), occurTime),
 
 		tags:         tags,
 		objectExists: objectExists,

@@ -20,7 +20,7 @@ func NewImageDeleted(
 	occurTime time.Time,
 ) *ImageDeleted {
 	return &ImageDeleted{
-		BaseDomainEvent: NewBaseDomainEvent(imageID.Value(), occurTime),
+		BaseDomainEvent: NewBaseDomainEvent(imageID.String(), occurTime),
 
 		tags: tags,
 	}

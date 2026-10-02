@@ -65,7 +65,7 @@ func (h *CreateImageHandler) Execute(
 
 	return &CreateImageResult{
 		Image: &common.ImageResult{
-			ID:           image.ID().Value(),
+			ID:           image.ID().String(),
 			ObjectKey:    image.ObjectKey().Value(),
 			ObjectExists: image.ObjectExists(),
 			CreateTime:   image.CreateTime(),

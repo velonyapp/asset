@@ -49,7 +49,10 @@ func (h *ProcessImageHandler) Execute(
 ) (*ProcessImageResult, error) {
 	now := time.Now()
 
-	imageID := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(uc.ImageID)
+	if err != nil {
+		return nil, err
+	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
@@ -99,7 +102,7 @@ func (h *ProcessImageHandler) Execute(
 	}
 
 	h.eventPublisher.Publish(ctx, integrationevent.NewImageProcessed(
-		image.ID().Value(),
+		image.ID().String(),
 		tagsValue,
 		now,
 	))

@@ -22,7 +22,7 @@ func NewImageCreated(
 	occurTime time.Time,
 ) *ImageCreated {
 	return &ImageCreated{
-		BaseDomainEvent: NewBaseDomainEvent(imageID.Value(), occurTime),
+		BaseDomainEvent: NewBaseDomainEvent(imageID.String(), occurTime),
 
 		tags:      tags,
 		objectKey: objectKey,

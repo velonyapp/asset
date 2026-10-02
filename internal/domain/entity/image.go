@@ -28,7 +28,7 @@ func NewImage(
 	objectKey vo.ObjectKey,
 	now time.Time,
 ) *Image {
-	imageID := vo.NewImageIDRandom()
+	imageID := vo.GenerateImageID()
 
 	i := &Image{
 		id:           imageID,

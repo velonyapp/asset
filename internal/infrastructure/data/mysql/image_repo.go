@@ -48,7 +48,7 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 		LIMIT 1
 	`
 
-	row := executor(ctx, repo.db).QueryRowContext(ctx, query, imageID.Value())
+	row := executor(ctx, repo.db).QueryRowContext(ctx, query, imageID.String())
 
 	image, err := scanImage(row)
 	if err != nil {
@@ -98,7 +98,7 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	}
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
-		image.ID().Value(),
+		image.ID().String(),
 		tagsJSON,
 		image.ObjectKey().Value(),
 		image.ObjectExists(),
@@ -143,6 +143,11 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		return nil, err
 	}
 
+	imageID, err := vo.NewImageID(id)
+	if err != nil {
+		return nil, err
+	}
+
 	var tagValues []string
 	if err := json.Unmarshal(tagsJSON, &tagValues); err != nil {
 		return nil, err
@@ -170,7 +175,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	}
 
 	return entity.ReconstituteImage(
-		vo.NewImageID(id),
+		imageID,
 		tags,
 		objectKeyVO,
 		objectExists,

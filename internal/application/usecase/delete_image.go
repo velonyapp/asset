@@ -40,7 +40,10 @@ func (h *DeleteImageHandler) Execute(
 ) (*DeleteImageResult, error) {
 	now := time.Now()
 
-	imageID := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(uc.ImageID)
+	if err != nil {
+		return nil, err
+	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
