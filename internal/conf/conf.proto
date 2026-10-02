@@ -7,26 +7,13 @@ import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
-  Service service = 1 [
+  Transport     transport     = 1 [
     (buf.validate.field).required = true
   ];
-  Transport     transport     = 2 [
+  Data          data          = 2 [
     (buf.validate.field).required = true
   ];
-  Data          data          = 3 [
-    (buf.validate.field).required = true
-  ];
-  Observability observability = 4;
-}
-
-message Service {
-  string public_url = 1 [
-    (buf.validate.field).string.uri = true
-  ];
-
-  string upload_token_secret = 2 [
-    (buf.validate.field).string.min_len = 32
-  ];
+  Observability observability = 3;
 }
 
 message Transport {
@@ -51,8 +38,17 @@ message Transport {
   }
 
   message RabbitMQ {
-    message Queue {
-      string delete_image = 1 [
+    message Queues {
+      string create_image = 1 [
+        (buf.validate.field).string.min_len = 1
+      ];
+      string process_image = 2 [
+        (buf.validate.field).string.min_len = 1
+      ];
+      string reconcile_image = 3 [
+        (buf.validate.field).string.min_len = 1
+      ];
+      string delete_image = 4 [
         (buf.validate.field).string.min_len = 1
       ];
     }
@@ -67,7 +63,7 @@ message Transport {
       (buf.validate.field).string.min_len = 1
     ];
 
-    Queue queue = 4 [
+    Queues queues = 4 [
       (buf.validate.field).required = true
     ];
   }

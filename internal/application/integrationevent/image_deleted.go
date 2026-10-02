@@ -6,8 +6,6 @@ var _ IntegrationEvent = (*ImageDeleted)(nil)
 
 type ImageDeleted struct {
 	BaseIntegrationEvent
-
-	tags []string
 }
 
 func NewImageDeleted(
@@ -16,9 +14,7 @@ func NewImageDeleted(
 	occurTime time.Time,
 ) *ImageDeleted {
 	return &ImageDeleted{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime),
-
-		tags: tags,
+		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),
 	}
 }
 
@@ -28,8 +24,4 @@ func (e *ImageDeleted) Type() string {
 
 func (e *ImageDeleted) AggregateType() string {
 	return "image"
-}
-
-func (i *ImageDeleted) Tags() []string {
-	return append([]string(nil), i.tags...)
 }

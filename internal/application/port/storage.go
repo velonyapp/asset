@@ -9,14 +9,14 @@ import (
 )
 
 type Storage interface {
-	Exists(ctx context.Context, key vo.StorageKey) (bool, error)
+	Exists(ctx context.Context, key vo.ObjectKey) (bool, error)
 
-	Get(ctx context.Context, key vo.StorageKey) (io.ReadCloser, error)
-	Put(ctx context.Context, key vo.StorageKey, body io.Reader) error
+	Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, error)
+	Put(ctx context.Context, key vo.ObjectKey, body io.Reader) error
 
-	Delete(ctx context.Context, key vo.StorageKey) error
-	DeleteMany(ctx context.Context, keys []vo.StorageKey) error
+	Delete(ctx context.Context, key vo.ObjectKey) error
+	DeleteMany(ctx context.Context, keys []vo.ObjectKey) error
 
-	PresignGet(ctx context.Context, key vo.StorageKey, expiresIn time.Duration) (string, error)
-	PresignPut(ctx context.Context, key vo.StorageKey, expiresIn time.Duration) (string, error)
+	PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error)
+	PresignPut(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error)
 }

@@ -9,11 +9,13 @@ import (
 
 var ProviderSet = wire.NewSet(
 	usecase.NewGetImageHandler,
-	usecase.NewUploadImageHandler,
+	usecase.NewCreateImageHandler,
 	usecase.NewPresignImageHandler,
+	usecase.NewProcessImageHandler,
+	usecase.NewReconcileImageHandler,
 	usecase.NewDeleteImageHandler,
 	domainevent.NewDispatcher,
 	domainevent.NewImageCreatedHandler,
-	domainevent.NewImageFinalizedHandler,
+	domainevent.NewImageObjectExistenceUpdatedHandler,
 	domainevent.NewImageDeletedHandler,
 )

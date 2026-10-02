@@ -8,30 +8,31 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[*event.ImageFinalized] = (*ImageFinalizedHandler)(nil)
+var _ Handler[*event.ImageObjectExistenceUpdated] = (*ImageObjectExistenceUpdatedHandler)(nil)
 
-type ImageFinalizedHandler struct {
+type ImageObjectExistenceUpdatedHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewImageFinalizedHandler(
+func NewImageObjectExistenceUpdatedHandler(
 	eventPublisher port.EventPublisher,
-) *ImageFinalizedHandler {
-	return &ImageFinalizedHandler{
+) *ImageObjectExistenceUpdatedHandler {
+	return &ImageObjectExistenceUpdatedHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *ImageFinalizedHandler) Execute(ctx context.Context, domainEvent *event.ImageFinalized) error {
+func (h *ImageObjectExistenceUpdatedHandler) Execute(ctx context.Context, domainEvent *event.ImageObjectExistenceUpdated) error {
 	tags := domainEvent.Tags()
 	tagValues := make([]string, len(tags))
 	for i, tag := range tags {
 		tagValues[i] = tag.Value()
 	}
 
-	integrationEvent := integrationevent.NewImageFinalized(
+	integrationEvent := integrationevent.NewImageObjectExistenceUpdated(
 		domainEvent.AggregateID(),
 		tagValues,
+		domainEvent.ObjectExists(),
 		domainEvent.OccurTime(),
 	)
 

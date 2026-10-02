@@ -8,6 +8,24 @@ info:
 servers:
     - url: https://asset.velony.app
 paths:
+    /v1/images:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_CreateImage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.Image'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
     /v1/images/{image}:
         get:
             tags:
@@ -42,11 +60,18 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /v1/images:presign:
+    /v1/images/{image}:presign:
         post:
             tags:
                 - AssetService
             operationId: AssetService_PresignImage
+            parameters:
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
+                  schema:
+                    type: string
             requestBody:
                 content:
                     application/json:
@@ -60,21 +85,23 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
-    /v1/images:upload:
+    /v1/images/{image}:process:
         post:
             tags:
                 - AssetService
-            operationId: AssetService_UploadImage
+            operationId: AssetService_ProcessImage
             parameters:
-                - name: token
-                  in: query
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
                   schema:
                     type: string
             requestBody:
                 content:
                     application/json:
                         schema:
-                            type: string
+                            $ref: '#/components/schemas/velony.asset.api.v1.ProcessImageRequest'
                 required: true
             responses:
                 "200":
@@ -82,23 +109,49 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.UploadImageResponse'
+                                $ref: '#/components/schemas/velony.asset.api.v1.ProcessImageResponse'
+    /v1/images/{image}:reconcile:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_ReconcileImage
+            parameters:
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.ReconcileImageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.ReconcileImageResponse'
 components:
     schemas:
         velony.asset.api.v1.Image:
+            required:
+                - tags
+                - objectKey
             type: object
             properties:
                 name:
                     type: string
                 tags:
-                    readOnly: true
                     type: array
                     items:
                         type: string
-                storageKey:
-                    readOnly: true
+                objectKey:
                     type: string
-                ready:
+                objectExists:
                     readOnly: true
                     type: boolean
                 createTime:
@@ -133,37 +186,48 @@ components:
                     type: string
                 allowUpscale:
                     type: boolean
-        velony.asset.api.v1.ImageTransform:
-            type: object
-            properties:
-                resize:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResize'
-                encoding:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageEncoding'
         velony.asset.api.v1.PresignImageRequest:
             required:
-                - storageKey
-                - expireTime
+                - name
             type: object
             properties:
-                storageKey:
+                name:
                     type: string
-                transform:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageTransform'
-                expireTime:
+                ttl:
+                    pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
                     type: string
-                    format: date-time
         velony.asset.api.v1.PresignImageResponse:
             type: object
             properties:
                 uploadUrl:
                     type: string
-        velony.asset.api.v1.UploadImageResponse:
+        velony.asset.api.v1.ProcessImageRequest:
             required:
-                - image
+                - name
             type: object
             properties:
-                image:
+                name:
                     type: string
+                resize:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResize'
+                encoding:
+                    $ref: '#/components/schemas/velony.asset.api.v1.ImageEncoding'
+                autoRotate:
+                    type: boolean
+                removeMetadata:
+                    type: boolean
+        velony.asset.api.v1.ProcessImageResponse:
+            type: object
+            properties: {}
+        velony.asset.api.v1.ReconcileImageRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+        velony.asset.api.v1.ReconcileImageResponse:
+            type: object
+            properties: {}
 tags:
     - name: AssetService

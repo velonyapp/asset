@@ -2,11 +2,12 @@ syntax = "proto3";
 
 package velony.asset.api.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
-import "google/api/httpbody.proto";
 import "google/api/client.proto";
+import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
@@ -22,19 +23,35 @@ service AssetService {
     option (google.api.method_signature) = "name";
   }
 
+  rpc CreateImage(CreateImageRequest) returns (Image) {
+    option (google.api.http) = {
+      post: "/v1/images"
+      body: "image"
+    };
+    option (google.api.method_signature) = "image";
+  }
+
   rpc PresignImage(PresignImageRequest)
   returns (PresignImageResponse) {
     option (google.api.http) = {
-      post: "/v1/images:presign"
+      post: "/v1/{name=images/*}:presign"
       body: "*"
     };
   }
 
-  rpc UploadImage(UploadImageRequest)
-  returns (UploadImageResponse) {
+  rpc ReconcileImage(ReconcileImageRequest)
+  returns (ReconcileImageResponse) {
     option (google.api.http) = {
-      post: "/v1/images:upload"
-      body: "image"
+      post: "/v1/{name=images/*}:reconcile"
+      body: "*"
+    };
+  }
+
+  rpc ProcessImage(ProcessImageRequest)
+  returns (ProcessImageResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=images/*}:process"
+      body: "*"
     };
   }
 
@@ -78,34 +95,6 @@ enum ImageFormat {
   IMAGE_FORMAT_AVIF = 4;
 }
 
-message Image {
-  option (google.api.resource) = {
-    type    : "asset.velony.app/Image"
-    pattern : "images/{image}"
-    singular: "image"
-    plural  : "images"
-  };
-
-  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
-
-  repeated string tags = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
-
-  string storage_key = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
-
-  bool ready = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
-
-  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
-}
-
-message GetImageRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
-    }
-  ];
-}
-
 message ImageResize {
   optional uint32 width = 1 [
     (google.api.field_behavior) = OPTIONAL
@@ -141,27 +130,47 @@ message ImageEncoding {
   ];
 }
 
-message ImageTransform {
-  ImageResize resize = 1 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
+message Image {
+  option (google.api.resource) = {
+    type    : "asset.velony.app/Image"
+    pattern : "images/{image}"
+    singular: "image"
+    plural  : "images"
+  };
 
-  ImageEncoding encoding = 2 [
-    (google.api.field_behavior) = OPTIONAL
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  repeated string tags = 2 [(google.api.field_behavior) = REQUIRED];
+
+  string object_key    = 3 [(google.api.field_behavior) = REQUIRED];
+  bool   object_exists = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message GetImageRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
   ];
 }
 
+message CreateImageRequest {
+  Image image = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
 message PresignImageRequest {
-  string storage_key = 1 [
-    (google.api.field_behavior) = REQUIRED
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
   ];
 
-  ImageTransform transform = 2 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-
-  google.protobuf.Timestamp expire_time = 3 [
-    (google.api.field_behavior) = REQUIRED
+  google.protobuf.Duration ttl = 2 [
+    (buf.validate.field).duration.gt = {}
   ];
 }
 
@@ -169,24 +178,40 @@ message PresignImageResponse {
   string upload_url = 1;
 }
 
-message UploadImageRequest {
-  string token = 1 [
-    (google.api.field_behavior) = REQUIRED
+message ProcessImageRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "asset.velony.app/Image"
+    }
   ];
 
-  google.api.HttpBody image = 2 [
-    (google.api.field_behavior) = REQUIRED
+  ImageResize resize = 2 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+  ImageEncoding encoding = 3 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+  bool auto_rotate = 4 [
+    (google.api.field_behavior) = OPTIONAL
+  ];
+  bool remove_metadata = 5 [
+    (google.api.field_behavior) = OPTIONAL
   ];
 }
 
-message UploadImageResponse {
-  string image = 1 [
+message ProcessImageResponse {}
+
+message ReconcileImageRequest {
+  string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
     type: "asset.velony.app/Image"
     }
   ];
 }
+
+message ReconcileImageResponse {}
 
 message DeleteImageRequest {
   string name = 1 [

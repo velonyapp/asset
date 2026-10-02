@@ -32,7 +32,7 @@ func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent *event.Im
 	integrationEvent := integrationevent.NewImageCreated(
 		domainEvent.AggregateID(),
 		tagValues,
-		domainEvent.StorageKey().Value(),
+		domainEvent.ObjectKey().Value(),
 		domainEvent.OccurTime(),
 	)
 

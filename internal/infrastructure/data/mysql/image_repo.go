@@ -39,8 +39,8 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 		SELECT
 			id,
 			tags,
-			storage_key,
-			ready,
+			object_key,
+			object_exists,
 			create_time,
 			delete_time
 		FROM images
@@ -62,49 +62,21 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 	return image, nil
 }
 
-func (repo *imageRepo) FindByStorageKey(ctx context.Context, storageKey vo.StorageKey) (*entity.Image, error) {
-	const query = `
-		SELECT
-			id,
-			tags,
-			storage_key,
-			ready,
-			create_time,
-			delete_time
-		FROM images
-		WHERE storage_key = ?
-		LIMIT 1
-	`
-
-	row := executor(ctx, repo.db).QueryRowContext(ctx, query, storageKey.Value())
-
-	image, err := scanImage(row)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
-		return nil, err
-	}
-
-	return image, nil
-}
-
 func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	const query = `
 		INSERT INTO images (
 			id,
 			tags,
-			storage_key,
-			ready,
+			object_key,
+			object_exists,
 			create_time,
 			delete_time
 		)
 		VALUES (?, ?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			tags = ?,
-			storage_key = ?,
-			ready = ?,
+			object_key = ?,
+			object_exists = ?,
 			delete_time = ?
 	`
 
@@ -128,14 +100,14 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		image.ID().Value(),
 		tagsJSON,
-		image.StorageKey().Value(),
-		image.IsReady(),
+		image.ObjectKey().Value(),
+		image.ObjectExists(),
 		image.CreateTime(),
 		deleteTime,
 
 		tagsJSON,
-		image.StorageKey().Value(),
-		image.IsReady(),
+		image.ObjectKey().Value(),
+		image.ObjectExists(),
 		deleteTime,
 	); err != nil {
 		return err
@@ -152,19 +124,19 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 
 func scanImage(scanner imageScanner) (*entity.Image, error) {
 	var (
-		id         string
-		tagsJSON   []byte
-		storageKey string
-		ready      bool
-		createTime time.Time
-		deleteTime sql.NullTime
+		id           string
+		tagsJSON     []byte
+		objectKey    string
+		objectExists bool
+		createTime   time.Time
+		deleteTime   sql.NullTime
 	)
 
 	if err := scanner.Scan(
 		&id,
 		&tagsJSON,
-		&storageKey,
-		&ready,
+		&objectKey,
+		&objectExists,
 		&createTime,
 		&deleteTime,
 	); err != nil {
@@ -186,7 +158,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		tags = append(tags, tag)
 	}
 
-	storageKeyVO, err := vo.NewStorageKey(storageKey)
+	objectKeyVO, err := vo.NewObjectKey(objectKey)
 	if err != nil {
 		return nil, err
 	}
@@ -200,8 +172,8 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	return entity.ReconstituteImage(
 		vo.NewImageID(id),
 		tags,
-		storageKeyVO,
-		ready,
+		objectKeyVO,
+		objectExists,
 		createTime,
 		deleteTimeVO,
 	), nil

@@ -38,12 +38,16 @@ func (h *GetImageHandler) Execute(
 	if err != nil {
 		return nil, err
 	}
-
-	if image == nil {
+	if image == nil || image.IsDeleted() {
 		return nil, common.ErrImageNotFound
 	}
 
 	return &GetImageResult{
-		Image: common.NewImageResult(image),
+		Image: &common.ImageResult{
+			ID:           image.ID().Value(),
+			ObjectKey:    image.ObjectKey().Value(),
+			ObjectExists: image.ObjectExists(),
+			CreateTime:   image.CreateTime(),
+		},
 	}, nil
 }

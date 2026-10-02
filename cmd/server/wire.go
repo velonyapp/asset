@@ -23,7 +23,6 @@ import (
 func wireApp(
 	context.Context,
 	*info.Service,
-	*conf.Service,
 	*conf.Data,
 	*conf.Transport,
 	*conf.Observability,

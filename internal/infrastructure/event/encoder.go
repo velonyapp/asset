@@ -51,12 +51,12 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 
 		return imageCreatedPayload(*event), nil
 
-	case *integrationevent.ImageFinalized:
+	case *integrationevent.ImageObjectExistenceUpdated:
 		if event == nil {
-			return nil, fmt.Errorf("ImageFinalized event is nil")
+			return nil, fmt.Errorf("ImageObjectExistenceUpdated event is nil")
 		}
 
-		return imageFinalizedPayload(*event), nil
+		return imageObjectExistenceUpdatedPayload(*event), nil
 
 	case *integrationevent.ImageDeleted:
 		if event == nil {

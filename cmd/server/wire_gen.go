@@ -31,7 +31,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, service *info.Service, confService *conf.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, service *info.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -39,34 +39,36 @@ func wireApp(contextContext context.Context, service *info.Service, confService 
 	encoder := event.NewEncoder()
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
-	imageFinalizedHandler := domainevent.NewImageFinalizedHandler(eventPublisher)
+	imageObjectExistenceUpdatedHandler := domainevent.NewImageObjectExistenceUpdatedHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageFinalizedHandler, imageDeletedHandler)
+	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageObjectExistenceUpdatedHandler, imageDeletedHandler)
 	repoImage := mysql.NewImageRepo(db, dispatcher)
 	getImageHandler := usecase.NewGetImageHandler(repoImage)
 	unitOfWork := mysql.NewUnitOfWork(db)
+	createImageHandler := usecase.NewCreateImageHandler(repoImage, unitOfWork)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
+	presignImageHandler := usecase.NewPresignImageHandler(repoImage, storage)
 	imageProcessor := image.NewProcessor()
-	uploadImageTokenManager := image.NewUploadTokenManager(confService)
-	uploadImageHandler := usecase.NewUploadImageHandler(repoImage, unitOfWork, storage, imageProcessor, uploadImageTokenManager)
-	presignImageHandler := usecase.NewPresignImageHandler(confService, uploadImageTokenManager)
+	processImageHandler := usecase.NewProcessImageHandler(repoImage, eventPublisher, storage, imageProcessor)
+	reconcileImageHandler := usecase.NewReconcileImageHandler(repoImage, unitOfWork, storage)
 	deleteImageHandler := usecase.NewDeleteImageHandler(repoImage, unitOfWork, storage)
-	apiService := api.NewService(getImageHandler, uploadImageHandler, presignImageHandler, deleteImageHandler)
+	apiService := api.NewService(getImageHandler, createImageHandler, presignImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
 	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
+	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
 	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
 		return nil, nil, err
 	}
-	app := newApp(logger, server, httpServer, openTelemetry)
+	app := newApp(logger, server, httpServer, rabbitMQConsumer, openTelemetry)
 	return app, func() {
 		cleanup()
 	}, nil

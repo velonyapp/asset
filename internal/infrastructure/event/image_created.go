@@ -7,7 +7,6 @@ import (
 
 func imageCreatedPayload(event integrationevent.ImageCreated) *v1.ImageCreatedPayload {
 	return &v1.ImageCreatedPayload{
-		Tags:       event.Tags(),
-		StorageKey: event.StorageKey(),
+		ObjectKey: event.ObjectKey(),
 	}
 }

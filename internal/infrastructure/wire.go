@@ -12,7 +12,6 @@ import (
 
 var ProviderSet = wire.NewSet(
 	image.NewProcessor,
-	image.NewUploadTokenManager,
 	mysql.NewConnection,
 	mysql.NewUnitOfWork,
 	mysql.NewImageRepo,

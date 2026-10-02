@@ -1,10 +1,9 @@
 CREATE TABLE images (
-    id          CHAR(36) PRIMARY KEY,
-    tags        JSON NOT NULL,
-    storage_key VARCHAR(128) NOT NULL UNIQUE,
-    ready       BOOLEAN NOT NULL,
-    create_time TIMESTAMP(6) NOT NULL,
-    delete_time TIMESTAMP(6)
+    id            CHAR(36) PRIMARY KEY,
+    tags          JSON NOT NULL,
+    object_key    VARCHAR(128) NOT NULL UNIQUE,
+    object_exists BOOLEAN NOT NULL,
+    create_time   TIMESTAMP(6) NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_events (

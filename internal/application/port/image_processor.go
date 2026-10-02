@@ -63,11 +63,13 @@ type ImageEncoding struct {
 	Quality *uint32
 }
 
-type ImageTransform struct {
-	Resize   *ImageResize
-	Encoding *ImageEncoding
+type ImageProcessOptions struct {
+	Resize         *ImageResize
+	Encoding       *ImageEncoding
+	AutoRotate     bool
+	RemoveMetadata bool
 }
 
 type ImageProcessor interface {
-	Process(image io.Reader, transform *ImageTransform) (io.Reader, error)
+	Process(src io.Reader, dst io.Writer, opts ImageProcessOptions) error
 }

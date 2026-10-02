@@ -13,36 +13,36 @@ var (
 )
 
 type Image struct {
-	id         vo.ImageID
-	tags       []vo.Tag
-	storageKey vo.StorageKey
-	ready      bool
-	createTime time.Time
-	deleteTime *time.Time
+	id           vo.ImageID
+	tags         []vo.Tag
+	objectKey    vo.ObjectKey
+	objectExists bool
+	createTime   time.Time
+	deleteTime   *time.Time
 
 	domainEvents []event.DomainEvent
 }
 
 func NewImage(
 	tags []vo.Tag,
-	storageKey vo.StorageKey,
+	objectKey vo.ObjectKey,
 	now time.Time,
 ) *Image {
 	imageID := vo.NewImageIDRandom()
 
 	i := &Image{
-		id:         imageID,
-		tags:       tags,
-		storageKey: storageKey,
-		ready:      false,
-		createTime: now,
+		id:           imageID,
+		tags:         tags,
+		objectKey:    objectKey,
+		objectExists: false,
+		createTime:   now,
 	}
 
 	i.recordEvent(
 		event.NewImageCreated(
 			imageID,
 			tags,
-			storageKey,
+			objectKey,
 			now,
 		),
 	)
@@ -53,17 +53,17 @@ func NewImage(
 func ReconstituteImage(
 	id vo.ImageID,
 	tags []vo.Tag,
-	storageKey vo.StorageKey,
-	ready bool,
+	objectKey vo.ObjectKey,
+	objectExist bool,
 	createTime time.Time,
 	deleteTime *time.Time,
 ) *Image {
 	i := &Image{
-		id:         id,
-		tags:       tags,
-		storageKey: storageKey,
-		ready:      ready,
-		createTime: createTime,
+		id:           id,
+		tags:         tags,
+		objectKey:    objectKey,
+		objectExists: objectExist,
+		createTime:   createTime,
 	}
 
 	if deleteTime != nil {
@@ -82,8 +82,12 @@ func (i *Image) Tags() []vo.Tag {
 	return append([]vo.Tag(nil), i.tags...)
 }
 
-func (i *Image) StorageKey() vo.StorageKey {
-	return i.storageKey
+func (i *Image) ObjectKey() vo.ObjectKey {
+	return i.objectKey
+}
+
+func (i *Image) ObjectExists() bool {
+	return i.objectExists
 }
 
 func (i *Image) CreateTime() time.Time {
@@ -99,29 +103,24 @@ func (i *Image) DeleteTime() *time.Time {
 	return &value
 }
 
-func (i *Image) IsReady() bool {
-	return i.ready
-}
-
 func (i *Image) IsDeleted() bool {
 	return i.deleteTime != nil
 }
 
-func (i *Image) Finalize(now time.Time) error {
+func (i *Image) UpdateObjectExistence(value bool, now time.Time) error {
 	if i.IsDeleted() {
 		return ErrImageDeleted
 	}
 
-	if i.IsReady() {
+	if value == i.objectExists {
 		return nil
 	}
 
-	i.ready = true
-
 	i.recordEvent(
-		event.NewImageFinalized(
+		event.NewImageObjectExistenceUpdated(
 			i.id,
 			i.tags,
+			i.objectExists,
 			now,
 		),
 	)
@@ -129,9 +128,9 @@ func (i *Image) Finalize(now time.Time) error {
 	return nil
 }
 
-func (i *Image) Delete(now time.Time) error {
+func (i *Image) Delete(now time.Time) {
 	if i.IsDeleted() {
-		return nil
+		return
 	}
 
 	i.deleteTime = &now
@@ -143,8 +142,6 @@ func (i *Image) Delete(now time.Time) error {
 			now,
 		),
 	)
-
-	return nil
 }
 
 func (i *Image) PullEvents() []event.DomainEvent {

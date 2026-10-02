@@ -47,16 +47,13 @@ func (h *DeleteImageHandler) Execute(
 		if err != nil {
 			return err
 		}
-
 		if image == nil || image.IsDeleted() {
 			return nil
 		}
 
-		if err := image.Delete(now); err != nil {
-			return err
-		}
+		image.Delete(now)
 
-		if err := h.storage.Delete(ctx, image.StorageKey()); err != nil {
+		if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {
 			return err
 		}
 

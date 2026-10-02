@@ -2,21 +2,17 @@ package usecase
 
 import (
 	"context"
-	"net/url"
 	"time"
 
+	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/conf"
+	"github.com/velonyapp/asset/internal/domain/repo"
+	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
 type PresignImage struct {
-	Tags []string
-
-	StorageKey string
-
-	Transform *port.ImageTransform
-
-	ExpireTime time.Time
+	ImageID string
+	TTL     time.Duration
 }
 
 type PresignImageResult struct {
@@ -24,17 +20,17 @@ type PresignImageResult struct {
 }
 
 type PresignImageHandler struct {
-	c                *conf.Service
-	uploadImageToken port.UploadImageTokenManager
+	imageRepo repo.Image
+	storage   port.Storage
 }
 
 func NewPresignImageHandler(
-	c *conf.Service,
-	uploadImageToken port.UploadImageTokenManager,
+	imageRepo repo.Image,
+	storage port.Storage,
 ) *PresignImageHandler {
 	return &PresignImageHandler{
-		c:                c,
-		uploadImageToken: uploadImageToken,
+		imageRepo: imageRepo,
+		storage:   storage,
 	}
 }
 
@@ -42,28 +38,22 @@ func (h *PresignImageHandler) Execute(
 	ctx context.Context,
 	uc *PresignImage,
 ) (*PresignImageResult, error) {
-	publicURL, err := url.Parse(h.c.PublicUrl)
+	imageID := vo.NewImageID(uc.ImageID)
+
+	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
 		return nil, err
 	}
+	if image == nil || image.IsDeleted() {
+		return nil, common.ErrImageNotFound
+	}
 
-	token, err := h.uploadImageToken.Sign(port.UploadImageTokenPayload{
-		Tags:       uc.Tags,
-		StorageKey: uc.StorageKey,
-		Transform:  uc.Transform,
-		ExpireTime: uc.ExpireTime,
-	})
+	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), uc.TTL)
 	if err != nil {
 		return nil, err
 	}
-
-	uploadURL := publicURL.JoinPath("v1/images:upload")
-
-	query := uploadURL.Query()
-	query.Set("token", token)
-	uploadURL.RawQuery = query.Encode()
 
 	return &PresignImageResult{
-		UploadURL: uploadURL.String(),
+		UploadURL: uploadURL,
 	}, nil
 }

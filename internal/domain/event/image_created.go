@@ -11,28 +11,28 @@ var _ DomainEvent = (*ImageCreated)(nil)
 type ImageCreated struct {
 	BaseDomainEvent
 
-	tags       []vo.Tag
-	storageKey vo.StorageKey
+	tags      []vo.Tag
+	objectKey vo.ObjectKey
 }
 
 func NewImageCreated(
 	imageID vo.ImageID,
 	tags []vo.Tag,
-	storageKey vo.StorageKey,
+	objectKey vo.ObjectKey,
 	occurTime time.Time,
 ) *ImageCreated {
 	return &ImageCreated{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.Value(), occurTime),
 
-		tags:       tags,
-		storageKey: storageKey,
+		tags:      tags,
+		objectKey: objectKey,
 	}
 }
 
-func (i *ImageCreated) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), i.tags...)
+func (e *ImageCreated) Tags() []vo.Tag {
+	return append([]vo.Tag(nil), e.tags...)
 }
 
-func (e *ImageCreated) StorageKey() vo.StorageKey {
-	return e.storageKey
+func (e *ImageCreated) ObjectKey() vo.ObjectKey {
+	return e.objectKey
 }

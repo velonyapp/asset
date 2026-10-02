@@ -6,13 +6,14 @@ import (
 	"sync"
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
+	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/application/usecase"
 	"github.com/velonyapp/asset/internal/conf"
-	"go.einride.tech/aip/resourcename"
 
 	"github.com/Azure/go-amqp"
 	"github.com/go-kratos/kratos/v3/transport"
 	"github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
+	"go.einride.tech/aip/resourcename"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -21,12 +22,19 @@ var (
 	ErrInvalidMessage     = errors.New("invalid message")
 )
 
-var _ transport.Server = (*rabbitMQConsumer)(nil)
+const (
+	imageResourcePattern = "images/{image}"
+)
 
-type rabbitMQConsumer struct {
+var _ transport.Server = (*RabbitMQConsumer)(nil)
+
+type RabbitMQConsumer struct {
 	c *conf.Transport
 
-	deleteImageHandler *usecase.DeleteImageHandler
+	createImageHandler    *usecase.CreateImageHandler
+	processImageHandler   *usecase.ProcessImageHandler
+	reconcileImageHandler *usecase.ReconcileImageHandler
+	deleteImageHandler    *usecase.DeleteImageHandler
 
 	conn      *rabbitmqamqp.AmqpConnection
 	consumers map[string]*rabbitmqamqp.Consumer
@@ -36,27 +44,167 @@ type rabbitMQConsumer struct {
 
 func NewRabbitMQConsumer(
 	c *conf.Transport,
+	createImageHandler *usecase.CreateImageHandler,
+	processImageHandler *usecase.ProcessImageHandler,
+	reconcileImageHandler *usecase.ReconcileImageHandler,
 	deleteImageHandler *usecase.DeleteImageHandler,
-) *rabbitMQConsumer {
-	return &rabbitMQConsumer{
+) *RabbitMQConsumer {
+	return &RabbitMQConsumer{
 		c:                  c,
 		deleteImageHandler: deleteImageHandler,
 	}
 }
 
-func (rc *rabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
+func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 	var errs []error
 
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queue.DeleteImage); err != nil {
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.CreateImage); err != nil {
+		errs = append(errs, err)
+	}
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ProcessImage); err != nil {
+		errs = append(errs, err)
+	}
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ReconcileImage); err != nil {
+		errs = append(errs, err)
+	}
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.DeleteImage); err != nil {
 		errs = append(errs, err)
 	}
 
 	return errors.Join(errs...)
 }
 
-func (rc *rabbitMQConsumer) handleMessage(ctx context.Context, queue string, data []byte) error {
+func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, data []byte) error {
 	switch queue {
-	case rc.c.Rabbitmq.Queue.DeleteImage:
+	case rc.c.Rabbitmq.Queues.CreateImage:
+		req := new(v1.CreateImageRequest)
+
+		if err := proto.Unmarshal(data, req); err != nil {
+			return ErrInvalidMessage
+		}
+
+		_, err := rc.createImageHandler.Execute(ctx, &usecase.CreateImage{
+			Tags:      req.Image.Tags,
+			ObjectKey: req.Image.ObjectKey,
+		})
+		return err
+
+	case rc.c.Rabbitmq.Queues.ProcessImage:
+		req := new(v1.ProcessImageRequest)
+
+		if err := proto.Unmarshal(data, req); err != nil {
+			return ErrInvalidMessage
+		}
+
+		var imageID string
+		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+			return err
+		}
+
+		var resize *port.ImageResize
+		if req.Resize != nil {
+			var fit port.ImageResizeFit
+			switch req.Resize.Fit {
+			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED:
+			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_CONTAIN:
+				fit = port.ImageResizeFitContain
+			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_COVER:
+				fit = port.ImageResizeFitCover
+			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_PAD:
+				fit = port.ImageResizeFitPad
+			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_STRETCH:
+				fit = port.ImageResizeFitStretch
+			default:
+				return port.ErrUnsupportedResizeFit
+			}
+
+			var gravity port.ImageGravity
+			switch req.Resize.Gravity {
+			case v1.ImageGravity_IMAGE_GRAVITY_UNSPECIFIED:
+			case v1.ImageGravity_IMAGE_GRAVITY_CENTER:
+				gravity = port.ImageGravityCenter
+			case v1.ImageGravity_IMAGE_GRAVITY_TOP:
+				gravity = port.ImageGravityTop
+			case v1.ImageGravity_IMAGE_GRAVITY_TOP_RIGHT:
+				gravity = port.ImageGravityTopRight
+			case v1.ImageGravity_IMAGE_GRAVITY_RIGHT:
+				gravity = port.ImageGravityRight
+			case v1.ImageGravity_IMAGE_GRAVITY_BOTTOM_RIGHT:
+				gravity = port.ImageGravityBottomRight
+			case v1.ImageGravity_IMAGE_GRAVITY_BOTTOM:
+				gravity = port.ImageGravityBottom
+			case v1.ImageGravity_IMAGE_GRAVITY_BOTTOM_LEFT:
+				gravity = port.ImageGravityBottomLeft
+			case v1.ImageGravity_IMAGE_GRAVITY_LEFT:
+				gravity = port.ImageGravityLeft
+			case v1.ImageGravity_IMAGE_GRAVITY_TOP_LEFT:
+				gravity = port.ImageGravityTopLeft
+			default:
+				return port.ErrUnsupportedImageGravity
+			}
+
+			resize = &port.ImageResize{
+				Width:           req.Resize.Width,
+				Height:          req.Resize.Height,
+				Fit:             fit,
+				Gravity:         gravity,
+				BackgroundColor: req.Resize.BackgroundColor,
+				AllowUpscale:    req.Resize.AllowUpscale,
+			}
+		}
+
+		var encoding *port.ImageEncoding
+		if req.Encoding != nil {
+			var format port.ImageFormat
+			switch req.Encoding.Format {
+			case v1.ImageFormat_IMAGE_FORMAT_UNSPECIFIED:
+			case v1.ImageFormat_IMAGE_FORMAT_JPEG:
+				format = port.ImageFormatJPEG
+			case v1.ImageFormat_IMAGE_FORMAT_PNG:
+				format = port.ImageFormatPNG
+			case v1.ImageFormat_IMAGE_FORMAT_WEBP:
+				format = port.ImageFormatWebP
+			case v1.ImageFormat_IMAGE_FORMAT_AVIF:
+				format = port.ImageFormatAVIF
+			default:
+				return port.ErrUnsupportedImageFormat
+			}
+
+			encoding = &port.ImageEncoding{
+				Format:  format,
+				Quality: req.Encoding.Quality,
+			}
+		}
+
+		_, err := rc.processImageHandler.Execute(ctx, &usecase.ProcessImage{
+			ImageID: imageID,
+			Options: port.ImageProcessOptions{
+				Resize:         resize,
+				Encoding:       encoding,
+				AutoRotate:     req.AutoRotate,
+				RemoveMetadata: req.RemoveMetadata,
+			},
+		})
+		return err
+
+	case rc.c.Rabbitmq.Queues.ReconcileImage:
+		req := new(v1.ReconcileImageRequest)
+
+		if err := proto.Unmarshal(data, req); err != nil {
+			return ErrInvalidMessage
+		}
+
+		var imageID string
+		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+			return err
+		}
+
+		_, err := rc.reconcileImageHandler.Execute(ctx, &usecase.ReconcileImage{
+			ImageID: imageID,
+		})
+		return err
+
+	case rc.c.Rabbitmq.Queues.DeleteImage:
 		req := new(v1.DeleteImageRequest)
 
 		if err := proto.Unmarshal(data, req); err != nil {
@@ -64,7 +212,7 @@ func (rc *rabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 		}
 
 		var imageID string
-		if err := resourcename.Sscan(req.GetName(), "images/{image}", &imageID); err != nil {
+		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
 			return err
 		}
 
@@ -78,7 +226,7 @@ func (rc *rabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 	}
 }
 
-func (rc *rabbitMQConsumer) registerConsumer(ctx context.Context, queue string) error {
+func (rc *RabbitMQConsumer) registerConsumer(ctx context.Context, queue string) error {
 	consumer, err := rc.conn.NewConsumer(ctx, queue, nil)
 	if err != nil {
 		return err
@@ -93,7 +241,7 @@ func (rc *rabbitMQConsumer) registerConsumer(ctx context.Context, queue string) 
 	return nil
 }
 
-func (rc *rabbitMQConsumer) Start(ctx context.Context) error {
+func (rc *RabbitMQConsumer) Start(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -163,7 +311,7 @@ func (rc *rabbitMQConsumer) Start(ctx context.Context) error {
 	}
 }
 
-func (rc *rabbitMQConsumer) Stop(ctx context.Context) error {
+func (rc *RabbitMQConsumer) Stop(ctx context.Context) error {
 	var errs []error
 
 	for name, consumer := range rc.consumers {

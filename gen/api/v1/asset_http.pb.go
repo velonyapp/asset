@@ -18,23 +18,29 @@ var _ = new(context.Context)
 
 const _ = http.SupportPackageIsVersion3
 
+const OperationAssetServiceCreateImage = "/velony.asset.api.v1.AssetService/CreateImage"
 const OperationAssetServiceDeleteImage = "/velony.asset.api.v1.AssetService/DeleteImage"
 const OperationAssetServiceGetImage = "/velony.asset.api.v1.AssetService/GetImage"
 const OperationAssetServicePresignImage = "/velony.asset.api.v1.AssetService/PresignImage"
-const OperationAssetServiceUploadImage = "/velony.asset.api.v1.AssetService/UploadImage"
+const OperationAssetServiceProcessImage = "/velony.asset.api.v1.AssetService/ProcessImage"
+const OperationAssetServiceReconcileImage = "/velony.asset.api.v1.AssetService/ReconcileImage"
 
 type AssetServiceHTTPServer interface {
+	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
-	UploadImage(context.Context, *UploadImageRequest) (*UploadImageResponse, error)
+	ProcessImage(context.Context, *ProcessImageRequest) (*ProcessImageResponse, error)
+	ReconcileImage(context.Context, *ReconcileImageRequest) (*ReconcileImageResponse, error)
 }
 
 func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) {
 	r := s.Route("/")
 	r.Handle("GET", "/v1/{name:images/[^/]+}", _AssetService_GetImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/images:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/images:upload", _AssetService_UploadImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/images", _AssetService_CreateImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:images/[^/]+}:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:images/[^/]+}:reconcile", _AssetService_ReconcileImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:images/[^/]+}:process", _AssetService_ProcessImage0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:images/[^/]+}", _AssetService_DeleteImage0_HTTP_Handler(srv))
 }
 
@@ -60,10 +66,35 @@ func _AssetService_GetImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx h
 	}
 }
 
+func _AssetService_CreateImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateImageRequest
+		if err := ctx.Bind(&in.Image); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAssetServiceCreateImage)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateImage(ctx, req.(*CreateImageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*Image)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _AssetService_PresignImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in PresignImageRequest
 		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationAssetServicePresignImage)
@@ -79,24 +110,46 @@ func _AssetService_PresignImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(c
 	}
 }
 
-func _AssetService_UploadImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+func _AssetService_ReconcileImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UploadImageRequest
-		if err := ctx.Bind(&in.Image); err != nil {
+		var in ReconcileImageRequest
+		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		if err := ctx.BindQuery(&in); err != nil {
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAssetServiceUploadImage)
+		http.SetOperation(ctx, OperationAssetServiceReconcileImage)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UploadImage(ctx, req.(*UploadImageRequest))
+			return srv.ReconcileImage(ctx, req.(*ReconcileImageRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UploadImageResponse)
+		reply := out.(*ReconcileImageResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AssetService_ProcessImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ProcessImageRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAssetServiceProcessImage)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ProcessImage(ctx, req.(*ProcessImageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProcessImageResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -124,10 +177,12 @@ func _AssetService_DeleteImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ct
 }
 
 type AssetServiceHTTPClient interface {
+	CreateImage(ctx context.Context, req *CreateImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	DeleteImage(ctx context.Context, req *DeleteImageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetImage(ctx context.Context, req *GetImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	PresignImage(ctx context.Context, req *PresignImageRequest, opts ...http.CallOption) (rsp *PresignImageResponse, err error)
-	UploadImage(ctx context.Context, req *UploadImageRequest, opts ...http.CallOption) (rsp *UploadImageResponse, err error)
+	ProcessImage(ctx context.Context, req *ProcessImageRequest, opts ...http.CallOption) (rsp *ProcessImageResponse, err error)
+	ReconcileImage(ctx context.Context, req *ReconcileImageRequest, opts ...http.CallOption) (rsp *ReconcileImageResponse, err error)
 }
 
 type AssetServiceHTTPClientImpl struct {
@@ -136,6 +191,23 @@ type AssetServiceHTTPClientImpl struct {
 
 func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 	return &AssetServiceHTTPClientImpl{client}
+}
+
+func (c *AssetServiceHTTPClientImpl) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...http.CallOption) (*Image, error) {
+	var out Image
+	pattern := "/v1/images"
+	path := http.BuildPath(pattern, in, http.WithQueryParams(), http.WithOmitFields("image"))
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationAssetServiceCreateImage),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in.Image, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AssetServiceHTTPClientImpl) DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -172,7 +244,7 @@ func (c *AssetServiceHTTPClientImpl) GetImage(ctx context.Context, in *GetImageR
 
 func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...http.CallOption) (*PresignImageResponse, error) {
 	var out PresignImageResponse
-	pattern := "/v1/images:presign"
+	pattern := "/v1/{name=images/*}:presign"
 	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
@@ -187,17 +259,34 @@ func (c *AssetServiceHTTPClientImpl) PresignImage(ctx context.Context, in *Presi
 	return &out, nil
 }
 
-func (c *AssetServiceHTTPClientImpl) UploadImage(ctx context.Context, in *UploadImageRequest, opts ...http.CallOption) (*UploadImageResponse, error) {
-	var out UploadImageResponse
-	pattern := "/v1/images:upload"
-	path := http.BuildPath(pattern, in, http.WithQueryParams(), http.WithOmitFields("image"))
+func (c *AssetServiceHTTPClientImpl) ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...http.CallOption) (*ProcessImageResponse, error) {
+	var out ProcessImageResponse
+	pattern := "/v1/{name=images/*}:process"
+	path := http.BuildPath(pattern, in)
 	opts = append([]http.CallOption{
 		http.Accept("application/protojson"),
-		http.ContentType(http.BodyContentType(in.Image)),
-		http.Operation(OperationAssetServiceUploadImage),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationAssetServiceProcessImage),
 		http.PathTemplate(pattern),
 	}, opts...)
-	err := c.cc.Invoke(ctx, "POST", path, in.Image, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AssetServiceHTTPClientImpl) ReconcileImage(ctx context.Context, in *ReconcileImageRequest, opts ...http.CallOption) (*ReconcileImageResponse, error) {
+	var out ReconcileImageResponse
+	pattern := "/v1/{name=images/*}:reconcile"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationAssetServiceReconcileImage),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

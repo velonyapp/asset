@@ -9,6 +9,7 @@ import (
 	"github.com/velonyapp/asset/internal/conf"
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
+	"github.com/velonyapp/asset/internal/presentation/transport"
 
 	"buf.build/go/protovalidate"
 	"github.com/go-kratos/kratos/contrib/otel/v3/tracing"
@@ -35,7 +36,7 @@ func init() {
 	flag.StringVar(&flagconf, "config", "../../configs", "config path, eg: -config config.yaml")
 }
 
-func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, _ *observability.OpenTelemetry) *kratos.App {
+func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, rc *transport.RabbitMQConsumer, _ *observability.OpenTelemetry) *kratos.App {
 	return kratos.New(
 		kratos.ID(InstanceID),
 		kratos.Name(Name),
@@ -45,6 +46,7 @@ func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, _ *observabil
 		kratos.Server(
 			gs,
 			hs,
+			rc,
 		),
 	)
 }
@@ -103,7 +105,6 @@ func main() {
 	app, cleanup, err := wireApp(
 		context.Background(),
 		bi.Service,
-		bc.Service,
 		bc.Data,
 		bc.Transport,
 		bc.Observability,

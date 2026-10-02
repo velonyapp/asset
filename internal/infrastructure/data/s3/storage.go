@@ -32,7 +32,7 @@ func NewStorage(client *s3.Client, c *conf.Data) port.Storage {
 	}
 }
 
-func (s *storage) Exists(ctx context.Context, key vo.StorageKey) (bool, error) {
+func (s *storage) Exists(ctx context.Context, key vo.ObjectKey) (bool, error) {
 	_, err := s.client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
@@ -52,7 +52,7 @@ func (s *storage) Exists(ctx context.Context, key vo.StorageKey) (bool, error) {
 	return true, nil
 }
 
-func (s *storage) Get(ctx context.Context, key vo.StorageKey) (io.ReadCloser, error) {
+func (s *storage) Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, error) {
 	result, err := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
@@ -64,7 +64,7 @@ func (s *storage) Get(ctx context.Context, key vo.StorageKey) (io.ReadCloser, er
 	return result.Body, nil
 }
 
-func (s *storage) Put(ctx context.Context, key vo.StorageKey, body io.Reader) error {
+func (s *storage) Put(ctx context.Context, key vo.ObjectKey, body io.Reader) error {
 	if _, err := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
@@ -76,7 +76,7 @@ func (s *storage) Put(ctx context.Context, key vo.StorageKey, body io.Reader) er
 	return nil
 }
 
-func (s *storage) Delete(ctx context.Context, key vo.StorageKey) error {
+func (s *storage) Delete(ctx context.Context, key vo.ObjectKey) error {
 	if _, err := s.client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
@@ -87,7 +87,7 @@ func (s *storage) Delete(ctx context.Context, key vo.StorageKey) error {
 	return nil
 }
 
-func (s *storage) DeleteMany(ctx context.Context, keys []vo.StorageKey) error {
+func (s *storage) DeleteMany(ctx context.Context, keys []vo.ObjectKey) error {
 	const batchSize = 1000
 
 	for start := 0; start < len(keys); start += batchSize {
@@ -128,12 +128,12 @@ func (s *storage) DeleteMany(ctx context.Context, keys []vo.StorageKey) error {
 	return nil
 }
 
-func (s *storage) PresignGet(ctx context.Context, key vo.StorageKey, expiresIn time.Duration) (string, error) {
+func (s *storage) PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error) {
 	result, err := s.presignClient.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
 	}, func(options *s3.PresignOptions) {
-		options.Expires = expiresIn
+		options.Expires = ttl,
 	})
 	if err != nil {
 		return "", err
@@ -142,12 +142,12 @@ func (s *storage) PresignGet(ctx context.Context, key vo.StorageKey, expiresIn t
 	return result.URL, nil
 }
 
-func (s *storage) PresignPut(ctx context.Context, key vo.StorageKey, expiresIn time.Duration) (string, error) {
+func (s *storage) PresignPut(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error) {
 	result, err := s.presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.Value()),
 	}, func(options *s3.PresignOptions) {
-		options.Expires = expiresIn
+		options.Expires = ttl,
 	})
 	if err != nil {
 		return "", err

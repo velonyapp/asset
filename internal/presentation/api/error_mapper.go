@@ -58,34 +58,22 @@ func mapError(err error) error {
 			applicationport.ErrInvalidImageQuality.Error(),
 		)
 
-	case errors.Is(err, applicationport.ErrInvalidUploadToken):
-		return kerrors.Unauthorized(
-			apiv1.ErrorReason_INVALID_UPLOAD_TOKEN.String(),
-			applicationport.ErrInvalidUploadToken.Error(),
-		)
-
-	case errors.Is(err, applicationport.ErrExpiredUploadToken):
-		return kerrors.Unauthorized(
-			apiv1.ErrorReason_INVALID_UPLOAD_TOKEN.String(),
-			applicationport.ErrInvalidUploadToken.Error(),
-		)
-
-	case errors.Is(err, domainvo.ErrStorageKeyEmpty):
+	case errors.Is(err, domainvo.ErrObjectKeyEmpty):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			domainvo.ErrStorageKeyEmpty.Error(),
+			domainvo.ErrObjectKeyEmpty.Error(),
 		)
 
-	case errors.Is(err, domainvo.ErrStorageKeyTooLong):
+	case errors.Is(err, domainvo.ErrObjectKeyTooLong):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			domainvo.ErrStorageKeyTooLong.Error(),
+			domainvo.ErrObjectKeyTooLong.Error(),
 		)
 
-	case errors.Is(err, domainvo.ErrStorageKeyInvalidUTF8):
+	case errors.Is(err, domainvo.ErrObjectKeyInvalidUTF8):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			domainvo.ErrStorageKeyInvalidUTF8.Error(),
+			domainvo.ErrObjectKeyInvalidUTF8.Error(),
 		)
 
 	default:

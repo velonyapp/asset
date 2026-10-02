@@ -26,6 +26,6 @@ func NewImageDeleted(
 	}
 }
 
-func (i *ImageDeleted) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), i.tags...)
+func (e *ImageDeleted) Tags() []vo.Tag {
+	return append([]vo.Tag(nil), e.tags...)
 }

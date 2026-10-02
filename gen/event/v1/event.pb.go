@@ -31,6 +31,7 @@ type Event struct {
 	AggregateType string                 `protobuf:"bytes,4,opt,name=aggregate_type,json=aggregateType,proto3" json:"aggregate_type,omitempty"`
 	OccurTime     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=occur_time,json=occurTime,proto3" json:"occur_time,omitempty"`
 	Payload       *anypb.Any             `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
+	Tags          []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,11 +108,18 @@ func (x *Event) GetPayload() *anypb.Any {
 	return nil
 }
 
+func (x *Event) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
 var File_velony_asset_event_v1_event_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_event_proto_rawDesc = "" +
 	"\n" +
-	"!velony/asset/event/v1/event.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19google/protobuf/any.proto\"\xe0\x01\n" +
+	"!velony/asset/event/v1/event.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19google/protobuf/any.proto\"\xf4\x01\n" +
 	"\x05Event\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12!\n" +
@@ -119,7 +127,8 @@ const file_velony_asset_event_v1_event_proto_rawDesc = "" +
 	"\x0eaggregate_type\x18\x04 \x01(\tR\raggregateType\x129\n" +
 	"\n" +
 	"occur_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\toccurTime\x12.\n" +
-	"\apayload\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\apayloadB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"\apayload\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\apayload\x12\x12\n" +
+	"\x04tags\x18\a \x03(\tR\x04tagsB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_event_proto_rawDescOnce sync.Once

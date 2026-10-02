@@ -6,7 +6,5 @@ import (
 )
 
 func imageDeletedPayload(event integrationevent.ImageDeleted) *v1.ImageDeletedPayload {
-	return &v1.ImageDeletedPayload{
-		Tags: event.Tags(),
-	}
+	return &v1.ImageDeletedPayload{}
 }

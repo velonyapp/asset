@@ -7,21 +7,19 @@ var _ IntegrationEvent = (*ImageCreated)(nil)
 type ImageCreated struct {
 	BaseIntegrationEvent
 
-	tags       []string
-	storageKey string
+	objectKey string
 }
 
 func NewImageCreated(
 	imageID string,
 	tags []string,
-	storageKey string,
+	objectKey string,
 	occurTime time.Time,
 ) *ImageCreated {
 	return &ImageCreated{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime),
+		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),
 
-		tags:       tags,
-		storageKey: storageKey,
+		objectKey: objectKey,
 	}
 }
 
@@ -33,10 +31,6 @@ func (e *ImageCreated) AggregateType() string {
 	return "image"
 }
 
-func (i *ImageCreated) Tags() []string {
-	return append([]string(nil), i.tags...)
-}
-
-func (e *ImageCreated) StorageKey() string {
-	return e.storageKey
+func (e *ImageCreated) ObjectKey() string {
+	return e.objectKey
 }
