@@ -35,7 +35,7 @@ func NewStorage(client *s3.Client, c *conf.Data) port.Storage {
 func (s *storage) Exists(ctx context.Context, key vo.ObjectKey) (bool, error) {
 	_, err := s.client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 	})
 	if err != nil {
 		var apiError smithy.APIError
@@ -55,7 +55,7 @@ func (s *storage) Exists(ctx context.Context, key vo.ObjectKey) (bool, error) {
 func (s *storage) Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, error) {
 	result, err := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 	})
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (s *storage) Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, err
 func (s *storage) Put(ctx context.Context, key vo.ObjectKey, body io.Reader) error {
 	if _, err := s.client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 		Body:   body,
 	}); err != nil {
 		return err
@@ -79,7 +79,7 @@ func (s *storage) Put(ctx context.Context, key vo.ObjectKey, body io.Reader) err
 func (s *storage) Delete(ctx context.Context, key vo.ObjectKey) error {
 	if _, err := s.client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 	}); err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (s *storage) DeleteMany(ctx context.Context, keys []vo.ObjectKey) error {
 
 		for _, key := range keys[start:end] {
 			objects = append(objects, types.ObjectIdentifier{
-				Key: aws.String(key.Value()),
+				Key: aws.String(key.String()),
 			})
 		}
 
@@ -131,7 +131,7 @@ func (s *storage) DeleteMany(ctx context.Context, keys []vo.ObjectKey) error {
 func (s *storage) PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error) {
 	result, err := s.presignClient.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 	}, func(options *s3.PresignOptions) {
 		options.Expires = ttl
 	})
@@ -145,7 +145,7 @@ func (s *storage) PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Dur
 func (s *storage) PresignPut(ctx context.Context, key vo.ObjectKey, ttl time.Duration) (string, error) {
 	result, err := s.presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
-		Key:    aws.String(key.Value()),
+		Key:    aws.String(key.String()),
 	}, func(options *s3.PresignOptions) {
 		options.Expires = ttl
 	})

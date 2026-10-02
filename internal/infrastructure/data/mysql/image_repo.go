@@ -100,13 +100,13 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		image.ID().String(),
 		tagsJSON,
-		image.ObjectKey().Value(),
+		image.ObjectKey().String(),
 		image.ObjectExists(),
 		image.CreateTime(),
 		deleteTime,
 
 		tagsJSON,
-		image.ObjectKey().Value(),
+		image.ObjectKey().String(),
 		image.ObjectExists(),
 		deleteTime,
 	); err != nil {

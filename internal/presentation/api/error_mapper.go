@@ -70,10 +70,16 @@ func mapError(err error) error {
 			domainvo.ErrObjectKeyTooLong.Error(),
 		)
 
-	case errors.Is(err, domainvo.ErrObjectKeyInvalidUTF8):
+	case errors.Is(err, domainvo.ErrObjectKeyElementEmpty):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
-			domainvo.ErrObjectKeyInvalidUTF8.Error(),
+			domainvo.ErrObjectKeyElementEmpty.Error(),
+		)
+
+	case errors.Is(err, domainvo.ErrObjectKeyInvalidCharacter):
+		return kerrors.BadRequest(
+			apiv1.ErrorReason_INVALID_STORAGE_KEY.String(),
+			domainvo.ErrObjectKeyInvalidCharacter.Error(),
 		)
 
 	default:
