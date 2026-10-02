@@ -42,21 +42,21 @@ func (h *DeleteImageHandler) Execute(
 
 	imageID := vo.NewImageID(uc.ImageID)
 
+	image, err := h.imageRepo.FindByID(ctx, imageID)
+	if err != nil {
+		return nil, err
+	}
+	if image == nil || image.IsDeleted() {
+		return &DeleteImageResult{}, nil
+	}
+
+	if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {
+		return nil, err
+	}
+
+	image.Delete(now)
+
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		image, err := h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil || image.IsDeleted() {
-			return nil
-		}
-
-		image.Delete(now)
-
-		if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return nil, err
