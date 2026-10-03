@@ -41,7 +41,10 @@ func NewCreateImageHandler(
 	}
 }
 
-func (h *createImageHandler) Handle(ctx context.Context, cmd *CreateImage) (*CreateImageResult, error) {
+func (h *createImageHandler) Handle(
+	ctx context.Context,
+	cmd *CreateImage,
+) (*CreateImageResult, error) {
 	now := time.Now()
 
 	tags, err := vo.NewTags(cmd.Tags)

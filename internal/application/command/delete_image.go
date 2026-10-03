@@ -40,7 +40,10 @@ func NewDeleteImageHandler(
 	}
 }
 
-func (h *deleteImageHandler) Handle(ctx context.Context, cmd *DeleteImage) (*DeleteImageResult, error) {
+func (h *deleteImageHandler) Handle(
+	ctx context.Context,
+	cmd *DeleteImage,
+) (*DeleteImageResult, error) {
 	now := time.Now()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)

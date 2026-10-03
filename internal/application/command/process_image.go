@@ -49,7 +49,10 @@ func NewProcessImageHandler(
 	}
 }
 
-func (h *processImageHandler) Handle(ctx context.Context, cmd *ProcessImage) (*ProcessImageResult, error) {
+func (h *processImageHandler) Handle(
+	ctx context.Context,
+	cmd *ProcessImage,
+) (*ProcessImageResult, error) {
 	now := time.Now()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
