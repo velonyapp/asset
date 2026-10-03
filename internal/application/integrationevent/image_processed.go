@@ -10,11 +10,11 @@ type ImageProcessed struct {
 
 func NewImageProcessed(
 	imageID string,
-	occurTime time.Time,
 	tags []string,
+	occurTime time.Time,
 ) *ImageProcessed {
 	return &ImageProcessed{
-		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),
+		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, tags, occurTime),
 	}
 }
 

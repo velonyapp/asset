@@ -8,5 +8,4 @@ import (
 
 type EventPublisher interface {
 	Publish(ctx context.Context, integrationEvent integrationevent.IntegrationEvent) error
-	PublishBatch(ctx context.Context, integrationEvents []integrationevent.IntegrationEvent) error
 }

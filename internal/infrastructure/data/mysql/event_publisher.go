@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"strings"
+	"encoding/json"
 
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
@@ -35,7 +35,11 @@ func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integra
 		return err
 	}
 
-	payload, err := protojson.Marshal(event)
+	tags, err := json.Marshal(event.Tags)
+	if err != nil {
+		return err
+	}
+	payload, err := protojson.Marshal(event.Payload)
 	if err != nil {
 		return err
 	}
@@ -46,10 +50,11 @@ func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integra
 			type,
 			aggregate_id,
 			aggregate_type,
-			occur_time,
-			payload
+			tags,
+			payload,
+			occur_time
 		)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
@@ -57,62 +62,10 @@ func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integra
 		event.Type,
 		event.AggregateId,
 		event.AggregateType,
-		event.OccurTime.AsTime(),
+		string(tags),
 		string(payload),
+		event.OccurTime.AsTime(),
 	)
-
-	return err
-}
-
-func (pub *eventPublisher) PublishBatch(ctx context.Context, integrationEvents []integrationevent.IntegrationEvent) error {
-	if len(integrationEvents) == 0 {
-		return nil
-	}
-
-	const prefix = `
-		INSERT INTO outbox_events (
-			id,
-			type,
-			aggregate_id,
-			aggregate_type,
-			occur_time,
-			payload
-		)
-		VALUES
-	`
-
-	var query strings.Builder
-	query.WriteString(prefix)
-
-	args := make([]any, 0, len(integrationEvents)*6)
-
-	for i, integrationEvent := range integrationEvents {
-		event, err := pub.encoder.Encode(integrationEvent)
-		if err != nil {
-			return err
-		}
-
-		payload, err := protojson.Marshal(event)
-		if err != nil {
-			return err
-		}
-
-		if i > 0 {
-			query.WriteString(",")
-		}
-		query.WriteString("(?, ?, ?, ?, ?, ?)")
-
-		args = append(args,
-			event.Id,
-			event.Type,
-			event.AggregateId,
-			event.AggregateType,
-			event.OccurTime.AsTime(),
-			string(payload),
-		)
-	}
-
-	_, err := executor(ctx, pub.db).ExecContext(ctx, query.String(), args...)
 
 	return err
 }

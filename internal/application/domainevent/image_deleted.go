@@ -25,8 +25,8 @@ func NewImageDeletedHandler(
 func (h *ImageDeletedHandler) Execute(ctx context.Context, domainEvent *event.ImageDeleted) error {
 	integrationEvent := integrationevent.NewImageDeleted(
 		domainEvent.AggregateID(),
-		domainEvent.DeleteTime(),
 		domainEvent.Tags().Strings(),
+		domainEvent.DeleteTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

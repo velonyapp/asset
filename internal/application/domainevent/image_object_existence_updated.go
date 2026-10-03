@@ -25,8 +25,8 @@ func NewImageObjectExistenceUpdatedHandler(
 func (h *ImageObjectExistenceUpdatedHandler) Execute(ctx context.Context, domainEvent *event.ImageObjectExistenceUpdated) error {
 	integrationEvent := integrationevent.NewImageObjectExistenceUpdated(
 		domainEvent.AggregateID(),
-		domainEvent.UpdateTime(),
 		domainEvent.Tags().Strings(),
+		domainEvent.UpdateTime(),
 		domainEvent.ObjectExists(),
 	)
 

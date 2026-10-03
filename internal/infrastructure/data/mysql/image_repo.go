@@ -3,8 +3,8 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/domainevent"
@@ -41,8 +41,7 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 			tags,
 			object_key,
 			object_exists,
-			create_time,
-			delete_time
+			create_time
 		FROM images
 		WHERE id = ?
 		LIMIT 1
@@ -63,45 +62,37 @@ func (repo *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entit
 }
 
 func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
+	if image.IsDeleted() {
+		const query = `
+			DELETE FROM images
+			WHERE id = ?
+		`
+
+		_, err := executor(ctx, repo.db).ExecContext(ctx, query, image.ID().String())
+		return err
+	}
+
 	const query = `
 		INSERT INTO images (
 			id,
 			tags,
 			object_key,
 			object_exists,
-			create_time,
-			delete_time
+			create_time
 		)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
-			tags = ?,
-			object_key = ?,
-			object_exists = ?,
-			delete_time = ?
+			object_exists = ?
 	`
-
-	tagsJSON, err := json.Marshal(image.Tags().Strings())
-	if err != nil {
-		return err
-	}
-
-	var deleteTime any
-	if image.DeleteTime() != nil {
-		deleteTime = image.DeleteTime()
-	}
 
 	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
 		image.ID().String(),
-		tagsJSON,
+		strings.Join(image.Tags().Strings(), ";"),
 		image.ObjectKey().String(),
 		image.ObjectExists(),
 		image.CreateTime(),
-		deleteTime,
 
-		tagsJSON,
-		image.ObjectKey().String(),
 		image.ObjectExists(),
-		deleteTime,
 	); err != nil {
 		return err
 	}
@@ -117,57 +108,44 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 
 func scanImage(scanner imageScanner) (*entity.Image, error) {
 	var (
-		id           string
-		tagsJSON     []byte
-		objectKey    string
-		objectExists bool
-		createTime   time.Time
-		deleteTime   sql.NullTime
+		idRaw           string
+		tagsRaw         string
+		objectKeyRaw    string
+		objectExistsRaw bool
+		createTimeRaw   time.Time
 	)
 
 	if err := scanner.Scan(
-		&id,
-		&tagsJSON,
-		&objectKey,
-		&objectExists,
-		&createTime,
-		&deleteTime,
+		&idRaw,
+		&tagsRaw,
+		&objectKeyRaw,
+		&objectExistsRaw,
+		&createTimeRaw,
 	); err != nil {
 		return nil, err
 	}
 
-	imageID, err := vo.NewImageID(id)
+	id, err := vo.NewImageID(idRaw)
 	if err != nil {
 		return nil, err
 	}
-
-	var tagValues []string
-	if err := json.Unmarshal(tagsJSON, &tagValues); err != nil {
-		return nil, err
-	}
-
-	tags, err := vo.NewTags(tagValues)
+	tags, err := vo.NewTags(strings.Split(tagsRaw, ";"))
 	if err != nil {
 		return nil, err
 	}
-
-	objectKeyVO, err := vo.NewObjectKey(objectKey)
+	objectKey, err := vo.NewObjectKey(objectKeyRaw)
 	if err != nil {
 		return nil, err
 	}
-
-	var deleteTimeVO *time.Time
-	if deleteTime.Valid {
-		value := deleteTime.Time
-		deleteTimeVO = &value
-	}
+	objectExists := objectExistsRaw
+	createTime := createTimeRaw
 
 	return entity.ReconstituteImage(
-		imageID,
+		id,
 		tags,
-		objectKeyVO,
+		objectKey,
 		objectExists,
 		createTime,
-		deleteTimeVO,
+		nil,
 	), nil
 }
