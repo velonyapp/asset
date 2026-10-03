@@ -74,11 +74,12 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		_, err := command.Send(ctx, &command.CreateImage{
+		if _, err := command.Send(ctx, &command.CreateImage{
 			Tags:      req.Image.Tags,
 			ObjectKey: req.Image.ObjectKey,
-		})
-		return err
+		}); err != nil {
+			return err
+		}
 
 	case rc.c.Rabbitmq.Queues.ProcessImage:
 		req := new(v1.ProcessImageRequest)
@@ -167,7 +168,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			}
 		}
 
-		_, err := command.Send(ctx, &command.ProcessImage{
+		if _, err := command.Send(ctx, &command.ProcessImage{
 			ImageID: imageID,
 			Options: port.ImageProcessOptions{
 				Resize:         resize,
@@ -175,8 +176,9 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 				AutoRotate:     req.AutoRotate,
 				RemoveMetadata: req.RemoveMetadata,
 			},
-		})
-		return err
+		}); err != nil {
+			return err
+		}
 
 	case rc.c.Rabbitmq.Queues.ReconcileImage:
 		req := new(v1.ReconcileImageRequest)
@@ -190,10 +192,11 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		_, err := command.Send(ctx, &command.ReconcileImage{
+		if _, err := command.Send(ctx, &command.ReconcileImage{
 			ImageID: imageID,
-		})
-		return err
+		}); err != nil {
+			return err
+		}
 
 	case rc.c.Rabbitmq.Queues.DeleteImage:
 		req := new(v1.DeleteImageRequest)
@@ -207,10 +210,11 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		_, err := command.Send(ctx, &command.DeleteImage{
+		if _, err := command.Send(ctx, &command.DeleteImage{
 			ImageID: imageID,
-		})
-		return err
+		}); err != nil {
+			return err
+		}
 
 	default:
 		return ErrUnsupportedMessage
