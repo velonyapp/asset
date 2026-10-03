@@ -5,8 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/velonyapp/asset/internal/application/port"
+
+	"github.com/davidbyttow/govips/v2/vips"
 )
 
 var _ port.ImageProcessor = (*processor)(nil)
