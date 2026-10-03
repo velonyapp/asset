@@ -126,18 +126,12 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		return nil, err
 	}
 
-	id, err := vo.NewImageID(idRaw)
-	if err != nil {
-		return nil, err
+	id, _ := vo.NewImageID(idRaw)
+	tags, _ := vo.NewTags(nil)
+	if tagsRaw != "" {
+		tags, _ = vo.NewTags(strings.Split(tagsRaw, ";"))
 	}
-	tags, err := vo.NewTags(strings.Split(tagsRaw, ";"))
-	if err != nil {
-		return nil, err
-	}
-	objectKey, err := vo.NewObjectKey(objectKeyRaw)
-	if err != nil {
-		return nil, err
-	}
+	objectKey, _ := vo.NewObjectKey(objectKeyRaw)
 	objectExists := objectExistsRaw
 	createTime := createTimeRaw
 

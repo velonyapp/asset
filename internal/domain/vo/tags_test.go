@@ -13,6 +13,11 @@ func TestNewTags(t *testing.T) {
 		err      error
 	}{
 		{
+			name:     "nil tags",
+			value:    nil,
+			expected: []string{},
+		},
+		{
 			name:     "empty tags",
 			value:    []string{},
 			expected: []string{},
