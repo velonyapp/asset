@@ -6,9 +6,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
+	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
@@ -64,8 +64,8 @@ func (h *processImageHandler) Handle(
 	if err != nil {
 		return nil, err
 	}
-	if image == nil || image.IsDeleted() {
-		return nil, common.ErrImageNotFound
+	if image.IsDeleted() {
+		return nil, entity.ErrImageDeleted
 	}
 	if !image.ObjectExists() {
 		return nil, ErrImageObjectDoesntExist

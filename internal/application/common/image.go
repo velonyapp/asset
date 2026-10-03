@@ -1,11 +1,6 @@
 package common
 
-import (
-	"errors"
-	"time"
-)
-
-var ErrImageNotFound = errors.New("image not found")
+import "time"
 
 type ImageResult struct {
 	ID           string

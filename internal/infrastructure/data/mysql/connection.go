@@ -7,7 +7,7 @@ import (
 
 	"github.com/XSAM/otelsql"
 	"github.com/go-sql-driver/mysql"
-	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+	"go.opentelemetry.io/otel/semconv/v1.37.0"
 )
 
 func NewConnection(c *conf.Data) (*sql.DB, error) {
@@ -18,6 +18,7 @@ func NewConnection(c *conf.Data) (*sql.DB, error) {
 
 	cfg.ParseTime = true
 	cfg.InterpolateParams = true
+	cfg.ClientFoundRows = true
 
 	dsn := cfg.FormatDSN()
 
