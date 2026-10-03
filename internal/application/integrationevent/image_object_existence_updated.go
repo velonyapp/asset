@@ -12,9 +12,9 @@ type ImageObjectExistenceUpdated struct {
 
 func NewImageObjectExistenceUpdated(
 	imageID string,
+	occurTime time.Time,
 	tags []string,
 	objectExists bool,
-	occurTime time.Time,
 ) *ImageObjectExistenceUpdated {
 	return &ImageObjectExistenceUpdated{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),

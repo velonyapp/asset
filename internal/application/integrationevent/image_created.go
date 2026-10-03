@@ -12,9 +12,9 @@ type ImageCreated struct {
 
 func NewImageCreated(
 	imageID string,
+	occurTime time.Time,
 	tags []string,
 	objectKey string,
-	occurTime time.Time,
 ) *ImageCreated {
 	return &ImageCreated{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),

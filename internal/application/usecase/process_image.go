@@ -98,8 +98,8 @@ func (h *ProcessImageHandler) Execute(
 
 	h.eventPublisher.Publish(ctx, integrationevent.NewImageProcessed(
 		image.ID().String(),
-		image.Tags().Strings(),
 		now,
+		image.Tags().Strings(),
 	))
 
 	return &ProcessImageResult{}, nil

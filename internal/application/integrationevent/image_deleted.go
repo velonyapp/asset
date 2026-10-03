@@ -10,8 +10,8 @@ type ImageDeleted struct {
 
 func NewImageDeleted(
 	imageID string,
-	tags []string,
 	occurTime time.Time,
+	tags []string,
 ) *ImageDeleted {
 	return &ImageDeleted{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, occurTime, tags),

@@ -25,9 +25,9 @@ func NewImageCreatedHandler(
 func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent *event.ImageCreated) error {
 	integrationEvent := integrationevent.NewImageCreated(
 		domainEvent.AggregateID(),
+		domainEvent.CreateTime(),
 		domainEvent.Tags().Strings(),
 		domainEvent.ObjectKey().String(),
-		domainEvent.OccurTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

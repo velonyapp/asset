@@ -13,19 +13,21 @@ type ImageObjectExistenceUpdated struct {
 
 	tags         vo.Tags
 	objectExists bool
+	updateTime   time.Time
 }
 
 func NewImageObjectExistenceUpdated(
 	imageID vo.ImageID,
 	tags vo.Tags,
 	objectExists bool,
-	occurTime time.Time,
+	updateTime time.Time,
 ) *ImageObjectExistenceUpdated {
 	return &ImageObjectExistenceUpdated{
-		BaseDomainEvent: NewBaseDomainEvent(imageID.String(), occurTime),
+		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:         tags,
 		objectExists: objectExists,
+		updateTime:   updateTime,
 	}
 }
 
@@ -35,4 +37,8 @@ func (e *ImageObjectExistenceUpdated) Tags() vo.Tags {
 
 func (e *ImageObjectExistenceUpdated) ObjectExists() bool {
 	return e.objectExists
+}
+
+func (e *ImageObjectExistenceUpdated) UpdateTime() time.Time {
+	return e.updateTime
 }
