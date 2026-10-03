@@ -228,6 +228,8 @@ components:
                     type: string
         velony.asset.api.v1.ReconcileImageResponse:
             type: object
-            properties: {}
+            properties:
+                image:
+                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
 tags:
     - name: AssetService

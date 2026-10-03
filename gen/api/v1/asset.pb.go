@@ -760,6 +760,7 @@ func (x *ReconcileImageRequest) GetName() string {
 
 type ReconcileImageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Image         *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -792,6 +793,13 @@ func (x *ReconcileImageResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReconcileImageResponse.ProtoReflect.Descriptor instead.
 func (*ReconcileImageResponse) Descriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ReconcileImageResponse) GetImage() *Image {
+	if x != nil {
+		return x.Image
+	}
+	return nil
 }
 
 type DeleteImageRequest struct {
@@ -890,8 +898,9 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x14ProcessImageResponse\"K\n" +
 	"\x15ReconcileImageRequest\x122\n" +
 	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name\"\x18\n" +
-	"\x16ReconcileImageResponse\"H\n" +
+	"\x16asset.velony.app/ImageR\x04name\"J\n" +
+	"\x16ReconcileImageResponse\x120\n" +
+	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageR\x05image\"H\n" +
 	"\x12DeleteImageRequest\x122\n" +
 	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
 	"\x16asset.velony.app/ImageR\x04name*\xa4\x01\n" +
@@ -970,23 +979,24 @@ var file_velony_asset_api_v1_asset_proto_depIdxs = []int32{
 	16, // 5: velony.asset.api.v1.PresignImageRequest.ttl:type_name -> google.protobuf.Duration
 	3,  // 6: velony.asset.api.v1.ProcessImageRequest.resize:type_name -> velony.asset.api.v1.ImageResize
 	4,  // 7: velony.asset.api.v1.ProcessImageRequest.encoding:type_name -> velony.asset.api.v1.ImageEncoding
-	6,  // 8: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
-	7,  // 9: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
-	8,  // 10: velony.asset.api.v1.AssetService.PresignImage:input_type -> velony.asset.api.v1.PresignImageRequest
-	12, // 11: velony.asset.api.v1.AssetService.ReconcileImage:input_type -> velony.asset.api.v1.ReconcileImageRequest
-	10, // 12: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
-	14, // 13: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
-	5,  // 14: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
-	5,  // 15: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
-	9,  // 16: velony.asset.api.v1.AssetService.PresignImage:output_type -> velony.asset.api.v1.PresignImageResponse
-	13, // 17: velony.asset.api.v1.AssetService.ReconcileImage:output_type -> velony.asset.api.v1.ReconcileImageResponse
-	11, // 18: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.ProcessImageResponse
-	17, // 19: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	5,  // 8: velony.asset.api.v1.ReconcileImageResponse.image:type_name -> velony.asset.api.v1.Image
+	6,  // 9: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
+	7,  // 10: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
+	8,  // 11: velony.asset.api.v1.AssetService.PresignImage:input_type -> velony.asset.api.v1.PresignImageRequest
+	12, // 12: velony.asset.api.v1.AssetService.ReconcileImage:input_type -> velony.asset.api.v1.ReconcileImageRequest
+	10, // 13: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
+	14, // 14: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
+	5,  // 15: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
+	5,  // 16: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
+	9,  // 17: velony.asset.api.v1.AssetService.PresignImage:output_type -> velony.asset.api.v1.PresignImageResponse
+	13, // 18: velony.asset.api.v1.AssetService.ReconcileImage:output_type -> velony.asset.api.v1.ReconcileImageResponse
+	11, // 19: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.ProcessImageResponse
+	17, // 20: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
+	15, // [15:21] is the sub-list for method output_type
+	9,  // [9:15] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_api_v1_asset_proto_init() }

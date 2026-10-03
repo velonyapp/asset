@@ -211,7 +211,9 @@ message ReconcileImageRequest {
   ];
 }
 
-message ReconcileImageResponse {}
+message ReconcileImageResponse {
+  Image image = 1;
+}
 
 message DeleteImageRequest {
   string name = 1 [

@@ -66,7 +66,9 @@ func (h *reconcileImageHandler) Handle(
 		return nil, err
 	}
 
-	image.UpdateObjectExistence(imageObjectExists, now)
+	if err := image.UpdateObjectExistence(imageObjectExists, now); err != nil {
+		return nil, err
+	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, image)
@@ -74,5 +76,13 @@ func (h *reconcileImageHandler) Handle(
 		return nil, err
 	}
 
-	return &ReconcileImageResult{}, nil
+	return &ReconcileImageResult{
+		Image: &common.ImageResult{
+			ID:           image.ID().String(),
+			Tags:         image.Tags().Strings(),
+			ObjectKey:    image.ObjectKey().String(),
+			ObjectExists: image.ObjectExists(),
+			CreateTime:   image.CreateTime(),
+		},
+	}, nil
 }

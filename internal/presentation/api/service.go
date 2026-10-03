@@ -189,13 +189,22 @@ func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequ
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if _, err := command.Send(ctx, &command.ReconcileImage{
+	result, err := command.Send(ctx, &command.ReconcileImage{
 		ImageID: imageID,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, mapError(err)
 	}
 
-	return &v1.ReconcileImageResponse{}, nil
+	return &v1.ReconcileImageResponse{
+		Image: &v1.Image{
+			Name:         resourcename.Sprint(imageResourcePattern, result.Image.ID),
+			Tags:         result.Image.Tags,
+			ObjectKey:    result.Image.ObjectKey,
+			ObjectExists: result.Image.ObjectExists,
+			CreateTime:   timestamppb.New(result.Image.CreateTime),
+		},
+	}, nil
 }
 
 func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (*emptypb.Empty, error) {
