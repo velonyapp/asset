@@ -1,4 +1,4 @@
-package usecase
+package query
 
 import (
 	"context"
@@ -19,7 +19,13 @@ type PresignImageResult struct {
 	UploadURL string
 }
 
-type PresignImageHandler struct {
+func (*PresignImage) resultType() *PresignImageResult {
+	return nil
+}
+
+type PresignImageHandler Handler[*PresignImage, *PresignImageResult]
+
+type presignImageHandler struct {
 	imageRepo repo.Image
 	storage   port.Storage
 }
@@ -27,18 +33,18 @@ type PresignImageHandler struct {
 func NewPresignImageHandler(
 	imageRepo repo.Image,
 	storage port.Storage,
-) *PresignImageHandler {
-	return &PresignImageHandler{
+) PresignImageHandler {
+	return &presignImageHandler{
 		imageRepo: imageRepo,
 		storage:   storage,
 	}
 }
 
-func (h *PresignImageHandler) Execute(
+func (h *presignImageHandler) Handle(
 	ctx context.Context,
-	uc *PresignImage,
+	qry *PresignImage,
 ) (*PresignImageResult, error) {
-	imageID, err := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(qry.ImageID)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +57,7 @@ func (h *PresignImageHandler) Execute(
 		return nil, common.ErrImageNotFound
 	}
 
-	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), uc.TTL)
+	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), qry.TTL)
 	if err != nil {
 		return nil, err
 	}

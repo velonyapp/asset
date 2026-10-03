@@ -1,4 +1,4 @@
-package usecase
+package command
 
 import (
 	"context"
@@ -18,7 +18,13 @@ type ReconcileImageResult struct {
 	Image *common.ImageResult
 }
 
-type ReconcileImageHandler struct {
+func (*ReconcileImage) resultType() *ReconcileImageResult {
+	return nil
+}
+
+type ReconcileImageHandler Handler[*ReconcileImage, *ReconcileImageResult]
+
+type reconcileImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
 	storage    port.Storage
@@ -28,21 +34,21 @@ func NewReconcileImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
-) *ReconcileImageHandler {
-	return &ReconcileImageHandler{
+) ReconcileImageHandler {
+	return &reconcileImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
 		storage:    storage,
 	}
 }
 
-func (h *ReconcileImageHandler) Execute(
+func (h *reconcileImageHandler) Handle(
 	ctx context.Context,
-	uc *ReconcileImage,
+	cmd *ReconcileImage,
 ) (*ReconcileImageResult, error) {
 	now := time.Now()
 
-	imageID, err := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
 		return nil, err
 	}

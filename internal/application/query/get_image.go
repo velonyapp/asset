@@ -1,4 +1,4 @@
-package usecase
+package query
 
 import (
 	"context"
@@ -16,23 +16,29 @@ type GetImageResult struct {
 	Image *common.ImageResult
 }
 
-type GetImageHandler struct {
+func (*GetImage) resultType() *GetImageResult {
+	return nil
+}
+
+type GetImageHandler Handler[*GetImage, *GetImageResult]
+
+type getImageHandler struct {
 	imageRepo repo.Image
 }
 
 func NewGetImageHandler(
 	imageRepo repo.Image,
-) *GetImageHandler {
-	return &GetImageHandler{
+) GetImageHandler {
+	return &getImageHandler{
 		imageRepo: imageRepo,
 	}
 }
 
-func (h *GetImageHandler) Execute(
+func (h *getImageHandler) Handle(
 	ctx context.Context,
-	uc *GetImage,
+	qry *GetImage,
 ) (*GetImageResult, error) {
-	imageID, err := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(qry.ImageID)
 	if err != nil {
 		return nil, err
 	}

@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
+	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/application/usecase"
 	"github.com/velonyapp/asset/internal/conf"
 
 	"github.com/Azure/go-amqp"
@@ -31,11 +31,6 @@ var _ transport.Server = (*RabbitMQConsumer)(nil)
 type RabbitMQConsumer struct {
 	c *conf.Transport
 
-	createImageHandler    *usecase.CreateImageHandler
-	processImageHandler   *usecase.ProcessImageHandler
-	reconcileImageHandler *usecase.ReconcileImageHandler
-	deleteImageHandler    *usecase.DeleteImageHandler
-
 	conn      *rabbitmqamqp.AmqpConnection
 	consumers map[string]*rabbitmqamqp.Consumer
 
@@ -43,18 +38,11 @@ type RabbitMQConsumer struct {
 }
 
 func NewRabbitMQConsumer(
+	_ *command.HandlerRegistry,
 	c *conf.Transport,
-	createImageHandler *usecase.CreateImageHandler,
-	processImageHandler *usecase.ProcessImageHandler,
-	reconcileImageHandler *usecase.ReconcileImageHandler,
-	deleteImageHandler *usecase.DeleteImageHandler,
 ) *RabbitMQConsumer {
 	return &RabbitMQConsumer{
-		c:                     c,
-		createImageHandler:    createImageHandler,
-		processImageHandler:   processImageHandler,
-		reconcileImageHandler: reconcileImageHandler,
-		deleteImageHandler:    deleteImageHandler,
+		c: c,
 	}
 }
 
@@ -86,7 +74,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		_, err := rc.createImageHandler.Execute(ctx, &usecase.CreateImage{
+		_, err := command.Send(ctx, &command.CreateImage{
 			Tags:      req.Image.Tags,
 			ObjectKey: req.Image.ObjectKey,
 		})
@@ -179,7 +167,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			}
 		}
 
-		_, err := rc.processImageHandler.Execute(ctx, &usecase.ProcessImage{
+		_, err := command.Send(ctx, &command.ProcessImage{
 			ImageID: imageID,
 			Options: port.ImageProcessOptions{
 				Resize:         resize,
@@ -202,7 +190,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		_, err := rc.reconcileImageHandler.Execute(ctx, &usecase.ReconcileImage{
+		_, err := command.Send(ctx, &command.ReconcileImage{
 			ImageID: imageID,
 		})
 		return err
@@ -219,7 +207,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		_, err := rc.deleteImageHandler.Execute(ctx, &usecase.DeleteImage{
+		_, err := command.Send(ctx, &command.DeleteImage{
 			ImageID: imageID,
 		})
 		return err

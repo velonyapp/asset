@@ -1,4 +1,4 @@
-package usecase
+package command
 
 import (
 	"context"
@@ -20,7 +20,13 @@ type CreateImageResult struct {
 	Image *common.ImageResult
 }
 
-type CreateImageHandler struct {
+func (*CreateImage) resultType() *CreateImageResult {
+	return nil
+}
+
+type CreateImageHandler Handler[*CreateImage, *CreateImageResult]
+
+type createImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
 }
@@ -28,24 +34,21 @@ type CreateImageHandler struct {
 func NewCreateImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
-) *CreateImageHandler {
-	return &CreateImageHandler{
+) CreateImageHandler {
+	return &createImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
 	}
 }
 
-func (h *CreateImageHandler) Execute(
-	ctx context.Context,
-	uc *CreateImage,
-) (*CreateImageResult, error) {
+func (h *createImageHandler) Handle(ctx context.Context, cmd *CreateImage) (*CreateImageResult, error) {
 	now := time.Now()
 
-	tags, err := vo.NewTags(uc.Tags)
+	tags, err := vo.NewTags(cmd.Tags)
 	if err != nil {
 		return nil, err
 	}
-	objectKey, err := vo.NewObjectKey(uc.ObjectKey)
+	objectKey, err := vo.NewObjectKey(cmd.ObjectKey)
 	if err != nil {
 		return nil, err
 	}

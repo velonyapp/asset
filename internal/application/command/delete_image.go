@@ -1,4 +1,4 @@
-package usecase
+package command
 
 import (
 	"context"
@@ -16,7 +16,13 @@ type DeleteImage struct {
 type DeleteImageResult struct {
 }
 
-type DeleteImageHandler struct {
+func (*DeleteImage) resultType() *DeleteImageResult {
+	return nil
+}
+
+type DeleteImageHandler Handler[*DeleteImage, *DeleteImageResult]
+
+type deleteImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
 	storage    port.Storage
@@ -26,21 +32,18 @@ func NewDeleteImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
-) *DeleteImageHandler {
-	return &DeleteImageHandler{
+) DeleteImageHandler {
+	return &deleteImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
 		storage:    storage,
 	}
 }
 
-func (h *DeleteImageHandler) Execute(
-	ctx context.Context,
-	uc *DeleteImage,
-) (*DeleteImageResult, error) {
+func (h *deleteImageHandler) Handle(ctx context.Context, cmd *DeleteImage) (*DeleteImageResult, error) {
 	now := time.Now()
 
-	imageID, err := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
 		return nil, err
 	}

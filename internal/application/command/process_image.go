@@ -1,4 +1,4 @@
-package usecase
+package command
 
 import (
 	"context"
@@ -22,7 +22,13 @@ type ProcessImage struct {
 
 type ProcessImageResult struct{}
 
-type ProcessImageHandler struct {
+func (*ProcessImage) resultType() *ProcessImageResult {
+	return nil
+}
+
+type ProcessImageHandler Handler[*ProcessImage, *ProcessImageResult]
+
+type processImageHandler struct {
 	imageRepo      repo.Image
 	eventPublisher port.EventPublisher
 	storage        port.Storage
@@ -34,8 +40,8 @@ func NewProcessImageHandler(
 	eventPublisher port.EventPublisher,
 	storage port.Storage,
 	imageProcessor port.ImageProcessor,
-) *ProcessImageHandler {
-	return &ProcessImageHandler{
+) ProcessImageHandler {
+	return &processImageHandler{
 		imageRepo:      imageRepo,
 		eventPublisher: eventPublisher,
 		storage:        storage,
@@ -43,13 +49,10 @@ func NewProcessImageHandler(
 	}
 }
 
-func (h *ProcessImageHandler) Execute(
-	ctx context.Context,
-	uc *ProcessImage,
-) (*ProcessImageResult, error) {
+func (h *processImageHandler) Handle(ctx context.Context, cmd *ProcessImage) (*ProcessImageResult, error) {
 	now := time.Now()
 
-	imageID, err := vo.NewImageID(uc.ImageID)
+	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +79,7 @@ func (h *ProcessImageHandler) Execute(
 	processErrCh := make(chan error, 1)
 
 	go func() {
-		err := h.imageProcessor.Process(src, pw, uc.Options)
+		err := h.imageProcessor.Process(src, pw, cmd.Options)
 		_ = pw.CloseWithError(err)
 		processErrCh <- err
 	}()

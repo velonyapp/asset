@@ -9,8 +9,9 @@ package main
 import (
 	"context"
 	"github.com/go-kratos/kratos/v3"
+	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/application/domainevent"
-	"github.com/velonyapp/asset/internal/application/usecase"
+	"github.com/velonyapp/asset/internal/application/query"
 	"github.com/velonyapp/asset/internal/conf"
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
@@ -43,27 +44,29 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageObjectExistenceUpdatedHandler, imageDeletedHandler)
 	repoImage := mysql.NewImageRepo(db, dispatcher)
-	getImageHandler := usecase.NewGetImageHandler(repoImage)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	createImageHandler := usecase.NewCreateImageHandler(repoImage, unitOfWork)
+	createImageHandler := command.NewCreateImageHandler(repoImage, unitOfWork)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
-	presignImageHandler := usecase.NewPresignImageHandler(repoImage, storage)
 	imageProcessor := image.NewProcessor()
-	processImageHandler := usecase.NewProcessImageHandler(repoImage, eventPublisher, storage, imageProcessor)
-	reconcileImageHandler := usecase.NewReconcileImageHandler(repoImage, unitOfWork, storage)
-	deleteImageHandler := usecase.NewDeleteImageHandler(repoImage, unitOfWork, storage)
-	apiService := api.NewService(getImageHandler, createImageHandler, presignImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
+	processImageHandler := command.NewProcessImageHandler(repoImage, eventPublisher, storage, imageProcessor)
+	reconcileImageHandler := command.NewReconcileImageHandler(repoImage, unitOfWork, storage)
+	deleteImageHandler := command.NewDeleteImageHandler(repoImage, unitOfWork, storage)
+	handlerRegistry := command.NewHandlerRegistry(createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
+	getImageHandler := query.NewGetImageHandler(repoImage)
+	presignImageHandler := query.NewPresignImageHandler(repoImage, storage)
+	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
+	apiService := api.NewService(handlerRegistry, queryHandlerRegistry)
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
 	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
-	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
+	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
 	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
 		return nil, nil, err

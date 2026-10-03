@@ -4,8 +4,9 @@ import (
 	"context"
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
+	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/application/usecase"
+	"github.com/velonyapp/asset/internal/application/query"
 
 	"go.einride.tech/aip/resourcename"
 	"google.golang.org/grpc/codes"
@@ -20,31 +21,13 @@ const (
 
 type Service struct {
 	v1.UnimplementedAssetServiceServer
-
-	getImageHandler       *usecase.GetImageHandler
-	createImageHandler    *usecase.CreateImageHandler
-	presignImageHandler   *usecase.PresignImageHandler
-	processImageHandler   *usecase.ProcessImageHandler
-	reconcileImageHandler *usecase.ReconcileImageHandler
-	deleteImageHandler    *usecase.DeleteImageHandler
 }
 
 func NewService(
-	getImageHandler *usecase.GetImageHandler,
-	createImageHandler *usecase.CreateImageHandler,
-	presignImageHandler *usecase.PresignImageHandler,
-	processImageHandler *usecase.ProcessImageHandler,
-	reconcileImageHandler *usecase.ReconcileImageHandler,
-	deleteImageHandler *usecase.DeleteImageHandler,
+	_ *command.HandlerRegistry,
+	_ *query.HandlerRegistry,
 ) *Service {
-	return &Service{
-		getImageHandler:       getImageHandler,
-		createImageHandler:    createImageHandler,
-		presignImageHandler:   presignImageHandler,
-		processImageHandler:   processImageHandler,
-		reconcileImageHandler: reconcileImageHandler,
-		deleteImageHandler:    deleteImageHandler,
-	}
+	return &Service{}
 }
 
 func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image, error) {
@@ -53,7 +36,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	result, err := s.getImageHandler.Execute(ctx, &usecase.GetImage{ImageID: imageID})
+	result, err := query.Send(ctx, &query.GetImage{ImageID: imageID})
 	if err != nil {
 		return nil, mapError(err)
 	}
@@ -68,7 +51,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 }
 
 func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (*v1.Image, error) {
-	result, err := s.createImageHandler.Execute(ctx, &usecase.CreateImage{
+	result, err := command.Send(ctx, &command.CreateImage{
 		Tags:      req.Image.Tags,
 		ObjectKey: req.Image.ObjectKey,
 	})
@@ -91,7 +74,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	result, err := s.presignImageHandler.Execute(ctx, &usecase.PresignImage{
+	result, err := query.Send(ctx, &query.PresignImage{
 		ImageID: imageID,
 		TTL:     req.Ttl.AsDuration(),
 	})
@@ -185,7 +168,7 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 		}
 	}
 
-	if _, err := s.processImageHandler.Execute(ctx, &usecase.ProcessImage{
+	if _, err := command.Send(ctx, &command.ProcessImage{
 		ImageID: imageID,
 		Options: port.ImageProcessOptions{
 			Resize:         resize,
@@ -206,7 +189,7 @@ func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequ
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if _, err := s.reconcileImageHandler.Execute(ctx, &usecase.ReconcileImage{
+	if _, err := command.Send(ctx, &command.ReconcileImage{
 		ImageID: imageID,
 	}); err != nil {
 		return nil, mapError(err)
@@ -221,7 +204,7 @@ func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if _, err := s.deleteImageHandler.Execute(ctx, &usecase.DeleteImage{
+	if _, err := command.Send(ctx, &command.DeleteImage{
 		ImageID: imageID,
 	}); err != nil {
 		return nil, mapError(err)
