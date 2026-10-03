@@ -219,6 +219,8 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 	default:
 		return ErrUnsupportedMessage
 	}
+
+	return nil
 }
 
 func (rc *RabbitMQConsumer) registerConsumer(ctx context.Context, queue string) error {
