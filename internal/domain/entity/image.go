@@ -14,7 +14,7 @@ var (
 
 type Image struct {
 	id           vo.ImageID
-	tags         []vo.Tag
+	tags         vo.Tags
 	objectKey    vo.ObjectKey
 	objectExists bool
 	createTime   time.Time
@@ -24,7 +24,7 @@ type Image struct {
 }
 
 func NewImage(
-	tags []vo.Tag,
+	tags vo.Tags,
 	objectKey vo.ObjectKey,
 	now time.Time,
 ) *Image {
@@ -52,7 +52,7 @@ func NewImage(
 
 func ReconstituteImage(
 	id vo.ImageID,
-	tags []vo.Tag,
+	tags vo.Tags,
 	objectKey vo.ObjectKey,
 	objectExist bool,
 	createTime time.Time,
@@ -78,8 +78,8 @@ func (i *Image) ID() vo.ImageID {
 	return i.id
 }
 
-func (i *Image) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), i.tags...)
+func (i *Image) Tags() vo.Tags {
+	return i.tags
 }
 
 func (i *Image) ObjectKey() vo.ObjectKey {

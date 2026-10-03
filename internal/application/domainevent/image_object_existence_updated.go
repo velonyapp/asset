@@ -23,15 +23,9 @@ func NewImageObjectExistenceUpdatedHandler(
 }
 
 func (h *ImageObjectExistenceUpdatedHandler) Execute(ctx context.Context, domainEvent *event.ImageObjectExistenceUpdated) error {
-	tags := domainEvent.Tags()
-	tagValues := make([]string, len(tags))
-	for i, tag := range tags {
-		tagValues[i] = tag.Value()
-	}
-
 	integrationEvent := integrationevent.NewImageObjectExistenceUpdated(
 		domainEvent.AggregateID(),
-		tagValues,
+		domainEvent.Tags().Strings(),
 		domainEvent.ObjectExists(),
 		domainEvent.OccurTime(),
 	)

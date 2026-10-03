@@ -96,14 +96,9 @@ func (h *ProcessImageHandler) Execute(
 		return nil, putErr
 	}
 
-	var tagsValue []string
-	for _, tag := range image.Tags() {
-		tagsValue = append(tagsValue, tag.Value())
-	}
-
 	h.eventPublisher.Publish(ctx, integrationevent.NewImageProcessed(
 		image.ID().String(),
-		tagsValue,
+		image.Tags().Strings(),
 		now,
 	))
 

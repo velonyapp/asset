@@ -2,14 +2,12 @@ package vo
 
 import (
 	"errors"
-	"strings"
-	"unicode/utf8"
 )
 
 var (
-	ErrTagEmpty       = errors.New("tag must not be empty")
-	ErrTagTooLong     = errors.New("tag must not exceed 64 characters")
-	ErrTagInvalidUTF8 = errors.New("tag must contain valid UTF-8")
+	ErrTagEmpty            = errors.New("tag must not be empty")
+	ErrTagTooLong          = errors.New("tag must not exceed 64 characters")
+	ErrTagInvalidCharacter = errors.New("tag contains an invalid character")
 )
 
 type Tag struct {
@@ -17,17 +15,23 @@ type Tag struct {
 }
 
 func NewTag(value string) (Tag, error) {
-	value = strings.TrimSpace(value)
-
 	if value == "" {
 		return Tag{}, ErrTagEmpty
 	}
 
-	if !utf8.ValidString(value) {
-		return Tag{}, ErrTagInvalidUTF8
+	for i := 0; i < len(value); i++ {
+		c := value[i]
+
+		if !((c >= 'a' && c <= 'z') ||
+			(c >= '0' && c <= '9') ||
+			c == '-' ||
+			c == '_' ||
+			c == '.') {
+			return Tag{}, ErrTagInvalidCharacter
+		}
 	}
 
-	if utf8.RuneCountInString(value) > 64 {
+	if len(value) > 64 {
 		return Tag{}, ErrTagTooLong
 	}
 
@@ -36,10 +40,10 @@ func NewTag(value string) (Tag, error) {
 	}, nil
 }
 
-func (t Tag) Value() string {
+func (t Tag) String() string {
 	return t.value
 }
 
-func (t Tag) String() string {
-	return t.value
+func (t Tag) Equal(other Tag) bool {
+	return t.value == other.value
 }

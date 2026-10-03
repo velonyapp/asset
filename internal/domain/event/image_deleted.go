@@ -11,12 +11,12 @@ var _ DomainEvent = (*ImageDeleted)(nil)
 type ImageDeleted struct {
 	BaseDomainEvent
 
-	tags []vo.Tag
+	tags vo.Tags
 }
 
 func NewImageDeleted(
 	imageID vo.ImageID,
-	tags []vo.Tag,
+	tags vo.Tags,
 	occurTime time.Time,
 ) *ImageDeleted {
 	return &ImageDeleted{
@@ -26,6 +26,6 @@ func NewImageDeleted(
 	}
 }
 
-func (e *ImageDeleted) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), e.tags...)
+func (e *ImageDeleted) Tags() vo.Tags {
+	return e.tags
 }

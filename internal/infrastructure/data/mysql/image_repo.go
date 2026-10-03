@@ -80,14 +80,7 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 			delete_time = ?
 	`
 
-	imageTags := image.Tags()
-
-	tags := make([]string, len(imageTags))
-	for i, tag := range imageTags {
-		tags[i] = tag.Value()
-	}
-
-	tagsJSON, err := json.Marshal(tags)
+	tagsJSON, err := json.Marshal(image.Tags().Strings())
 	if err != nil {
 		return err
 	}
@@ -153,14 +146,9 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		return nil, err
 	}
 
-	tags := make([]vo.Tag, 0, len(tagValues))
-	for _, value := range tagValues {
-		tag, err := vo.NewTag(value)
-		if err != nil {
-			return nil, err
-		}
-
-		tags = append(tags, tag)
+	tags, err := vo.NewTags(tagValues)
+	if err != nil {
+		return nil, err
 	}
 
 	objectKeyVO, err := vo.NewObjectKey(objectKey)

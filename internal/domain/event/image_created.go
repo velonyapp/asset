@@ -11,13 +11,13 @@ var _ DomainEvent = (*ImageCreated)(nil)
 type ImageCreated struct {
 	BaseDomainEvent
 
-	tags      []vo.Tag
+	tags      vo.Tags
 	objectKey vo.ObjectKey
 }
 
 func NewImageCreated(
 	imageID vo.ImageID,
-	tags []vo.Tag,
+	tags vo.Tags,
 	objectKey vo.ObjectKey,
 	occurTime time.Time,
 ) *ImageCreated {
@@ -29,8 +29,8 @@ func NewImageCreated(
 	}
 }
 
-func (e *ImageCreated) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), e.tags...)
+func (e *ImageCreated) Tags() vo.Tags {
+	return e.tags
 }
 
 func (e *ImageCreated) ObjectKey() vo.ObjectKey {

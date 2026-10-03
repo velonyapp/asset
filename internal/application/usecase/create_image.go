@@ -41,14 +41,9 @@ func (h *CreateImageHandler) Execute(
 ) (*CreateImageResult, error) {
 	now := time.Now()
 
-	tags := make([]vo.Tag, 0)
-	for _, tagRaw := range uc.Tags {
-		tag, err := vo.NewTag(tagRaw)
-		if err != nil {
-			return nil, err
-		}
-
-		tags = append(tags, tag)
+	tags, err := vo.NewTags(uc.Tags)
+	if err != nil {
+		return nil, err
 	}
 	objectKey, err := vo.NewObjectKey(uc.ObjectKey)
 	if err != nil {

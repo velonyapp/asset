@@ -11,13 +11,13 @@ var _ DomainEvent = (*ImageObjectExistenceUpdated)(nil)
 type ImageObjectExistenceUpdated struct {
 	BaseDomainEvent
 
-	tags         []vo.Tag
+	tags         vo.Tags
 	objectExists bool
 }
 
 func NewImageObjectExistenceUpdated(
 	imageID vo.ImageID,
-	tags []vo.Tag,
+	tags vo.Tags,
 	objectExists bool,
 	occurTime time.Time,
 ) *ImageObjectExistenceUpdated {
@@ -29,8 +29,8 @@ func NewImageObjectExistenceUpdated(
 	}
 }
 
-func (e *ImageObjectExistenceUpdated) Tags() []vo.Tag {
-	return append([]vo.Tag(nil), e.tags...)
+func (e *ImageObjectExistenceUpdated) Tags() vo.Tags {
+	return e.tags
 }
 
 func (e *ImageObjectExistenceUpdated) ObjectExists() bool {
