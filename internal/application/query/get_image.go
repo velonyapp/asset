@@ -54,6 +54,7 @@ func (h *getImageHandler) Handle(
 	return &GetImageResult{
 		Image: &common.ImageResult{
 			ID:           image.ID().String(),
+			Tags:         image.Tags().Strings(),
 			ObjectKey:    image.ObjectKey().String(),
 			ObjectExists: image.ObjectExists(),
 			CreateTime:   image.CreateTime(),

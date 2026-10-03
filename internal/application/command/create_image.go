@@ -64,6 +64,7 @@ func (h *createImageHandler) Handle(ctx context.Context, cmd *CreateImage) (*Cre
 	return &CreateImageResult{
 		Image: &common.ImageResult{
 			ID:           image.ID().String(),
+			Tags:         image.Tags().Strings(),
 			ObjectKey:    image.ObjectKey().String(),
 			ObjectExists: image.ObjectExists(),
 			CreateTime:   image.CreateTime(),
