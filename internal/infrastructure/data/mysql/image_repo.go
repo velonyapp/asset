@@ -68,33 +68,34 @@ func (repo *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 			WHERE id = ?
 		`
 
-		_, err := executor(ctx, repo.db).ExecContext(ctx, query, image.ID().String())
-		return err
-	}
+		if _, err := executor(ctx, repo.db).ExecContext(ctx, query, image.ID().String()); err != nil {
+			return err
+		}
+	} else {
+		const query = `
+			INSERT INTO images (
+				id,
+				tags,
+				object_key,
+				object_exists,
+				create_time
+			)
+			VALUES (?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE
+				object_exists = ?
+		`
 
-	const query = `
-		INSERT INTO images (
-			id,
-			tags,
-			object_key,
-			object_exists,
-			create_time
-		)
-		VALUES (?, ?, ?, ?, ?)
-		ON DUPLICATE KEY UPDATE
-			object_exists = ?
-	`
+		if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
+			image.ID().String(),
+			strings.Join(image.Tags().Strings(), ";"),
+			image.ObjectKey().String(),
+			image.ObjectExists(),
+			image.CreateTime(),
 
-	if _, err := executor(ctx, repo.db).ExecContext(ctx, query,
-		image.ID().String(),
-		strings.Join(image.Tags().Strings(), ";"),
-		image.ObjectKey().String(),
-		image.ObjectExists(),
-		image.CreateTime(),
-
-		image.ObjectExists(),
-	); err != nil {
-		return err
+			image.ObjectExists(),
+		); err != nil {
+			return err
+		}
 	}
 
 	for _, domainEvent := range image.PullEvents() {
