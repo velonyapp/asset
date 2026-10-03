@@ -50,8 +50,11 @@ func NewRabbitMQConsumer(
 	deleteImageHandler *usecase.DeleteImageHandler,
 ) *RabbitMQConsumer {
 	return &RabbitMQConsumer{
-		c:                  c,
-		deleteImageHandler: deleteImageHandler,
+		c:                     c,
+		createImageHandler:    createImageHandler,
+		processImageHandler:   processImageHandler,
+		reconcileImageHandler: reconcileImageHandler,
+		deleteImageHandler:    deleteImageHandler,
 	}
 }
 
