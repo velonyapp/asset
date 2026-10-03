@@ -40,12 +40,6 @@ func mapError(err error) error {
 			applicationport.ErrInvalidImageBackgroundColor.Error(),
 		)
 
-	case errors.Is(err, applicationport.ErrImageUpscaleNotAllowed):
-		return kerrors.BadRequest(
-			apiv1.ErrorReason_INVALID_IMAGE_RESIZE.String(),
-			applicationport.ErrImageUpscaleNotAllowed.Error(),
-		)
-
 	case errors.Is(err, applicationport.ErrUnsupportedImageFormat):
 		return kerrors.BadRequest(
 			apiv1.ErrorReason_INVALID_IMAGE_ENCODING.String(),

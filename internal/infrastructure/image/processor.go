@@ -18,11 +18,7 @@ func NewProcessor() port.ImageProcessor {
 	return &processor{}
 }
 
-func (p *processor) Process(
-	src io.Reader,
-	dst io.Writer,
-	opts port.ImageProcessOptions,
-) error {
+func (p *processor) Process(src io.Reader, dst io.Writer, opts port.ImageProcessOptions) error {
 	if opts.Resize == nil &&
 		opts.Encoding == nil &&
 		!opts.AutoRotate &&
@@ -42,46 +38,40 @@ func (p *processor) Process(
 			return err
 		}
 	}
-
 	if opts.Resize != nil {
 		if err := resize(imageRef, *opts.Resize); err != nil {
 			return err
 		}
 	}
-
 	if opts.RemoveMetadata {
 		if err := imageRef.RemoveMetadata(); err != nil {
 			return err
 		}
 	}
+	if opts.Encoding != nil {
+		return encode(imageRef, dst, *opts.Encoding)
+	}
 
-	return encode(imageRef, dst, opts.Encoding)
+	return encodeNative(imageRef, dst)
 }
 
 func resize(imageRef *vips.ImageRef, opts port.ImageResize) error {
-	fit := opts.Fit
-	if fit == "" {
-		fit = port.ImageResizeFitContain
+	if opts.Fit == "" {
+		opts.Fit = port.ImageResizeFitContain
+	}
+	if opts.Gravity == "" {
+		opts.Gravity = port.ImageGravityCenter
 	}
 
-	gravity := opts.Gravity
-	if gravity == "" {
-		gravity = port.ImageGravityCenter
-	}
-
-	switch fit {
+	switch opts.Fit {
 	case port.ImageResizeFitContain:
 		return resizeContain(imageRef, opts)
-
 	case port.ImageResizeFitCover:
-		return resizeCover(imageRef, opts, gravity)
-
+		return resizeCover(imageRef, opts)
 	case port.ImageResizeFitPad:
-		return resizePad(imageRef, opts, gravity)
-
+		return resizePad(imageRef, opts)
 	case port.ImageResizeFitStretch:
 		return resizeStretch(imageRef, opts)
-
 	default:
 		return port.ErrUnsupportedResizeFit
 	}
@@ -124,11 +114,7 @@ func resizeContain(imageRef *vips.ImageRef, opts port.ImageResize) error {
 	return imageRef.Resize(scale, vips.KernelLanczos3)
 }
 
-func resizeCover(
-	imageRef *vips.ImageRef,
-	opts port.ImageResize,
-	gravity port.ImageGravity,
-) error {
+func resizeCover(imageRef *vips.ImageRef, opts port.ImageResize) error {
 	if opts.Width == nil || opts.Height == nil || *opts.Width == 0 || *opts.Height == 0 {
 		return port.ErrInvalidResizeDimensions
 	}
@@ -145,7 +131,18 @@ func resizeCover(
 	}
 
 	if !opts.AllowUpscale && scale > 1 {
-		return port.ErrImageUpscaleNotAllowed
+		scale = 1
+
+		imageRatio := float64(imageRef.Width()) / float64(imageRef.Height())
+		targetRatio := float64(width) / float64(height)
+
+		if imageRatio > targetRatio {
+			width = int(float64(imageRef.Height()) * targetRatio)
+			height = imageRef.Height()
+		} else {
+			width = imageRef.Width()
+			height = int(float64(imageRef.Width()) / targetRatio)
+		}
 	}
 
 	if scale != 1 {
@@ -157,7 +154,7 @@ func resizeCover(
 	maxX := imageRef.Width() - width
 	maxY := imageRef.Height() - height
 
-	x, y, err := gravityOffset(maxX, maxY, gravity)
+	x, y, err := gravityOffset(maxX, maxY, opts.Gravity)
 	if err != nil {
 		return err
 	}
@@ -165,11 +162,7 @@ func resizeCover(
 	return imageRef.Crop(x, y, width, height)
 }
 
-func resizePad(
-	imageRef *vips.ImageRef,
-	opts port.ImageResize,
-	gravity port.ImageGravity,
-) error {
+func resizePad(imageRef *vips.ImageRef, opts port.ImageResize) error {
 	if opts.Width == nil || opts.Height == nil || *opts.Width == 0 || *opts.Height == 0 {
 		return port.ErrInvalidResizeDimensions
 	}
@@ -198,7 +191,7 @@ func resizePad(
 	maxX := width - imageRef.Width()
 	maxY := height - imageRef.Height()
 
-	x, y, err := gravityOffset(maxX, maxY, gravity)
+	x, y, err := gravityOffset(maxX, maxY, opts.Gravity)
 	if err != nil {
 		return err
 	}
@@ -219,8 +212,13 @@ func resizeStretch(imageRef *vips.ImageRef, opts port.ImageResize) error {
 	width := int(*opts.Width)
 	height := int(*opts.Height)
 
-	if !opts.AllowUpscale && (width > imageRef.Width() || height > imageRef.Height()) {
-		return port.ErrImageUpscaleNotAllowed
+	if !opts.AllowUpscale {
+		if width > imageRef.Width() {
+			width = imageRef.Width()
+		}
+		if height > imageRef.Height() {
+			height = imageRef.Height()
+		}
 	}
 
 	return imageRef.ThumbnailWithSize(
@@ -270,12 +268,7 @@ func gravityOffset(
 
 func parseBackgroundColor(value *string) (*vips.ColorRGBA, error) {
 	if value == nil {
-		return &vips.ColorRGBA{
-			R: 0,
-			G: 0,
-			B: 0,
-			A: 0,
-		}, nil
+		return &vips.ColorRGBA{R: 0, G: 0, B: 0, A: 0}, nil
 	}
 
 	hex := strings.TrimPrefix(*value, "#")
@@ -287,17 +280,14 @@ func parseBackgroundColor(value *string) (*vips.ColorRGBA, error) {
 	if err != nil {
 		return nil, port.ErrInvalidImageBackgroundColor
 	}
-
 	g, err := strconv.ParseUint(hex[2:4], 16, 8)
 	if err != nil {
 		return nil, port.ErrInvalidImageBackgroundColor
 	}
-
 	b, err := strconv.ParseUint(hex[4:6], 16, 8)
 	if err != nil {
 		return nil, port.ErrInvalidImageBackgroundColor
 	}
-
 	a := uint64(255)
 
 	if len(hex) == 8 {
@@ -307,92 +297,99 @@ func parseBackgroundColor(value *string) (*vips.ColorRGBA, error) {
 		}
 	}
 
-	return &vips.ColorRGBA{
-		R: uint8(r),
-		G: uint8(g),
-		B: uint8(b),
-		A: uint8(a),
-	}, nil
+	return &vips.ColorRGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(a)}, nil
 }
 
-func encode(
-	imageRef *vips.ImageRef,
-	dst io.Writer,
-	encoding *port.ImageEncoding,
-) error {
-	if encoding == nil {
-		result, _, err := imageRef.ExportNative()
-		if err != nil {
-			return err
-		}
-
-		return writeAll(dst, result)
+func encodeNative(imageRef *vips.ImageRef, dst io.Writer) error {
+	result, _, err := imageRef.ExportNative()
+	if err != nil {
+		return err
 	}
 
-	if encoding.Quality != nil && (*encoding.Quality == 0 || *encoding.Quality > 100) {
+	return writeAll(dst, result)
+}
+
+func encode(imageRef *vips.ImageRef, dst io.Writer, opts port.ImageEncoding) error {
+	if opts.Quality != nil && (*opts.Quality == 0 || *opts.Quality > 100) {
 		return port.ErrInvalidImageQuality
 	}
 
-	switch encoding.Format {
+	switch opts.Format {
 	case port.ImageFormatJPEG:
-		params := vips.NewJpegExportParams()
-
-		if encoding.Quality != nil {
-			params.Quality = int(*encoding.Quality)
-		}
-
-		result, _, err := imageRef.ExportJpeg(params)
-		if err != nil {
-			return err
-		}
-
-		return writeAll(dst, result)
-
+		return encodeJPEG(imageRef, dst, opts)
 	case port.ImageFormatPNG:
-		params := vips.NewPngExportParams()
-
-		if encoding.Quality != nil {
-			params.Quality = int(*encoding.Quality)
-		}
-
-		result, _, err := imageRef.ExportPng(params)
-		if err != nil {
-			return err
-		}
-
-		return writeAll(dst, result)
-
+		return encodePNG(imageRef, dst, opts)
 	case port.ImageFormatWebP:
-		params := vips.NewWebpExportParams()
-
-		if encoding.Quality != nil {
-			params.Quality = int(*encoding.Quality)
-		}
-
-		result, _, err := imageRef.ExportWebp(params)
-		if err != nil {
-			return err
-		}
-
-		return writeAll(dst, result)
-
+		return encodeWebP(imageRef, dst, opts)
 	case port.ImageFormatAVIF:
-		params := vips.NewAvifExportParams()
-
-		if encoding.Quality != nil {
-			params.Quality = int(*encoding.Quality)
-		}
-
-		result, _, err := imageRef.ExportAvif(params)
-		if err != nil {
-			return err
-		}
-
-		return writeAll(dst, result)
-
+		return encodeAVIF(imageRef, dst, opts)
 	default:
 		return port.ErrUnsupportedImageFormat
 	}
+}
+
+func encodeJPEG(
+	imageRef *vips.ImageRef,
+	dst io.Writer,
+	opts port.ImageEncoding,
+) error {
+	params := vips.NewJpegExportParams()
+
+	if opts.Quality != nil {
+		params.Quality = int(*opts.Quality)
+	}
+
+	result, _, err := imageRef.ExportJpeg(params)
+	if err != nil {
+		return err
+	}
+
+	return writeAll(dst, result)
+}
+
+func encodePNG(imageRef *vips.ImageRef, dst io.Writer, opts port.ImageEncoding) error {
+	params := vips.NewPngExportParams()
+
+	if opts.Quality != nil {
+		params.Quality = int(*opts.Quality)
+	}
+
+	result, _, err := imageRef.ExportPng(params)
+	if err != nil {
+		return err
+	}
+
+	return writeAll(dst, result)
+}
+
+func encodeWebP(imageRef *vips.ImageRef, dst io.Writer, opts port.ImageEncoding) error {
+	params := vips.NewWebpExportParams()
+
+	if opts.Quality != nil {
+		params.Quality = int(*opts.Quality)
+	}
+
+	result, _, err := imageRef.ExportWebp(params)
+	if err != nil {
+		return err
+	}
+
+	return writeAll(dst, result)
+}
+
+func encodeAVIF(imageRef *vips.ImageRef, dst io.Writer, opts port.ImageEncoding) error {
+	params := vips.NewAvifExportParams()
+
+	if opts.Quality != nil {
+		params.Quality = int(*opts.Quality)
+	}
+
+	result, _, err := imageRef.ExportAvif(params)
+	if err != nil {
+		return err
+	}
+
+	return writeAll(dst, result)
 }
 
 func writeAll(dst io.Writer, data []byte) error {

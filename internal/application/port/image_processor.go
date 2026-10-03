@@ -12,7 +12,6 @@ var (
 	ErrUnsupportedImageFormat      = errors.New("unsupported image format")
 	ErrInvalidImageQuality         = errors.New("invalid image quality")
 	ErrInvalidImageBackgroundColor = errors.New("invalid image background color")
-	ErrImageUpscaleNotAllowed      = errors.New("image upscale not allowed")
 )
 
 type ImageResizeFit string
