@@ -1,4 +1,4 @@
-package event
+package protobuf
 
 import (
 	v1 "github.com/velonyapp/asset/gen/event/v1"

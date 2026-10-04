@@ -16,8 +16,8 @@ import (
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
-	"github.com/velonyapp/asset/internal/infrastructure/event"
 	"github.com/velonyapp/asset/internal/infrastructure/image"
+	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
@@ -37,7 +37,7 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	if err != nil {
 		return nil, nil, err
 	}
-	encoder := event.NewEncoder()
+	encoder := protobuf.NewEncoder()
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
 	imageObjectExistenceUpdatedHandler := domainevent.NewImageObjectExistenceUpdatedHandler(eventPublisher)

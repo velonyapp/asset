@@ -3,8 +3,8 @@ package infrastructure
 import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
-	"github.com/velonyapp/asset/internal/infrastructure/event"
 	"github.com/velonyapp/asset/internal/infrastructure/image"
+	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
 
 	"github.com/google/wire"
@@ -20,5 +20,5 @@ var ProviderSet = wire.NewSet(
 	s3.NewStorage,
 	observability.NewOpenTelemetry,
 	observability.NewServerMetrics,
-	event.NewEncoder,
+	protobuf.NewEncoder,
 )

@@ -7,7 +7,7 @@ import (
 
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/infrastructure/event"
+	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -16,12 +16,12 @@ var _ port.EventPublisher = (*eventPublisher)(nil)
 
 type eventPublisher struct {
 	db      *sql.DB
-	encoder *event.Encoder
+	encoder *protobuf.Encoder
 }
 
 func NewEventPublisher(
 	db *sql.DB,
-	encoder *event.Encoder,
+	encoder *protobuf.Encoder,
 ) port.EventPublisher {
 	return &eventPublisher{
 		db:      db,

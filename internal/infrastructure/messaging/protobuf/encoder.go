@@ -1,4 +1,4 @@
-package event
+package protobuf
 
 import (
 	"fmt"
@@ -18,10 +18,6 @@ func NewEncoder() *Encoder {
 }
 
 func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, error) {
-	if event == nil {
-		return nil, fmt.Errorf("integration event is nil")
-	}
-
 	payload, err := e.payload(event)
 	if err != nil {
 		return nil, err
@@ -45,26 +41,11 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, er
 func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Message, error) {
 	switch event := event.(type) {
 	case *integrationevent.ImageCreated:
-		if event == nil {
-			return nil, fmt.Errorf("ImageCreated event is nil")
-		}
-
 		return imageCreatedPayload(*event), nil
-
 	case *integrationevent.ImageObjectExistenceUpdated:
-		if event == nil {
-			return nil, fmt.Errorf("ImageObjectExistenceUpdated event is nil")
-		}
-
 		return imageObjectExistenceUpdatedPayload(*event), nil
-
 	case *integrationevent.ImageDeleted:
-		if event == nil {
-			return nil, fmt.Errorf("ImageDeleted event is nil")
-		}
-
 		return imageDeletedPayload(*event), nil
-
 	default:
 		return nil, fmt.Errorf("unknown integration event %T", event)
 	}
