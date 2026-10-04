@@ -20,6 +20,7 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/image"
 	observability2 "github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/presentation/api"
+	"github.com/velonyapp/asset/internal/presentation/middleware"
 	"github.com/velonyapp/asset/internal/presentation/observability"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 	"log/slog"
@@ -60,12 +61,15 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	presignImageHandler := query.NewPresignImageHandler(repoImage, storage)
 	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
 	apiService := api.NewService(handlerRegistry, queryHandlerRegistry)
+	tracing := middleware.NewTracingMiddleware()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
-	server := transport.NewGRPCServer(confTransport, apiService, serverMetrics)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, serverMetrics)
+	metrics := middleware.NewMetricsMiddleware(serverMetrics)
+	validation := middleware.NewValidationMiddleware()
+	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, validation)
+	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
 	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
