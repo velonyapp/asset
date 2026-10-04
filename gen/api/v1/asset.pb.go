@@ -30,27 +30,27 @@ type ImageResizeFit int32
 
 const (
 	ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED ImageResizeFit = 0
-	ImageResizeFit_IMAGE_RESIZE_FIT_CONTAIN     ImageResizeFit = 1
-	ImageResizeFit_IMAGE_RESIZE_FIT_COVER       ImageResizeFit = 2
-	ImageResizeFit_IMAGE_RESIZE_FIT_PAD         ImageResizeFit = 3
-	ImageResizeFit_IMAGE_RESIZE_FIT_STRETCH     ImageResizeFit = 4
+	ImageResizeFit_CONTAIN                      ImageResizeFit = 1
+	ImageResizeFit_COVER                        ImageResizeFit = 2
+	ImageResizeFit_PAD                          ImageResizeFit = 3
+	ImageResizeFit_STRETCH                      ImageResizeFit = 4
 )
 
 // Enum value maps for ImageResizeFit.
 var (
 	ImageResizeFit_name = map[int32]string{
 		0: "IMAGE_RESIZE_FIT_UNSPECIFIED",
-		1: "IMAGE_RESIZE_FIT_CONTAIN",
-		2: "IMAGE_RESIZE_FIT_COVER",
-		3: "IMAGE_RESIZE_FIT_PAD",
-		4: "IMAGE_RESIZE_FIT_STRETCH",
+		1: "CONTAIN",
+		2: "COVER",
+		3: "PAD",
+		4: "STRETCH",
 	}
 	ImageResizeFit_value = map[string]int32{
 		"IMAGE_RESIZE_FIT_UNSPECIFIED": 0,
-		"IMAGE_RESIZE_FIT_CONTAIN":     1,
-		"IMAGE_RESIZE_FIT_COVER":       2,
-		"IMAGE_RESIZE_FIT_PAD":         3,
-		"IMAGE_RESIZE_FIT_STRETCH":     4,
+		"CONTAIN":                      1,
+		"COVER":                        2,
+		"PAD":                          3,
+		"STRETCH":                      4,
 	}
 )
 
@@ -84,43 +84,43 @@ func (ImageResizeFit) EnumDescriptor() ([]byte, []int) {
 type ImageGravity int32
 
 const (
-	ImageGravity_IMAGE_GRAVITY_UNSPECIFIED  ImageGravity = 0
-	ImageGravity_IMAGE_GRAVITY_CENTER       ImageGravity = 1
-	ImageGravity_IMAGE_GRAVITY_TOP          ImageGravity = 2
-	ImageGravity_IMAGE_GRAVITY_TOP_RIGHT    ImageGravity = 3
-	ImageGravity_IMAGE_GRAVITY_RIGHT        ImageGravity = 4
-	ImageGravity_IMAGE_GRAVITY_BOTTOM_RIGHT ImageGravity = 5
-	ImageGravity_IMAGE_GRAVITY_BOTTOM       ImageGravity = 6
-	ImageGravity_IMAGE_GRAVITY_BOTTOM_LEFT  ImageGravity = 7
-	ImageGravity_IMAGE_GRAVITY_LEFT         ImageGravity = 8
-	ImageGravity_IMAGE_GRAVITY_TOP_LEFT     ImageGravity = 9
+	ImageGravity_IMAGE_GRAVITY_UNSPECIFIED ImageGravity = 0
+	ImageGravity_CENTER                    ImageGravity = 1
+	ImageGravity_TOP                       ImageGravity = 2
+	ImageGravity_TOP_RIGHT                 ImageGravity = 3
+	ImageGravity_RIGHT                     ImageGravity = 4
+	ImageGravity_BOTTOM_RIGHT              ImageGravity = 5
+	ImageGravity_BOTTOM                    ImageGravity = 6
+	ImageGravity_BOTTOM_LEFT               ImageGravity = 7
+	ImageGravity_LEFT                      ImageGravity = 8
+	ImageGravity_TOP_LEFT                  ImageGravity = 9
 )
 
 // Enum value maps for ImageGravity.
 var (
 	ImageGravity_name = map[int32]string{
 		0: "IMAGE_GRAVITY_UNSPECIFIED",
-		1: "IMAGE_GRAVITY_CENTER",
-		2: "IMAGE_GRAVITY_TOP",
-		3: "IMAGE_GRAVITY_TOP_RIGHT",
-		4: "IMAGE_GRAVITY_RIGHT",
-		5: "IMAGE_GRAVITY_BOTTOM_RIGHT",
-		6: "IMAGE_GRAVITY_BOTTOM",
-		7: "IMAGE_GRAVITY_BOTTOM_LEFT",
-		8: "IMAGE_GRAVITY_LEFT",
-		9: "IMAGE_GRAVITY_TOP_LEFT",
+		1: "CENTER",
+		2: "TOP",
+		3: "TOP_RIGHT",
+		4: "RIGHT",
+		5: "BOTTOM_RIGHT",
+		6: "BOTTOM",
+		7: "BOTTOM_LEFT",
+		8: "LEFT",
+		9: "TOP_LEFT",
 	}
 	ImageGravity_value = map[string]int32{
-		"IMAGE_GRAVITY_UNSPECIFIED":  0,
-		"IMAGE_GRAVITY_CENTER":       1,
-		"IMAGE_GRAVITY_TOP":          2,
-		"IMAGE_GRAVITY_TOP_RIGHT":    3,
-		"IMAGE_GRAVITY_RIGHT":        4,
-		"IMAGE_GRAVITY_BOTTOM_RIGHT": 5,
-		"IMAGE_GRAVITY_BOTTOM":       6,
-		"IMAGE_GRAVITY_BOTTOM_LEFT":  7,
-		"IMAGE_GRAVITY_LEFT":         8,
-		"IMAGE_GRAVITY_TOP_LEFT":     9,
+		"IMAGE_GRAVITY_UNSPECIFIED": 0,
+		"CENTER":                    1,
+		"TOP":                       2,
+		"TOP_RIGHT":                 3,
+		"RIGHT":                     4,
+		"BOTTOM_RIGHT":              5,
+		"BOTTOM":                    6,
+		"BOTTOM_LEFT":               7,
+		"LEFT":                      8,
+		"TOP_LEFT":                  9,
 	}
 )
 
@@ -155,27 +155,27 @@ type ImageFormat int32
 
 const (
 	ImageFormat_IMAGE_FORMAT_UNSPECIFIED ImageFormat = 0
-	ImageFormat_IMAGE_FORMAT_JPEG        ImageFormat = 1
-	ImageFormat_IMAGE_FORMAT_PNG         ImageFormat = 2
-	ImageFormat_IMAGE_FORMAT_WEBP        ImageFormat = 3
-	ImageFormat_IMAGE_FORMAT_AVIF        ImageFormat = 4
+	ImageFormat_JPEG                     ImageFormat = 1
+	ImageFormat_PNG                      ImageFormat = 2
+	ImageFormat_WEBP                     ImageFormat = 3
+	ImageFormat_AVIF                     ImageFormat = 4
 )
 
 // Enum value maps for ImageFormat.
 var (
 	ImageFormat_name = map[int32]string{
 		0: "IMAGE_FORMAT_UNSPECIFIED",
-		1: "IMAGE_FORMAT_JPEG",
-		2: "IMAGE_FORMAT_PNG",
-		3: "IMAGE_FORMAT_WEBP",
-		4: "IMAGE_FORMAT_AVIF",
+		1: "JPEG",
+		2: "PNG",
+		3: "WEBP",
+		4: "AVIF",
 	}
 	ImageFormat_value = map[string]int32{
 		"IMAGE_FORMAT_UNSPECIFIED": 0,
-		"IMAGE_FORMAT_JPEG":        1,
-		"IMAGE_FORMAT_PNG":         2,
-		"IMAGE_FORMAT_WEBP":        3,
-		"IMAGE_FORMAT_AVIF":        4,
+		"JPEG":                     1,
+		"PNG":                      2,
+		"WEBP":                     3,
+		"AVIF":                     4,
 	}
 )
 
@@ -903,30 +903,32 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageR\x05image\"H\n" +
 	"\x12DeleteImageRequest\x122\n" +
 	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name*\xa4\x01\n" +
+	"\x16asset.velony.app/ImageR\x04name*`\n" +
 	"\x0eImageResizeFit\x12 \n" +
-	"\x1cIMAGE_RESIZE_FIT_UNSPECIFIED\x10\x00\x12\x1c\n" +
-	"\x18IMAGE_RESIZE_FIT_CONTAIN\x10\x01\x12\x1a\n" +
-	"\x16IMAGE_RESIZE_FIT_COVER\x10\x02\x12\x18\n" +
-	"\x14IMAGE_RESIZE_FIT_PAD\x10\x03\x12\x1c\n" +
-	"\x18IMAGE_RESIZE_FIT_STRETCH\x10\x04*\xa1\x02\n" +
+	"\x1cIMAGE_RESIZE_FIT_UNSPECIFIED\x10\x00\x12\v\n" +
+	"\aCONTAIN\x10\x01\x12\t\n" +
+	"\x05COVER\x10\x02\x12\a\n" +
+	"\x03PAD\x10\x03\x12\v\n" +
+	"\aSTRETCH\x10\x04*\xa3\x01\n" +
 	"\fImageGravity\x12\x1d\n" +
-	"\x19IMAGE_GRAVITY_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14IMAGE_GRAVITY_CENTER\x10\x01\x12\x15\n" +
-	"\x11IMAGE_GRAVITY_TOP\x10\x02\x12\x1b\n" +
-	"\x17IMAGE_GRAVITY_TOP_RIGHT\x10\x03\x12\x17\n" +
-	"\x13IMAGE_GRAVITY_RIGHT\x10\x04\x12\x1e\n" +
-	"\x1aIMAGE_GRAVITY_BOTTOM_RIGHT\x10\x05\x12\x18\n" +
-	"\x14IMAGE_GRAVITY_BOTTOM\x10\x06\x12\x1d\n" +
-	"\x19IMAGE_GRAVITY_BOTTOM_LEFT\x10\a\x12\x16\n" +
-	"\x12IMAGE_GRAVITY_LEFT\x10\b\x12\x1a\n" +
-	"\x16IMAGE_GRAVITY_TOP_LEFT\x10\t*\x86\x01\n" +
+	"\x19IMAGE_GRAVITY_UNSPECIFIED\x10\x00\x12\n" +
+	"\n" +
+	"\x06CENTER\x10\x01\x12\a\n" +
+	"\x03TOP\x10\x02\x12\r\n" +
+	"\tTOP_RIGHT\x10\x03\x12\t\n" +
+	"\x05RIGHT\x10\x04\x12\x10\n" +
+	"\fBOTTOM_RIGHT\x10\x05\x12\n" +
+	"\n" +
+	"\x06BOTTOM\x10\x06\x12\x0f\n" +
+	"\vBOTTOM_LEFT\x10\a\x12\b\n" +
+	"\x04LEFT\x10\b\x12\f\n" +
+	"\bTOP_LEFT\x10\t*R\n" +
 	"\vImageFormat\x12\x1c\n" +
-	"\x18IMAGE_FORMAT_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11IMAGE_FORMAT_JPEG\x10\x01\x12\x14\n" +
-	"\x10IMAGE_FORMAT_PNG\x10\x02\x12\x15\n" +
-	"\x11IMAGE_FORMAT_WEBP\x10\x03\x12\x15\n" +
-	"\x11IMAGE_FORMAT_AVIF\x10\x042\xb2\x06\n" +
+	"\x18IMAGE_FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04JPEG\x10\x01\x12\a\n" +
+	"\x03PNG\x10\x02\x12\b\n" +
+	"\x04WEBP\x10\x03\x12\b\n" +
+	"\x04AVIF\x10\x042\xb2\x06\n" +
 	"\fAssetService\x12p\n" +
 	"\bGetImage\x12$.velony.asset.api.v1.GetImageRequest\x1a\x1a.velony.asset.api.v1.Image\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/{name=images/*}\x12u\n" +
 	"\vCreateImage\x12'.velony.asset.api.v1.CreateImageRequest\x1a\x1a.velony.asset.api.v1.Image\"!\xdaA\x05image\x82\xd3\xe4\x93\x02\x13:\x05image\"\n" +

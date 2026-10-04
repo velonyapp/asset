@@ -66,33 +66,33 @@ service AssetService {
 enum ImageResizeFit {
   IMAGE_RESIZE_FIT_UNSPECIFIED = 0;
 
-  IMAGE_RESIZE_FIT_CONTAIN = 1;
-  IMAGE_RESIZE_FIT_COVER   = 2;
-  IMAGE_RESIZE_FIT_PAD     = 3;
-  IMAGE_RESIZE_FIT_STRETCH = 4;
+  CONTAIN = 1;
+  COVER   = 2;
+  PAD     = 3;
+  STRETCH = 4;
 }
 
 enum ImageGravity {
   IMAGE_GRAVITY_UNSPECIFIED = 0;
 
-  IMAGE_GRAVITY_CENTER       = 1;
-  IMAGE_GRAVITY_TOP          = 2;
-  IMAGE_GRAVITY_TOP_RIGHT    = 3;
-  IMAGE_GRAVITY_RIGHT        = 4;
-  IMAGE_GRAVITY_BOTTOM_RIGHT = 5;
-  IMAGE_GRAVITY_BOTTOM       = 6;
-  IMAGE_GRAVITY_BOTTOM_LEFT  = 7;
-  IMAGE_GRAVITY_LEFT         = 8;
-  IMAGE_GRAVITY_TOP_LEFT     = 9;
+  CENTER       = 1;
+  TOP          = 2;
+  TOP_RIGHT    = 3;
+  RIGHT        = 4;
+  BOTTOM_RIGHT = 5;
+  BOTTOM       = 6;
+  BOTTOM_LEFT  = 7;
+  LEFT         = 8;
+  TOP_LEFT     = 9;
 }
 
 enum ImageFormat {
   IMAGE_FORMAT_UNSPECIFIED = 0;
 
-  IMAGE_FORMAT_JPEG = 1;
-  IMAGE_FORMAT_PNG  = 2;
-  IMAGE_FORMAT_WEBP = 3;
-  IMAGE_FORMAT_AVIF = 4;
+  JPEG = 1;
+  PNG  = 2;
+  WEBP = 3;
+  AVIF = 4;
 }
 
 message ImageResize {
