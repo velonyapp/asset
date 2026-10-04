@@ -119,7 +119,7 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 				if errors.As(err, &mysqlErr) &&
 					mysqlErr.Number == 1062 &&
 					strings.Contains(mysqlErr.Message, "uq_images_object_key") {
-					return repo.ErrObjectKeyConflict
+					return repo.ErrObjectKeyAlreadyExists
 				}
 
 				return err

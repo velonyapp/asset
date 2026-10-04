@@ -24,25 +24,25 @@ const (
 type ErrorReason int32
 
 const (
-	ErrorReason_ERROR_REASON_UNSPECIFIED ErrorReason = 0
-	ErrorReason_INVALID_IMAGE_RESIZE     ErrorReason = 1
-	ErrorReason_INVALID_IMAGE_ENCODING   ErrorReason = 2
-	ErrorReason_INVALID_STORAGE_KEY      ErrorReason = 3
+	ErrorReason_ERROR_REASON_UNSPECIFIED  ErrorReason = 0
+	ErrorReason_IMAGE_NOT_FOUND           ErrorReason = 1
+	ErrorReason_OBJECT_KEY_ALREADY_EXISTS ErrorReason = 2
+	ErrorReason_OBJECT_NOT_FOUND          ErrorReason = 3
 )
 
 // Enum value maps for ErrorReason.
 var (
 	ErrorReason_name = map[int32]string{
 		0: "ERROR_REASON_UNSPECIFIED",
-		1: "INVALID_IMAGE_RESIZE",
-		2: "INVALID_IMAGE_ENCODING",
-		3: "INVALID_STORAGE_KEY",
+		1: "IMAGE_NOT_FOUND",
+		2: "OBJECT_KEY_ALREADY_EXISTS",
+		3: "OBJECT_NOT_FOUND",
 	}
 	ErrorReason_value = map[string]int32{
-		"ERROR_REASON_UNSPECIFIED": 0,
-		"INVALID_IMAGE_RESIZE":     1,
-		"INVALID_IMAGE_ENCODING":   2,
-		"INVALID_STORAGE_KEY":      3,
+		"ERROR_REASON_UNSPECIFIED":  0,
+		"IMAGE_NOT_FOUND":           1,
+		"OBJECT_KEY_ALREADY_EXISTS": 2,
+		"OBJECT_NOT_FOUND":          3,
 	}
 )
 
@@ -77,12 +77,12 @@ var File_velony_asset_api_v1_error_reason_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_error_reason_proto_rawDesc = "" +
 	"\n" +
-	"&velony/asset/api/v1/error_reason.proto\x12\x13velony.asset.api.v1*z\n" +
+	"&velony/asset/api/v1/error_reason.proto\x12\x13velony.asset.api.v1*u\n" +
 	"\vErrorReason\x12\x1c\n" +
-	"\x18ERROR_REASON_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14INVALID_IMAGE_RESIZE\x10\x01\x12\x1a\n" +
-	"\x16INVALID_IMAGE_ENCODING\x10\x02\x12\x17\n" +
-	"\x13INVALID_STORAGE_KEY\x10\x03B-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\x18ERROR_REASON_UNSPECIFIED\x10\x00\x12\x13\n" +
+	"\x0fIMAGE_NOT_FOUND\x10\x01\x12\x1d\n" +
+	"\x19OBJECT_KEY_ALREADY_EXISTS\x10\x02\x12\x14\n" +
+	"\x10OBJECT_NOT_FOUND\x10\x03B-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_error_reason_proto_rawDescOnce sync.Once

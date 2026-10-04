@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	ErrImageNotFound     = errors.New("image not found")
-	ErrObjectKeyConflict = errors.New("object key already exists")
+	ErrImageNotFound          = errors.New("image not found")
+	ErrObjectKeyAlreadyExists = errors.New("object key already exists")
 )
 
 type Image interface {
