@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-sdk-go-v2/otelaws"
 )
 
 func NewConnection(c *conf.Data) (*s3.Client, error) {
@@ -25,6 +26,8 @@ func NewConnection(c *conf.Data) (*s3.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	otelaws.AppendMiddlewares(&cfg.APIOptions)
 
 	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
 		options.BaseEndpoint = aws.String(c.S3.Endpoint)
