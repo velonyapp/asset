@@ -16,6 +16,7 @@ func NewGRPCServer(
 	service *api.Service,
 	tracing middleware.Tracing,
 	metrics middleware.Metrics,
+	errorMapper middleware.ErrorMapper,
 	validation middleware.Validation,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
@@ -24,6 +25,7 @@ func NewGRPCServer(
 			recovery.Recovery(),
 			tracing.Middleware(),
 			metrics.Middleware(),
+			errorMapper.Middleware(),
 			validation.Middleware(),
 		),
 	}

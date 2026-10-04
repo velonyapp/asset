@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"errors"
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
 	"github.com/velonyapp/asset/internal/application/command"
@@ -9,10 +10,12 @@ import (
 	"github.com/velonyapp/asset/internal/application/query"
 
 	"go.einride.tech/aip/resourcename"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+var (
+	ErrInvalidImageResourceName = errors.New("invalid image resource name")
 )
 
 const (
@@ -33,12 +36,12 @@ func NewService(
 func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, ErrInvalidImageResourceName
 	}
 
 	result, err := query.Send(ctx, &query.GetImage{ImageID: imageID})
 	if err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &v1.Image{
@@ -56,7 +59,7 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 		ObjectKey: req.Image.ObjectKey,
 	})
 	if err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &v1.Image{
@@ -71,7 +74,7 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest) (*v1.PresignImageResponse, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, ErrInvalidImageResourceName
 	}
 
 	result, err := query.Send(ctx, &query.PresignImage{
@@ -79,7 +82,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 		TTL:     req.Ttl.AsDuration(),
 	})
 	if err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &v1.PresignImageResponse{
@@ -90,7 +93,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest) (*v1.ProcessImageResponse, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, ErrInvalidImageResourceName
 	}
 
 	var resize *port.ImageResize
@@ -177,7 +180,7 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 			RemoveMetadata: req.RemoveMetadata,
 		},
 	}); err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &v1.ProcessImageResponse{}, nil
@@ -186,14 +189,14 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequest) (*v1.ReconcileImageResponse, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, ErrInvalidImageResourceName
 	}
 
 	result, err := command.Send(ctx, &command.ReconcileImage{
 		ImageID: imageID,
 	})
 	if err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &v1.ReconcileImageResponse{
@@ -210,13 +213,13 @@ func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequ
 func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (*emptypb.Empty, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, ErrInvalidImageResourceName
 	}
 
 	if _, err := command.Send(ctx, &command.DeleteImage{
 		ImageID: imageID,
 	}); err != nil {
-		return nil, mapError(err)
+		return nil, err
 	}
 
 	return &emptypb.Empty{}, nil

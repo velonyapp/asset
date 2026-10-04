@@ -15,6 +15,7 @@ func NewHTTPServer(
 	service *api.Service,
 	tracing middleware.Tracing,
 	metrics middleware.Metrics,
+	errorMapper middleware.ErrorMapper,
 	validation middleware.Validation,
 ) *http.Server {
 	opts := []http.ServerOption{
@@ -23,6 +24,7 @@ func NewHTTPServer(
 			recovery.Recovery(),
 			tracing.Middleware(),
 			metrics.Middleware(),
+			errorMapper.Middleware(),
 			validation.Middleware(),
 		),
 	}

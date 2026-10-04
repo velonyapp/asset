@@ -17,5 +17,6 @@ var ProviderSet = wire.NewSet(
 	observability.NewServerMetrics,
 	middleware.NewTracingMiddleware,
 	middleware.NewMetricsMiddleware,
+	middleware.NewErrorMapperMiddleware,
 	middleware.NewValidationMiddleware,
 )

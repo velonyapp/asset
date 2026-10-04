@@ -67,9 +67,10 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 		return nil, nil, err
 	}
 	metrics := middleware.NewMetricsMiddleware(serverMetrics)
+	errorMapper := middleware.NewErrorMapperMiddleware()
 	validation := middleware.NewValidationMiddleware()
-	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, validation)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, validation)
+	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
+	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
 	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
