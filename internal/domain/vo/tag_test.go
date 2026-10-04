@@ -29,6 +29,11 @@ func TestNewTag(t *testing.T) {
 			expected: "billing.invoice_created-v2",
 		},
 		{
+			name:     "allows colon",
+			value:    "billing:invoice_created",
+			expected: "billing:invoice_created",
+		},
+		{
 			name:     "exactly 64 characters",
 			value:    strings.Repeat("a", 64),
 			expected: strings.Repeat("a", 64),

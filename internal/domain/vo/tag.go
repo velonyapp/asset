@@ -26,7 +26,8 @@ func NewTag(value string) (Tag, error) {
 			(c >= '0' && c <= '9') ||
 			c == '-' ||
 			c == '_' ||
-			c == '.') {
+			c == '.' ||
+			c == ':') {
 			return Tag{}, ErrTagInvalidCharacter
 		}
 	}
