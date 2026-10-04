@@ -16,11 +16,11 @@ type DeleteImage struct {
 type DeleteImageResult struct {
 }
 
-func (*DeleteImage) resultType() *DeleteImageResult {
-	return nil
+func (DeleteImage) resultType() DeleteImageResult {
+	return DeleteImageResult{}
 }
 
-type DeleteImageHandler Handler[*DeleteImage, *DeleteImageResult]
+type DeleteImageHandler Handler[DeleteImage, DeleteImageResult]
 
 type deleteImageHandler struct {
 	imageRepo  repo.Image
@@ -42,25 +42,25 @@ func NewDeleteImageHandler(
 
 func (h *deleteImageHandler) Handle(
 	ctx context.Context,
-	cmd *DeleteImage,
-) (*DeleteImageResult, error) {
+	cmd DeleteImage,
+) (DeleteImageResult, error) {
 	now := time.Now()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
-		return nil, err
+		return DeleteImageResult{}, err
 	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
-		return nil, err
+		return DeleteImageResult{}, err
 	}
 	if image == nil || image.IsDeleted() {
-		return &DeleteImageResult{}, nil
+		return DeleteImageResult{}, nil
 	}
 
 	if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {
-		return nil, err
+		return DeleteImageResult{}, err
 	}
 
 	image.Delete(now)
@@ -68,8 +68,8 @@ func (h *deleteImageHandler) Handle(
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return nil, err
+		return DeleteImageResult{}, err
 	}
 
-	return &DeleteImageResult{}, nil
+	return DeleteImageResult{}, nil
 }

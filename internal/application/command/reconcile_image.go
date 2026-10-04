@@ -16,14 +16,14 @@ type ReconcileImage struct {
 }
 
 type ReconcileImageResult struct {
-	Image *common.ImageResult
+	Image common.ImageResult
 }
 
-func (*ReconcileImage) resultType() *ReconcileImageResult {
-	return nil
+func (ReconcileImage) resultType() ReconcileImageResult {
+	return ReconcileImageResult{}
 }
 
-type ReconcileImageHandler Handler[*ReconcileImage, *ReconcileImageResult]
+type ReconcileImageHandler Handler[ReconcileImage, ReconcileImageResult]
 
 type reconcileImageHandler struct {
 	imageRepo  repo.Image
@@ -45,40 +45,40 @@ func NewReconcileImageHandler(
 
 func (h *reconcileImageHandler) Handle(
 	ctx context.Context,
-	cmd *ReconcileImage,
-) (*ReconcileImageResult, error) {
+	cmd ReconcileImage,
+) (ReconcileImageResult, error) {
 	now := time.Now()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
-		return nil, err
+		return ReconcileImageResult{}, err
 	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
-		return nil, err
+		return ReconcileImageResult{}, err
 	}
 	if image.IsDeleted() {
-		return nil, entity.ErrImageDeleted
+		return ReconcileImageResult{}, entity.ErrImageDeleted
 	}
 
 	imageObjectExists, err := h.storage.Exists(ctx, image.ObjectKey())
 	if err != nil {
-		return nil, err
+		return ReconcileImageResult{}, err
 	}
 
 	if err := image.UpdateObjectExistence(imageObjectExists, now); err != nil {
-		return nil, err
+		return ReconcileImageResult{}, err
 	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return nil, err
+		return ReconcileImageResult{}, err
 	}
 
-	return &ReconcileImageResult{
-		Image: &common.ImageResult{
+	return ReconcileImageResult{
+		Image: common.ImageResult{
 			ID:           image.ID().String(),
 			Tags:         image.Tags().Strings(),
 			ObjectKey:    image.ObjectKey().String(),

@@ -22,11 +22,11 @@ type ProcessImage struct {
 
 type ProcessImageResult struct{}
 
-func (*ProcessImage) resultType() *ProcessImageResult {
-	return nil
+func (ProcessImage) resultType() ProcessImageResult {
+	return ProcessImageResult{}
 }
 
-type ProcessImageHandler Handler[*ProcessImage, *ProcessImageResult]
+type ProcessImageHandler Handler[ProcessImage, ProcessImageResult]
 
 type processImageHandler struct {
 	imageRepo      repo.Image
@@ -51,29 +51,29 @@ func NewProcessImageHandler(
 
 func (h *processImageHandler) Handle(
 	ctx context.Context,
-	cmd *ProcessImage,
-) (*ProcessImageResult, error) {
+	cmd ProcessImage,
+) (ProcessImageResult, error) {
 	now := time.Now()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {
-		return nil, err
+		return ProcessImageResult{}, err
 	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
-		return nil, err
+		return ProcessImageResult{}, err
 	}
 	if image.IsDeleted() {
-		return nil, entity.ErrImageDeleted
+		return ProcessImageResult{}, entity.ErrImageDeleted
 	}
 	if !image.ObjectExists() {
-		return nil, ErrImageObjectDoesntExist
+		return ProcessImageResult{}, ErrImageObjectDoesntExist
 	}
 
 	src, err := h.storage.Get(ctx, image.ObjectKey())
 	if err != nil {
-		return nil, err
+		return ProcessImageResult{}, err
 	}
 	defer src.Close()
 
@@ -96,10 +96,10 @@ func (h *processImageHandler) Handle(
 
 	processErr := <-processErrCh
 	if processErr != nil {
-		return nil, processErr
+		return ProcessImageResult{}, processErr
 	}
 	if putErr != nil {
-		return nil, putErr
+		return ProcessImageResult{}, putErr
 	}
 
 	h.eventPublisher.Publish(ctx, integrationevent.NewImageProcessed(
@@ -108,5 +108,5 @@ func (h *processImageHandler) Handle(
 		now,
 	))
 
-	return &ProcessImageResult{}, nil
+	return ProcessImageResult{}, nil
 }

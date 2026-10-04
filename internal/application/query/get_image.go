@@ -14,14 +14,14 @@ type GetImage struct {
 }
 
 type GetImageResult struct {
-	Image *common.ImageResult
+	Image common.ImageResult
 }
 
-func (*GetImage) resultType() *GetImageResult {
-	return nil
+func (GetImage) resultType() GetImageResult {
+	return GetImageResult{}
 }
 
-type GetImageHandler Handler[*GetImage, *GetImageResult]
+type GetImageHandler Handler[GetImage, GetImageResult]
 
 type getImageHandler struct {
 	imageRepo repo.Image
@@ -37,23 +37,23 @@ func NewGetImageHandler(
 
 func (h *getImageHandler) Handle(
 	ctx context.Context,
-	qry *GetImage,
-) (*GetImageResult, error) {
+	qry GetImage,
+) (GetImageResult, error) {
 	imageID, err := vo.NewImageID(qry.ImageID)
 	if err != nil {
-		return nil, err
+		return GetImageResult{}, err
 	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
-		return nil, err
+		return GetImageResult{}, err
 	}
 	if image.IsDeleted() {
-		return nil, entity.ErrImageDeleted
+		return GetImageResult{}, entity.ErrImageDeleted
 	}
 
-	return &GetImageResult{
-		Image: &common.ImageResult{
+	return GetImageResult{
+		Image: common.ImageResult{
 			ID:           image.ID().String(),
 			Tags:         image.Tags().Strings(),
 			ObjectKey:    image.ObjectKey().String(),

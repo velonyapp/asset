@@ -19,11 +19,11 @@ type PresignImageResult struct {
 	UploadURL string
 }
 
-func (*PresignImage) resultType() *PresignImageResult {
-	return nil
+func (PresignImage) resultType() PresignImageResult {
+	return PresignImageResult{}
 }
 
-type PresignImageHandler Handler[*PresignImage, *PresignImageResult]
+type PresignImageHandler Handler[PresignImage, PresignImageResult]
 
 type presignImageHandler struct {
 	imageRepo repo.Image
@@ -42,27 +42,27 @@ func NewPresignImageHandler(
 
 func (h *presignImageHandler) Handle(
 	ctx context.Context,
-	qry *PresignImage,
-) (*PresignImageResult, error) {
+	qry PresignImage,
+) (PresignImageResult, error) {
 	imageID, err := vo.NewImageID(qry.ImageID)
 	if err != nil {
-		return nil, err
+		return PresignImageResult{}, err
 	}
 
 	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
-		return nil, err
+		return PresignImageResult{}, err
 	}
 	if image.IsDeleted() {
-		return nil, entity.ErrImageDeleted
+		return PresignImageResult{}, entity.ErrImageDeleted
 	}
 
 	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), qry.TTL)
 	if err != nil {
-		return nil, err
+		return PresignImageResult{}, err
 	}
 
-	return &PresignImageResult{
+	return PresignImageResult{
 		UploadURL: uploadURL,
 	}, nil
 }

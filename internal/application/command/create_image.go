@@ -17,14 +17,14 @@ type CreateImage struct {
 }
 
 type CreateImageResult struct {
-	Image *common.ImageResult
+	Image common.ImageResult
 }
 
-func (*CreateImage) resultType() *CreateImageResult {
-	return nil
+func (CreateImage) resultType() CreateImageResult {
+	return CreateImageResult{}
 }
 
-type CreateImageHandler Handler[*CreateImage, *CreateImageResult]
+type CreateImageHandler Handler[CreateImage, CreateImageResult]
 
 type createImageHandler struct {
 	imageRepo  repo.Image
@@ -43,17 +43,17 @@ func NewCreateImageHandler(
 
 func (h *createImageHandler) Handle(
 	ctx context.Context,
-	cmd *CreateImage,
-) (*CreateImageResult, error) {
+	cmd CreateImage,
+) (CreateImageResult, error) {
 	now := time.Now()
 
 	tags, err := vo.NewTags(cmd.Tags)
 	if err != nil {
-		return nil, err
+		return CreateImageResult{}, err
 	}
 	objectKey, err := vo.NewObjectKey(cmd.ObjectKey)
 	if err != nil {
-		return nil, err
+		return CreateImageResult{}, err
 	}
 
 	image := entity.NewImage(tags, objectKey, now)
@@ -61,11 +61,11 @@ func (h *createImageHandler) Handle(
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return nil, err
+		return CreateImageResult{}, err
 	}
 
-	return &CreateImageResult{
-		Image: &common.ImageResult{
+	return CreateImageResult{
+		Image: common.ImageResult{
 			ID:           image.ID().String(),
 			Tags:         image.Tags().Strings(),
 			ObjectKey:    image.ObjectKey().String(),
