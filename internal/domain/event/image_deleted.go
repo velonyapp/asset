@@ -19,8 +19,8 @@ func NewImageDeleted(
 	imageID vo.ImageID,
 	tags vo.Tags,
 	deleteTime time.Time,
-) *ImageDeleted {
-	return &ImageDeleted{
+) ImageDeleted {
+	return ImageDeleted{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:       tags,
@@ -28,10 +28,10 @@ func NewImageDeleted(
 	}
 }
 
-func (e *ImageDeleted) Tags() vo.Tags {
+func (e ImageDeleted) Tags() vo.Tags {
 	return e.tags
 }
 
-func (e *ImageDeleted) DeleteTime() time.Time {
+func (e ImageDeleted) DeleteTime() time.Time {
 	return e.deleteTime
 }

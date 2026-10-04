@@ -21,8 +21,8 @@ func NewImageCreated(
 	tags vo.Tags,
 	objectKey vo.ObjectKey,
 	createTime time.Time,
-) *ImageCreated {
-	return &ImageCreated{
+) ImageCreated {
+	return ImageCreated{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:       tags,
@@ -31,14 +31,14 @@ func NewImageCreated(
 	}
 }
 
-func (e *ImageCreated) Tags() vo.Tags {
+func (e ImageCreated) Tags() vo.Tags {
 	return e.tags
 }
 
-func (e *ImageCreated) ObjectKey() vo.ObjectKey {
+func (e ImageCreated) ObjectKey() vo.ObjectKey {
 	return e.objectKey
 }
 
-func (e *ImageCreated) CreateTime() time.Time {
+func (e ImageCreated) CreateTime() time.Time {
 	return e.createTime
 }

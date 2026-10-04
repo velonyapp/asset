@@ -8,7 +8,7 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[*event.ImageObjectExistenceUpdated] = (*ImageObjectExistenceUpdatedHandler)(nil)
+var _ Handler[event.ImageObjectExistenceUpdated] = (*ImageObjectExistenceUpdatedHandler)(nil)
 
 type ImageObjectExistenceUpdatedHandler struct {
 	eventPublisher port.EventPublisher
@@ -22,7 +22,7 @@ func NewImageObjectExistenceUpdatedHandler(
 	}
 }
 
-func (h *ImageObjectExistenceUpdatedHandler) Execute(ctx context.Context, domainEvent *event.ImageObjectExistenceUpdated) error {
+func (h *ImageObjectExistenceUpdatedHandler) Execute(ctx context.Context, domainEvent event.ImageObjectExistenceUpdated) error {
 	integrationEvent := integrationevent.NewImageObjectExistenceUpdated(
 		domainEvent.AggregateID(),
 		domainEvent.Tags().Strings(),

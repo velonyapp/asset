@@ -40,12 +40,12 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, er
 
 func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Message, error) {
 	switch event := event.(type) {
-	case *integrationevent.ImageCreated:
-		return imageCreatedPayload(*event), nil
-	case *integrationevent.ImageObjectExistenceUpdated:
-		return imageObjectExistenceUpdatedPayload(*event), nil
-	case *integrationevent.ImageDeleted:
-		return imageDeletedPayload(*event), nil
+	case integrationevent.ImageCreated:
+		return imageCreatedPayload(event), nil
+	case integrationevent.ImageObjectExistenceUpdated:
+		return imageObjectExistenceUpdatedPayload(event), nil
+	case integrationevent.ImageDeleted:
+		return imageDeletedPayload(event), nil
 	default:
 		return nil, fmt.Errorf("unknown integration event %T", event)
 	}

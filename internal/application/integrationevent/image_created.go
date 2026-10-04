@@ -15,22 +15,22 @@ func NewImageCreated(
 	tags []string,
 	occurTime time.Time,
 	objectKey string,
-) *ImageCreated {
-	return &ImageCreated{
+) ImageCreated {
+	return ImageCreated{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, tags, occurTime),
 
 		objectKey: objectKey,
 	}
 }
 
-func (e *ImageCreated) Type() string {
+func (e ImageCreated) Type() string {
 	return "asset.image.created"
 }
 
-func (e *ImageCreated) AggregateType() string {
+func (e ImageCreated) AggregateType() string {
 	return "image"
 }
 
-func (e *ImageCreated) ObjectKey() string {
+func (e ImageCreated) ObjectKey() string {
 	return e.objectKey
 }

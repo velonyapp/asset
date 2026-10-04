@@ -21,8 +21,8 @@ func NewImageObjectExistenceUpdated(
 	tags vo.Tags,
 	objectExists bool,
 	updateTime time.Time,
-) *ImageObjectExistenceUpdated {
-	return &ImageObjectExistenceUpdated{
+) ImageObjectExistenceUpdated {
+	return ImageObjectExistenceUpdated{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:         tags,
@@ -31,14 +31,14 @@ func NewImageObjectExistenceUpdated(
 	}
 }
 
-func (e *ImageObjectExistenceUpdated) Tags() vo.Tags {
+func (e ImageObjectExistenceUpdated) Tags() vo.Tags {
 	return e.tags
 }
 
-func (e *ImageObjectExistenceUpdated) ObjectExists() bool {
+func (e ImageObjectExistenceUpdated) ObjectExists() bool {
 	return e.objectExists
 }
 
-func (e *ImageObjectExistenceUpdated) UpdateTime() time.Time {
+func (e ImageObjectExistenceUpdated) UpdateTime() time.Time {
 	return e.updateTime
 }

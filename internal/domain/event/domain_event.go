@@ -19,5 +19,5 @@ func NewBaseDomainEvent(aggregateID string) BaseDomainEvent {
 	}
 }
 
-func (e *BaseDomainEvent) ID() string          { return e.id }
-func (e *BaseDomainEvent) AggregateID() string { return e.aggregateID }
+func (e BaseDomainEvent) ID() string          { return e.id }
+func (e BaseDomainEvent) AggregateID() string { return e.aggregateID }

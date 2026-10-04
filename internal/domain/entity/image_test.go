@@ -42,7 +42,7 @@ func TestImage_UpdateObjectExistence(t *testing.T) {
 		t.Fatalf("expected 1 event, got %d", len(events))
 	}
 
-	if _, ok := events[0].(*event.ImageObjectExistenceUpdated); !ok {
+	if _, ok := events[0].(event.ImageObjectExistenceUpdated); !ok {
 		t.Errorf(
 			"expected ImageObjectExistenceUpdated, got %T",
 			events[0],
@@ -132,7 +132,7 @@ func TestImage_Delete(t *testing.T) {
 		t.Fatalf("expected 1 event, got %d", len(events))
 	}
 
-	if _, ok := events[0].(*event.ImageDeleted); !ok {
+	if _, ok := events[0].(event.ImageDeleted); !ok {
 		t.Errorf(
 			"expected ImageDeleted, got %T",
 			events[0],

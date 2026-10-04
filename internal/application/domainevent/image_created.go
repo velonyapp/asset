@@ -8,7 +8,7 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[*event.ImageCreated] = (*ImageCreatedHandler)(nil)
+var _ Handler[event.ImageCreated] = (*ImageCreatedHandler)(nil)
 
 type ImageCreatedHandler struct {
 	eventPublisher port.EventPublisher
@@ -22,7 +22,7 @@ func NewImageCreatedHandler(
 	}
 }
 
-func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent *event.ImageCreated) error {
+func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent event.ImageCreated) error {
 	integrationEvent := integrationevent.NewImageCreated(
 		domainEvent.AggregateID(),
 		domainEvent.Tags().Strings(),

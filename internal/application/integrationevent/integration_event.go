@@ -31,7 +31,7 @@ func NewBaseIntegrationEvent(aggregateID string, tags []string, occurTime time.T
 	}
 }
 
-func (e *BaseIntegrationEvent) ID() string           { return e.id }
-func (e *BaseIntegrationEvent) AggregateID() string  { return e.aggregateID }
-func (e *BaseIntegrationEvent) Tags() []string       { return append([]string(nil), e.tags...) }
-func (e *BaseIntegrationEvent) OccurTime() time.Time { return e.occurTime }
+func (e BaseIntegrationEvent) ID() string           { return e.id }
+func (e BaseIntegrationEvent) AggregateID() string  { return e.aggregateID }
+func (e BaseIntegrationEvent) Tags() []string       { return append([]string(nil), e.tags...) }
+func (e BaseIntegrationEvent) OccurTime() time.Time { return e.occurTime }

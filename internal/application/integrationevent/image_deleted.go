@@ -12,16 +12,16 @@ func NewImageDeleted(
 	imageID string,
 	tags []string,
 	occurTime time.Time,
-) *ImageDeleted {
-	return &ImageDeleted{
+) ImageDeleted {
+	return ImageDeleted{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, tags, occurTime),
 	}
 }
 
-func (e *ImageDeleted) Type() string {
+func (e ImageDeleted) Type() string {
 	return "asset.image.deleted"
 }
 
-func (e *ImageDeleted) AggregateType() string {
+func (e ImageDeleted) AggregateType() string {
 	return "image"
 }
