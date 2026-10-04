@@ -6,12 +6,10 @@
 package main
 
 import (
-	"context"
 	"log/slog"
 
 	"github.com/velonyapp/asset/internal/application"
 	"github.com/velonyapp/asset/internal/conf"
-	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure"
 	"github.com/velonyapp/asset/internal/presentation"
 
@@ -21,11 +19,8 @@ import (
 
 // wireApp init kratos application.
 func wireApp(
-	context.Context,
-	*info.Service,
 	*conf.Data,
 	*conf.Transport,
-	*conf.Observability,
 	*slog.Logger,
 ) (*kratos.App, func(), error) {
 	panic(wire.Build(

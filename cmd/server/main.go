@@ -7,8 +7,7 @@ import (
 	"os"
 
 	"github.com/velonyapp/asset/internal/conf"
-	"github.com/velonyapp/asset/internal/info"
-	"github.com/velonyapp/asset/internal/infrastructure/observability"
+	"github.com/velonyapp/asset/internal/observability/telemetry"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 
 	"buf.build/go/protovalidate"
@@ -36,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "config", "../../configs", "config path, eg: -config config.yaml")
 }
 
-func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, rc *transport.RabbitMQConsumer, _ *observability.OpenTelemetry) *kratos.App {
+func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, rc *transport.RabbitMQConsumer) *kratos.App {
 	return kratos.New(
 		kratos.ID(InstanceID),
 		kratos.Name(Name),
@@ -53,18 +52,6 @@ func newApp(logger *slog.Logger, gs *grpc.Server, hs *http.Server, rc *transport
 
 func main() {
 	flag.Parse()
-
-	// Info
-	bi := info.Bootstrap{
-		Service: &info.Service{
-			Name:       Name,
-			Version:    Version,
-			InstanceID: InstanceID,
-		},
-	}
-	if err := protovalidate.Validate(&bi); err != nil {
-		panic(err)
-	}
 
 	// Config
 	c := config.New(
@@ -87,6 +74,19 @@ func main() {
 		panic(err)
 	}
 
+	// Telemetry
+	_, cleanup, err := telemetry.NewOpenTelemetry(
+		context.Background(),
+		bc.Telemetry,
+		Name,
+		Version,
+		InstanceID,
+	)
+	if err != nil {
+		panic(err)
+	}
+	defer cleanup()
+
 	// Logger
 	logger := log.NewLogger(
 		slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
@@ -103,11 +103,8 @@ func main() {
 
 	// App
 	app, cleanup, err := wireApp(
-		context.Background(),
-		bi.Service,
 		bc.Data,
 		bc.Transport,
-		bc.Observability,
 		logger,
 	)
 	if err != nil {

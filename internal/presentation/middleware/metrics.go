@@ -1,21 +1,40 @@
 package middleware
 
 import (
-	"github.com/velonyapp/asset/internal/infrastructure/observability"
-
 	"github.com/go-kratos/kratos/contrib/otel/v3/metrics"
 	"github.com/go-kratos/kratos/v3/middleware"
+	"go.opentelemetry.io/otel"
 )
+
+const instrumentationName = "github.com/velonyapp/asset/internal/presentation/middleware"
 
 type Metrics middleware.Middleware
 
-func NewMetrics(serverMetrics *observability.ServerMetrics) Metrics {
+func NewMetrics() (Metrics, error) {
+	meter := otel.Meter(instrumentationName)
+
+	requests, err := metrics.DefaultRequestsCounter(
+		meter,
+		metrics.DefaultServerRequestsCounterName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	seconds, err := metrics.DefaultSecondsHistogram(
+		meter,
+		metrics.DefaultServerSecondsHistogramName,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return Metrics(
 		metrics.Server(
-			metrics.WithSeconds(serverMetrics.Seconds),
-			metrics.WithRequests(serverMetrics.Requests),
+			metrics.WithSeconds(seconds),
+			metrics.WithRequests(requests),
 		),
-	)
+	), nil
 }
 
 func (m Metrics) Middleware() middleware.Middleware {

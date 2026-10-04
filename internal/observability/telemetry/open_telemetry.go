@@ -1,4 +1,4 @@
-package observability
+package telemetry
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/velonyapp/asset/internal/conf"
-	"github.com/velonyapp/asset/internal/info"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -25,7 +24,7 @@ type OpenTelemetry struct {
 	meterProvider  *metric.MeterProvider
 }
 
-func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Service) (*OpenTelemetry, func(), error) {
+func NewOpenTelemetry(ctx context.Context, c *conf.Telemetry, name, version, instanceID string) (*OpenTelemetry, func(), error) {
 	if c == nil {
 		return &OpenTelemetry{}, func() {}, nil
 	}
@@ -33,9 +32,9 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Servic
 	res, err := resource.New(ctx,
 		resource.WithTelemetrySDK(),
 		resource.WithAttributes(
-			attribute.String("service.name", i.Name),
-			attribute.String("service.version", i.Version),
-			attribute.String("service.instance.id", i.InstanceID),
+			attribute.String("service.name", name),
+			attribute.String("service.version", version),
+			attribute.String("service.instance.id", instanceID),
 		),
 		resource.WithFromEnv(),
 	)
@@ -74,7 +73,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Servic
 		var exporter trace.SpanExporter
 
 		switch c.Tracing.Protocol {
-		case conf.Observability_PROTOCOL_GRPC:
+		case conf.Telemetry_PROTOCOL_GRPC:
 			exporterOpts := []otlptracegrpc.Option{
 				otlptracegrpc.WithEndpointURL(c.Tracing.Endpoint),
 			}
@@ -93,7 +92,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Servic
 				return nil, nil, err
 			}
 
-		case conf.Observability_PROTOCOL_HTTP_PROTOBUF:
+		case conf.Telemetry_PROTOCOL_HTTP_PROTOBUF:
 			exporterOpts := []otlptracehttp.Option{
 				otlptracehttp.WithEndpointURL(c.Tracing.Endpoint),
 			}
@@ -136,7 +135,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Servic
 		var exporter metric.Exporter
 
 		switch c.Metrics.Protocol {
-		case conf.Observability_PROTOCOL_GRPC:
+		case conf.Telemetry_PROTOCOL_GRPC:
 			exporterOpts := []otlpmetricgrpc.Option{
 				otlpmetricgrpc.WithEndpointURL(c.Metrics.Endpoint),
 			}
@@ -157,7 +156,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Observability, i *info.Servic
 				return nil, nil, err
 			}
 
-		case conf.Observability_PROTOCOL_HTTP_PROTOBUF:
+		case conf.Telemetry_PROTOCOL_HTTP_PROTOBUF:
 			exporterOpts := []otlpmetrichttp.Option{
 				otlpmetrichttp.WithEndpointURL(c.Metrics.Endpoint),
 			}

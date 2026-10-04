@@ -7,17 +7,14 @@
 package main
 
 import (
-	"context"
 	"github.com/go-kratos/kratos/v3"
 	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/application/domainevent"
 	"github.com/velonyapp/asset/internal/application/query"
 	"github.com/velonyapp/asset/internal/conf"
-	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
-	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/infrastructure/processing"
 	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
@@ -32,7 +29,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, service *info.Service, data *conf.Data, confTransport *conf.Transport, confObservability *conf.Observability, logger *slog.Logger) (*kratos.App, func(), error) {
+func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger) (*kratos.App, func(), error) {
 	db, err := mysql.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
@@ -59,24 +56,18 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	getImageHandler := query.NewGetImageHandler(image)
 	presignImageHandler := query.NewPresignImageHandler(image, storage)
 	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
-	apiService := api.NewService(handlerRegistry, queryHandlerRegistry)
+	service := api.NewService(handlerRegistry, queryHandlerRegistry)
 	tracing := middleware.NewTracing()
-	serverMetrics, err := observability.NewServerMetrics()
+	metrics, err := middleware.NewMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
-	metrics := middleware.NewMetrics(serverMetrics)
 	errorMapper := middleware.NewErrorMapper()
 	validation := middleware.NewValidation()
-	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
+	server := transport.NewGRPCServer(confTransport, service, tracing, metrics, errorMapper, validation)
+	httpServer := transport.NewHTTPServer(confTransport, service, tracing, metrics, errorMapper, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
-	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, service)
-	if err != nil {
-		return nil, nil, err
-	}
-	app := newApp(logger, server, httpServer, rabbitMQConsumer, openTelemetry)
+	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {
-		cleanup()
 	}, nil
 }

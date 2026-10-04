@@ -23,52 +23,52 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Observability_Protocol int32
+type Telemetry_Protocol int32
 
 const (
-	Observability_PROTOCOL_UNSPECIFIED   Observability_Protocol = 0
-	Observability_PROTOCOL_GRPC          Observability_Protocol = 1
-	Observability_PROTOCOL_HTTP_PROTOBUF Observability_Protocol = 2
+	Telemetry_PROTOCOL_UNSPECIFIED   Telemetry_Protocol = 0
+	Telemetry_PROTOCOL_GRPC          Telemetry_Protocol = 1
+	Telemetry_PROTOCOL_HTTP_PROTOBUF Telemetry_Protocol = 2
 )
 
-// Enum value maps for Observability_Protocol.
+// Enum value maps for Telemetry_Protocol.
 var (
-	Observability_Protocol_name = map[int32]string{
+	Telemetry_Protocol_name = map[int32]string{
 		0: "PROTOCOL_UNSPECIFIED",
 		1: "PROTOCOL_GRPC",
 		2: "PROTOCOL_HTTP_PROTOBUF",
 	}
-	Observability_Protocol_value = map[string]int32{
+	Telemetry_Protocol_value = map[string]int32{
 		"PROTOCOL_UNSPECIFIED":   0,
 		"PROTOCOL_GRPC":          1,
 		"PROTOCOL_HTTP_PROTOBUF": 2,
 	}
 )
 
-func (x Observability_Protocol) Enum() *Observability_Protocol {
-	p := new(Observability_Protocol)
+func (x Telemetry_Protocol) Enum() *Telemetry_Protocol {
+	p := new(Telemetry_Protocol)
 	*p = x
 	return p
 }
 
-func (x Observability_Protocol) String() string {
+func (x Telemetry_Protocol) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (Observability_Protocol) Descriptor() protoreflect.EnumDescriptor {
+func (Telemetry_Protocol) Descriptor() protoreflect.EnumDescriptor {
 	return file_conf_conf_proto_enumTypes[0].Descriptor()
 }
 
-func (Observability_Protocol) Type() protoreflect.EnumType {
+func (Telemetry_Protocol) Type() protoreflect.EnumType {
 	return &file_conf_conf_proto_enumTypes[0]
 }
 
-func (x Observability_Protocol) Number() protoreflect.EnumNumber {
+func (x Telemetry_Protocol) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use Observability_Protocol.Descriptor instead.
-func (Observability_Protocol) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use Telemetry_Protocol.Descriptor instead.
+func (Telemetry_Protocol) EnumDescriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
 }
 
@@ -76,7 +76,7 @@ type Bootstrap struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Transport     *Transport             `protobuf:"bytes,1,opt,name=transport,proto3" json:"transport,omitempty"`
 	Data          *Data                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	Observability *Observability         `protobuf:"bytes,3,opt,name=observability,proto3" json:"observability,omitempty"`
+	Telemetry     *Telemetry             `protobuf:"bytes,3,opt,name=telemetry,proto3" json:"telemetry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -125,9 +125,9 @@ func (x *Bootstrap) GetData() *Data {
 	return nil
 }
 
-func (x *Bootstrap) GetObservability() *Observability {
+func (x *Bootstrap) GetTelemetry() *Telemetry {
 	if x != nil {
-		return x.Observability
+		return x.Telemetry
 	}
 	return nil
 }
@@ -244,28 +244,28 @@ func (x *Data) GetS3() *Data_S3 {
 	return nil
 }
 
-type Observability struct {
+type Telemetry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tracing       *Observability_Tracing `protobuf:"bytes,1,opt,name=tracing,proto3" json:"tracing,omitempty"`
-	Metrics       *Observability_Metrics `protobuf:"bytes,2,opt,name=metrics,proto3" json:"metrics,omitempty"`
+	Tracing       *Telemetry_Tracing     `protobuf:"bytes,1,opt,name=tracing,proto3" json:"tracing,omitempty"`
+	Metrics       *Telemetry_Metrics     `protobuf:"bytes,2,opt,name=metrics,proto3" json:"metrics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Observability) Reset() {
-	*x = Observability{}
+func (x *Telemetry) Reset() {
+	*x = Telemetry{}
 	mi := &file_conf_conf_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Observability) String() string {
+func (x *Telemetry) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Observability) ProtoMessage() {}
+func (*Telemetry) ProtoMessage() {}
 
-func (x *Observability) ProtoReflect() protoreflect.Message {
+func (x *Telemetry) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -277,19 +277,19 @@ func (x *Observability) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Observability.ProtoReflect.Descriptor instead.
-func (*Observability) Descriptor() ([]byte, []int) {
+// Deprecated: Use Telemetry.ProtoReflect.Descriptor instead.
+func (*Telemetry) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Observability) GetTracing() *Observability_Tracing {
+func (x *Telemetry) GetTracing() *Telemetry_Tracing {
 	if x != nil {
 		return x.Tracing
 	}
 	return nil
 }
 
-func (x *Observability) GetMetrics() *Observability_Metrics {
+func (x *Telemetry) GetMetrics() *Telemetry_Metrics {
 	if x != nil {
 		return x.Metrics
 	}
@@ -672,9 +672,9 @@ func (x *Data_S3) GetBucket() string {
 	return ""
 }
 
-type Observability_Tracing struct {
+type Telemetry_Tracing struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Protocol      Observability_Protocol `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Observability_Protocol" json:"protocol,omitempty"`
+	Protocol      Telemetry_Protocol     `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Telemetry_Protocol" json:"protocol,omitempty"`
 	Endpoint      string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	Authorization *string                `protobuf:"bytes,3,opt,name=authorization,proto3,oneof" json:"authorization,omitempty"`
 	SampleRatio   *float64               `protobuf:"fixed64,4,opt,name=sample_ratio,json=sampleRatio,proto3,oneof" json:"sample_ratio,omitempty"`
@@ -682,20 +682,20 @@ type Observability_Tracing struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Observability_Tracing) Reset() {
-	*x = Observability_Tracing{}
+func (x *Telemetry_Tracing) Reset() {
+	*x = Telemetry_Tracing{}
 	mi := &file_conf_conf_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Observability_Tracing) String() string {
+func (x *Telemetry_Tracing) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Observability_Tracing) ProtoMessage() {}
+func (*Telemetry_Tracing) ProtoMessage() {}
 
-func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
+func (x *Telemetry_Tracing) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -707,42 +707,42 @@ func (x *Observability_Tracing) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Observability_Tracing.ProtoReflect.Descriptor instead.
-func (*Observability_Tracing) Descriptor() ([]byte, []int) {
+// Deprecated: Use Telemetry_Tracing.ProtoReflect.Descriptor instead.
+func (*Telemetry_Tracing) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 0}
 }
 
-func (x *Observability_Tracing) GetProtocol() Observability_Protocol {
+func (x *Telemetry_Tracing) GetProtocol() Telemetry_Protocol {
 	if x != nil {
 		return x.Protocol
 	}
-	return Observability_PROTOCOL_UNSPECIFIED
+	return Telemetry_PROTOCOL_UNSPECIFIED
 }
 
-func (x *Observability_Tracing) GetEndpoint() string {
+func (x *Telemetry_Tracing) GetEndpoint() string {
 	if x != nil {
 		return x.Endpoint
 	}
 	return ""
 }
 
-func (x *Observability_Tracing) GetAuthorization() string {
+func (x *Telemetry_Tracing) GetAuthorization() string {
 	if x != nil && x.Authorization != nil {
 		return *x.Authorization
 	}
 	return ""
 }
 
-func (x *Observability_Tracing) GetSampleRatio() float64 {
+func (x *Telemetry_Tracing) GetSampleRatio() float64 {
 	if x != nil && x.SampleRatio != nil {
 		return *x.SampleRatio
 	}
 	return 0
 }
 
-type Observability_Metrics struct {
+type Telemetry_Metrics struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Protocol       Observability_Protocol `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Observability_Protocol" json:"protocol,omitempty"`
+	Protocol       Telemetry_Protocol     `protobuf:"varint,1,opt,name=protocol,proto3,enum=kratos.api.Telemetry_Protocol" json:"protocol,omitempty"`
 	Endpoint       string                 `protobuf:"bytes,2,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	Authorization  *string                `protobuf:"bytes,3,opt,name=authorization,proto3,oneof" json:"authorization,omitempty"`
 	ExportInterval *durationpb.Duration   `protobuf:"bytes,4,opt,name=export_interval,json=exportInterval,proto3" json:"export_interval,omitempty"`
@@ -750,20 +750,20 @@ type Observability_Metrics struct {
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *Observability_Metrics) Reset() {
-	*x = Observability_Metrics{}
+func (x *Telemetry_Metrics) Reset() {
+	*x = Telemetry_Metrics{}
 	mi := &file_conf_conf_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Observability_Metrics) String() string {
+func (x *Telemetry_Metrics) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Observability_Metrics) ProtoMessage() {}
+func (*Telemetry_Metrics) ProtoMessage() {}
 
-func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
+func (x *Telemetry_Metrics) ProtoReflect() protoreflect.Message {
 	mi := &file_conf_conf_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -775,33 +775,33 @@ func (x *Observability_Metrics) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Observability_Metrics.ProtoReflect.Descriptor instead.
-func (*Observability_Metrics) Descriptor() ([]byte, []int) {
+// Deprecated: Use Telemetry_Metrics.ProtoReflect.Descriptor instead.
+func (*Telemetry_Metrics) Descriptor() ([]byte, []int) {
 	return file_conf_conf_proto_rawDescGZIP(), []int{3, 1}
 }
 
-func (x *Observability_Metrics) GetProtocol() Observability_Protocol {
+func (x *Telemetry_Metrics) GetProtocol() Telemetry_Protocol {
 	if x != nil {
 		return x.Protocol
 	}
-	return Observability_PROTOCOL_UNSPECIFIED
+	return Telemetry_PROTOCOL_UNSPECIFIED
 }
 
-func (x *Observability_Metrics) GetEndpoint() string {
+func (x *Telemetry_Metrics) GetEndpoint() string {
 	if x != nil {
 		return x.Endpoint
 	}
 	return ""
 }
 
-func (x *Observability_Metrics) GetAuthorization() string {
+func (x *Telemetry_Metrics) GetAuthorization() string {
 	if x != nil && x.Authorization != nil {
 		return *x.Authorization
 	}
 	return ""
 }
 
-func (x *Observability_Metrics) GetExportInterval() *durationpb.Duration {
+func (x *Telemetry_Metrics) GetExportInterval() *durationpb.Duration {
 	if x != nil {
 		return x.ExportInterval
 	}
@@ -813,11 +813,11 @@ var File_conf_conf_proto protoreflect.FileDescriptor
 const file_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"\x0fconf/conf.proto\x12\n" +
-	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xb7\x01\n" +
+	"kratos.api\x1a\x1bbuf/validate/validate.proto\x1a\x1egoogle/protobuf/duration.proto\"\xab\x01\n" +
 	"\tBootstrap\x12;\n" +
 	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12?\n" +
-	"\robservability\x18\x03 \x01(\v2\x19.kratos.api.ObservabilityR\robservability\"\x99\x06\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x123\n" +
+	"\ttelemetry\x18\x03 \x01(\v2\x15.kratos.api.TelemetryR\ttelemetry\"\x99\x06\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x12B\n" +
@@ -853,20 +853,20 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12+\n" +
 	"\raccess_key_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vaccessKeyId\x123\n" +
 	"\x11secret_access_key\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x0fsecretAccessKey\x12\x1f\n" +
-	"\x06bucket\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06bucket\"\x87\x06\n" +
-	"\rObservability\x12;\n" +
-	"\atracing\x18\x01 \x01(\v2!.kratos.api.Observability.TracingR\atracing\x12;\n" +
-	"\ametrics\x18\x02 \x01(\v2!.kratos.api.Observability.MetricsR\ametrics\x1a\x92\x02\n" +
-	"\aTracing\x12J\n" +
-	"\bprotocol\x18\x01 \x01(\x0e2\".kratos.api.Observability.ProtocolB\n" +
+	"\x06bucket\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06bucket\"\xf3\x05\n" +
+	"\tTelemetry\x127\n" +
+	"\atracing\x18\x01 \x01(\v2\x1d.kratos.api.Telemetry.TracingR\atracing\x127\n" +
+	"\ametrics\x18\x02 \x01(\v2\x1d.kratos.api.Telemetry.MetricsR\ametrics\x1a\x8e\x02\n" +
+	"\aTracing\x12F\n" +
+	"\bprotocol\x18\x01 \x01(\x0e2\x1e.kratos.api.Telemetry.ProtocolB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bprotocol\x12#\n" +
 	"\bendpoint\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x122\n" +
 	"\rauthorization\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\rauthorization\x88\x01\x01\x12?\n" +
 	"\fsample_ratio\x18\x04 \x01(\x01B\x17\xbaH\x14\x12\x12\x19\x00\x00\x00\x00\x00\x00\xf0?)\x00\x00\x00\x00\x00\x00\x00\x00H\x01R\vsampleRatio\x88\x01\x01B\x10\n" +
 	"\x0e_authorizationB\x0f\n" +
-	"\r_sample_ratio\x1a\x91\x02\n" +
-	"\aMetrics\x12J\n" +
-	"\bprotocol\x18\x01 \x01(\x0e2\".kratos.api.Observability.ProtocolB\n" +
+	"\r_sample_ratio\x1a\x8d\x02\n" +
+	"\aMetrics\x12F\n" +
+	"\bprotocol\x18\x01 \x01(\x0e2\x1e.kratos.api.Telemetry.ProtocolB\n" +
 	"\xbaH\a\x82\x01\x04\x10\x01 \x00R\bprotocol\x12#\n" +
 	"\bendpoint\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x122\n" +
 	"\rauthorization\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\rauthorization\x88\x01\x01\x12O\n" +
@@ -892,39 +892,39 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_conf_conf_proto_goTypes = []any{
-	(Observability_Protocol)(0),       // 0: kratos.api.Observability.Protocol
+	(Telemetry_Protocol)(0),           // 0: kratos.api.Telemetry.Protocol
 	(*Bootstrap)(nil),                 // 1: kratos.api.Bootstrap
 	(*Transport)(nil),                 // 2: kratos.api.Transport
 	(*Data)(nil),                      // 3: kratos.api.Data
-	(*Observability)(nil),             // 4: kratos.api.Observability
+	(*Telemetry)(nil),                 // 4: kratos.api.Telemetry
 	(*Transport_HTTP)(nil),            // 5: kratos.api.Transport.HTTP
 	(*Transport_GRPC)(nil),            // 6: kratos.api.Transport.GRPC
 	(*Transport_RabbitMQ)(nil),        // 7: kratos.api.Transport.RabbitMQ
 	(*Transport_RabbitMQ_Queues)(nil), // 8: kratos.api.Transport.RabbitMQ.Queues
 	(*Data_MySQL)(nil),                // 9: kratos.api.Data.MySQL
 	(*Data_S3)(nil),                   // 10: kratos.api.Data.S3
-	(*Observability_Tracing)(nil),     // 11: kratos.api.Observability.Tracing
-	(*Observability_Metrics)(nil),     // 12: kratos.api.Observability.Metrics
+	(*Telemetry_Tracing)(nil),         // 11: kratos.api.Telemetry.Tracing
+	(*Telemetry_Metrics)(nil),         // 12: kratos.api.Telemetry.Metrics
 	(*durationpb.Duration)(nil),       // 13: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
 	3,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
-	4,  // 2: kratos.api.Bootstrap.observability:type_name -> kratos.api.Observability
+	4,  // 2: kratos.api.Bootstrap.telemetry:type_name -> kratos.api.Telemetry
 	5,  // 3: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	6,  // 4: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
 	7,  // 5: kratos.api.Transport.rabbitmq:type_name -> kratos.api.Transport.RabbitMQ
 	9,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
 	10, // 7: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
-	11, // 8: kratos.api.Observability.tracing:type_name -> kratos.api.Observability.Tracing
-	12, // 9: kratos.api.Observability.metrics:type_name -> kratos.api.Observability.Metrics
+	11, // 8: kratos.api.Telemetry.tracing:type_name -> kratos.api.Telemetry.Tracing
+	12, // 9: kratos.api.Telemetry.metrics:type_name -> kratos.api.Telemetry.Metrics
 	13, // 10: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
 	13, // 11: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
 	8,  // 12: kratos.api.Transport.RabbitMQ.queues:type_name -> kratos.api.Transport.RabbitMQ.Queues
 	13, // 13: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	0,  // 14: kratos.api.Observability.Tracing.protocol:type_name -> kratos.api.Observability.Protocol
-	0,  // 15: kratos.api.Observability.Metrics.protocol:type_name -> kratos.api.Observability.Protocol
-	13, // 16: kratos.api.Observability.Metrics.export_interval:type_name -> google.protobuf.Duration
+	0,  // 14: kratos.api.Telemetry.Tracing.protocol:type_name -> kratos.api.Telemetry.Protocol
+	0,  // 15: kratos.api.Telemetry.Metrics.protocol:type_name -> kratos.api.Telemetry.Protocol
+	13, // 16: kratos.api.Telemetry.Metrics.export_interval:type_name -> google.protobuf.Duration
 	17, // [17:17] is the sub-list for method output_type
 	17, // [17:17] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name

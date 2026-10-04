@@ -7,13 +7,13 @@ import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
-  Transport     transport     = 1 [
+  Transport transport = 1 [
     (buf.validate.field).required = true
   ];
-  Data          data          = 2 [
+  Data data = 2 [
     (buf.validate.field).required = true
   ];
-  Observability observability = 3;
+  Telemetry telemetry = 3;
 }
 
 message Transport {
@@ -123,7 +123,7 @@ message Data {
   ];
 }
 
-message Observability {
+message Telemetry {
   enum Protocol {
     PROTOCOL_UNSPECIFIED   = 0;
     PROTOCOL_GRPC          = 1;
