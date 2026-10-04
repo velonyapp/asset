@@ -3,15 +3,15 @@ package infrastructure
 import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
-	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
+	"github.com/velonyapp/asset/internal/infrastructure/processing"
 
 	"github.com/google/wire"
 )
 
 var ProviderSet = wire.NewSet(
-	image.NewProcessor,
+	processing.NewImageProcessor,
 	mysql.NewConnection,
 	mysql.NewUnitOfWork,
 	mysql.NewImageRepo,

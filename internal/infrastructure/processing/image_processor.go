@@ -1,4 +1,4 @@
-package image
+package processing
 
 import (
 	"io"
@@ -10,15 +10,15 @@ import (
 	"github.com/davidbyttow/govips/v2/vips"
 )
 
-var _ port.ImageProcessor = (*processor)(nil)
+var _ port.ImageProcessor = (*imageProcessor)(nil)
 
-type processor struct{}
+type imageProcessor struct{}
 
-func NewProcessor() port.ImageProcessor {
-	return &processor{}
+func NewImageProcessor() port.ImageProcessor {
+	return &imageProcessor{}
 }
 
-func (p *processor) Process(src io.Reader, dst io.Writer, opts port.ImageProcessOptions) error {
+func (p *imageProcessor) Process(src io.Reader, dst io.Writer, opts port.ImageProcessOptions) error {
 	if opts.Resize == nil &&
 		opts.Encoding == nil &&
 		!opts.AutoRotate &&

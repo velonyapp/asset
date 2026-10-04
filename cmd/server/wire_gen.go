@@ -16,9 +16,9 @@ import (
 	"github.com/velonyapp/asset/internal/info"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
-	"github.com/velonyapp/asset/internal/infrastructure/image"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/observability"
+	"github.com/velonyapp/asset/internal/infrastructure/processing"
 	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
 	"github.com/velonyapp/asset/internal/presentation/transport"
@@ -43,21 +43,21 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	imageObjectExistenceUpdatedHandler := domainevent.NewImageObjectExistenceUpdatedHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageObjectExistenceUpdatedHandler, imageDeletedHandler)
-	repoImage := mysql.NewImageRepo(db, dispatcher)
+	image := mysql.NewImageRepo(db, dispatcher)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	createImageHandler := command.NewCreateImageHandler(repoImage, unitOfWork)
+	createImageHandler := command.NewCreateImageHandler(image, unitOfWork)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
-	imageProcessor := image.NewProcessor()
-	processImageHandler := command.NewProcessImageHandler(repoImage, eventPublisher, storage, imageProcessor)
-	reconcileImageHandler := command.NewReconcileImageHandler(repoImage, unitOfWork, storage)
-	deleteImageHandler := command.NewDeleteImageHandler(repoImage, unitOfWork, storage)
+	imageProcessor := processing.NewImageProcessor()
+	processImageHandler := command.NewProcessImageHandler(image, eventPublisher, storage, imageProcessor)
+	reconcileImageHandler := command.NewReconcileImageHandler(image, unitOfWork, storage)
+	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork, storage)
 	handlerRegistry := command.NewHandlerRegistry(createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
-	getImageHandler := query.NewGetImageHandler(repoImage)
-	presignImageHandler := query.NewPresignImageHandler(repoImage, storage)
+	getImageHandler := query.NewGetImageHandler(image)
+	presignImageHandler := query.NewPresignImageHandler(image, storage)
 	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
 	apiService := api.NewService(handlerRegistry, queryHandlerRegistry)
 	tracing := middleware.NewTracingMiddleware()
