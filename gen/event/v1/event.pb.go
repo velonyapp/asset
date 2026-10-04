@@ -29,9 +29,9 @@ type Event struct {
 	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	AggregateId   string                 `protobuf:"bytes,3,opt,name=aggregate_id,json=aggregateId,proto3" json:"aggregate_id,omitempty"`
 	AggregateType string                 `protobuf:"bytes,4,opt,name=aggregate_type,json=aggregateType,proto3" json:"aggregate_type,omitempty"`
-	OccurTime     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=occur_time,json=occurTime,proto3" json:"occur_time,omitempty"`
+	Tags          []string               `protobuf:"bytes,5,rep,name=tags,proto3" json:"tags,omitempty"`
 	Payload       *anypb.Any             `protobuf:"bytes,6,opt,name=payload,proto3" json:"payload,omitempty"`
-	Tags          []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	OccurTime     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=occur_time,json=occurTime,proto3" json:"occur_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -94,9 +94,9 @@ func (x *Event) GetAggregateType() string {
 	return ""
 }
 
-func (x *Event) GetOccurTime() *timestamppb.Timestamp {
+func (x *Event) GetTags() []string {
 	if x != nil {
-		return x.OccurTime
+		return x.Tags
 	}
 	return nil
 }
@@ -108,9 +108,9 @@ func (x *Event) GetPayload() *anypb.Any {
 	return nil
 }
 
-func (x *Event) GetTags() []string {
+func (x *Event) GetOccurTime() *timestamppb.Timestamp {
 	if x != nil {
-		return x.Tags
+		return x.OccurTime
 	}
 	return nil
 }
@@ -124,11 +124,11 @@ const file_velony_asset_event_v1_event_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04type\x18\x02 \x01(\tR\x04type\x12!\n" +
 	"\faggregate_id\x18\x03 \x01(\tR\vaggregateId\x12%\n" +
-	"\x0eaggregate_type\x18\x04 \x01(\tR\raggregateType\x129\n" +
+	"\x0eaggregate_type\x18\x04 \x01(\tR\raggregateType\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tags\x12.\n" +
+	"\apayload\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\apayload\x129\n" +
 	"\n" +
-	"occur_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\toccurTime\x12.\n" +
-	"\apayload\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\apayload\x12\x12\n" +
-	"\x04tags\x18\a \x03(\tR\x04tagsB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"occur_time\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\toccurTimeB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_event_proto_rawDescOnce sync.Once
@@ -145,12 +145,12 @@ func file_velony_asset_event_v1_event_proto_rawDescGZIP() []byte {
 var file_velony_asset_event_v1_event_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_event_v1_event_proto_goTypes = []any{
 	(*Event)(nil),                 // 0: velony.asset.event.v1.Event
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
-	(*anypb.Any)(nil),             // 2: google.protobuf.Any
+	(*anypb.Any)(nil),             // 1: google.protobuf.Any
+	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
 }
 var file_velony_asset_event_v1_event_proto_depIdxs = []int32{
-	1, // 0: velony.asset.event.v1.Event.occur_time:type_name -> google.protobuf.Timestamp
-	2, // 1: velony.asset.event.v1.Event.payload:type_name -> google.protobuf.Any
+	1, // 0: velony.asset.event.v1.Event.payload:type_name -> google.protobuf.Any
+	2, // 1: velony.asset.event.v1.Event.occur_time:type_name -> google.protobuf.Timestamp
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

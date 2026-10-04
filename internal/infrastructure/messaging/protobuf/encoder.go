@@ -33,8 +33,9 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, er
 		Type:          event.Type(),
 		AggregateId:   event.AggregateID(),
 		AggregateType: event.AggregateType(),
-		OccurTime:     timestamppb.New(event.OccurTime()),
+		Tags:          event.Tags(),
 		Payload:       payloadAny,
+		OccurTime:     timestamppb.New(event.OccurTime()),
 	}, nil
 }
 
@@ -44,6 +45,8 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 		return imageCreatedPayload(event), nil
 	case integrationevent.ImageObjectExistenceUpdated:
 		return imageObjectExistenceUpdatedPayload(event), nil
+	case integrationevent.ImageProcessed:
+		return imageProcessedPayload(event), nil
 	case integrationevent.ImageDeleted:
 		return imageDeletedPayload(event), nil
 	default:

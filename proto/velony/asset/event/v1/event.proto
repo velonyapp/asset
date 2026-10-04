@@ -12,7 +12,7 @@ message Event {
   string                    type           = 2;
   string                    aggregate_id   = 3;
   string                    aggregate_type = 4;
-  google.protobuf.Timestamp occur_time     = 5;
+  repeated string           tags           = 5;
   google.protobuf.Any       payload        = 6;
-  repeated string           tags           = 7;
+  google.protobuf.Timestamp occur_time     = 7;
 }
