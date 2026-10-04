@@ -13,8 +13,8 @@ var ProviderSet = wire.NewSet(
 	transport.NewGRPCServer,
 	transport.NewHTTPServer,
 	transport.NewRabbitMQConsumer,
-	middleware.NewTracingMiddleware,
-	middleware.NewMetricsMiddleware,
-	middleware.NewErrorMapperMiddleware,
-	middleware.NewValidationMiddleware,
+	middleware.NewTracing,
+	middleware.NewMetrics,
+	middleware.NewErrorMapper,
+	middleware.NewValidation,
 )

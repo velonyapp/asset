@@ -60,14 +60,14 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	presignImageHandler := query.NewPresignImageHandler(image, storage)
 	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
 	apiService := api.NewService(handlerRegistry, queryHandlerRegistry)
-	tracing := middleware.NewTracingMiddleware()
+	tracing := middleware.NewTracing()
 	serverMetrics, err := observability.NewServerMetrics()
 	if err != nil {
 		return nil, nil, err
 	}
-	metrics := middleware.NewMetricsMiddleware(serverMetrics)
-	errorMapper := middleware.NewErrorMapperMiddleware()
-	validation := middleware.NewValidationMiddleware()
+	metrics := middleware.NewMetrics(serverMetrics)
+	errorMapper := middleware.NewErrorMapper()
+	validation := middleware.NewValidation()
 	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)

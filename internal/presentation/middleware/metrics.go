@@ -9,7 +9,7 @@ import (
 
 type Metrics middleware.Middleware
 
-func NewMetricsMiddleware(serverMetrics *observability.ServerMetrics) Metrics {
+func NewMetrics(serverMetrics *observability.ServerMetrics) Metrics {
 	return Metrics(
 		metrics.Server(
 			metrics.WithSeconds(serverMetrics.Seconds),

@@ -18,7 +18,7 @@ import (
 
 type ErrorMapper middleware.Middleware
 
-func NewErrorMapperMiddleware() ErrorMapper {
+func NewErrorMapper() ErrorMapper {
 	return ErrorMapper(
 		func(next middleware.Handler) middleware.Handler {
 			return func(ctx context.Context, req any) (any, error) {

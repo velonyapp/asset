@@ -7,7 +7,7 @@ import (
 
 type Tracing middleware.Middleware
 
-func NewTracingMiddleware() Tracing {
+func NewTracing() Tracing {
 	return Tracing(tracing.Server())
 }
 

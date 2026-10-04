@@ -9,7 +9,7 @@ import (
 
 type Validation middleware.Middleware
 
-func NewValidationMiddleware() Validation {
+func NewValidation() Validation {
 	return Validation(
 		validate.Validator(func(req any) error {
 			message, ok := req.(proto.Message)
