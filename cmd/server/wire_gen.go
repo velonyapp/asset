@@ -18,10 +18,9 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/event"
 	"github.com/velonyapp/asset/internal/infrastructure/image"
-	observability2 "github.com/velonyapp/asset/internal/infrastructure/observability"
+	"github.com/velonyapp/asset/internal/infrastructure/observability"
 	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
-	"github.com/velonyapp/asset/internal/presentation/observability"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 	"log/slog"
 )
@@ -72,7 +71,7 @@ func wireApp(contextContext context.Context, service *info.Service, data *conf.D
 	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
-	openTelemetry, cleanup, err := observability2.NewOpenTelemetry(contextContext, confObservability, service)
+	openTelemetry, cleanup, err := observability.NewOpenTelemetry(contextContext, confObservability, service)
 	if err != nil {
 		return nil, nil, err
 	}

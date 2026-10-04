@@ -19,5 +19,6 @@ var ProviderSet = wire.NewSet(
 	s3.NewConnection,
 	s3.NewStorage,
 	observability.NewOpenTelemetry,
+	observability.NewServerMetrics,
 	event.NewEncoder,
 )

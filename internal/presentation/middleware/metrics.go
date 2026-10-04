@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/velonyapp/asset/internal/presentation/observability"
+	"github.com/velonyapp/asset/internal/infrastructure/observability"
 
 	"github.com/go-kratos/kratos/contrib/otel/v3/metrics"
 	"github.com/go-kratos/kratos/v3/middleware"
