@@ -865,7 +865,7 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x06format\x18\x01 \x01(\x0e2 .velony.asset.api.v1.ImageFormatB\x03\xe0A\x01R\x06format\x12\"\n" +
 	"\aquality\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\aquality\x88\x01\x01B\n" +
 	"\n" +
-	"\b_quality\"\x85\x02\n" +
+	"\b_quality\"\x83\x02\n" +
 	"\x05Image\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x17\n" +
 	"\x04tags\x18\x02 \x03(\tB\x03\xe0A\x02R\x04tags\x12\"\n" +
@@ -873,37 +873,37 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"object_key\x18\x03 \x01(\tB\x03\xe0A\x02R\tobjectKey\x12(\n" +
 	"\robject_exists\x18\x04 \x01(\bB\x03\xe0A\x03R\fobjectExists\x12@\n" +
 	"\vcreate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
-	"createTime::\xeaA7\n" +
-	"\x16asset.velony.app/Image\x12\x0eimages/{image}*\x06images2\x05image\"E\n" +
-	"\x0fGetImageRequest\x122\n" +
-	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name\"K\n" +
+	"createTime:8\xeaA5\n" +
+	"\x14api.velony.app/Image\x12\x0eimages/{image}*\x06images2\x05image\"C\n" +
+	"\x0fGetImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name\"K\n" +
 	"\x12CreateImageRequest\x125\n" +
-	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"\x80\x01\n" +
-	"\x13PresignImageRequest\x122\n" +
-	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name\x125\n" +
+	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"~\n" +
+	"\x13PresignImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name\x125\n" +
 	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\x03ttl\"5\n" +
 	"\x14PresignImageResponse\x12\x1d\n" +
 	"\n" +
-	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"\xa1\x02\n" +
-	"\x13ProcessImageRequest\x122\n" +
-	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name\x12=\n" +
+	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"\x9f\x02\n" +
+	"\x13ProcessImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name\x12=\n" +
 	"\x06resize\x18\x02 \x01(\v2 .velony.asset.api.v1.ImageResizeB\x03\xe0A\x01R\x06resize\x12C\n" +
 	"\bencoding\x18\x03 \x01(\v2\".velony.asset.api.v1.ImageEncodingB\x03\xe0A\x01R\bencoding\x12$\n" +
 	"\vauto_rotate\x18\x04 \x01(\bB\x03\xe0A\x01R\n" +
 	"autoRotate\x12,\n" +
 	"\x0fremove_metadata\x18\x05 \x01(\bB\x03\xe0A\x01R\x0eremoveMetadata\"\x16\n" +
-	"\x14ProcessImageResponse\"K\n" +
-	"\x15ReconcileImageRequest\x122\n" +
-	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name\"J\n" +
+	"\x14ProcessImageResponse\"I\n" +
+	"\x15ReconcileImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name\"J\n" +
 	"\x16ReconcileImageResponse\x120\n" +
-	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageR\x05image\"H\n" +
-	"\x12DeleteImageRequest\x122\n" +
-	"\x04name\x18\x01 \x01(\tB\x1e\xe0A\x02\xfaA\x18\n" +
-	"\x16asset.velony.app/ImageR\x04name*`\n" +
+	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageR\x05image\"F\n" +
+	"\x12DeleteImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name*`\n" +
 	"\x0eImageResizeFit\x12 \n" +
 	"\x1cIMAGE_RESIZE_FIT_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aCONTAIN\x10\x01\x12\t\n" +
@@ -928,7 +928,7 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x04JPEG\x10\x01\x12\a\n" +
 	"\x03PNG\x10\x02\x12\b\n" +
 	"\x04WEBP\x10\x03\x12\b\n" +
-	"\x04AVIF\x10\x042\xb2\x06\n" +
+	"\x04AVIF\x10\x042\xb0\x06\n" +
 	"\fAssetService\x12p\n" +
 	"\bGetImage\x12$.velony.asset.api.v1.GetImageRequest\x1a\x1a.velony.asset.api.v1.Image\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/{name=images/*}\x12u\n" +
 	"\vCreateImage\x12'.velony.asset.api.v1.CreateImageRequest\x1a\x1a.velony.asset.api.v1.Image\"!\xdaA\x05image\x82\xd3\xe4\x93\x02\x13:\x05image\"\n" +
@@ -936,7 +936,7 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\fPresignImage\x12(.velony.asset.api.v1.PresignImageRequest\x1a).velony.asset.api.v1.PresignImageResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/{name=images/*}:presign\x12\x93\x01\n" +
 	"\x0eReconcileImage\x12*.velony.asset.api.v1.ReconcileImageRequest\x1a+.velony.asset.api.v1.ReconcileImageResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/v1/{name=images/*}:reconcile\x12\x8b\x01\n" +
 	"\fProcessImage\x12(.velony.asset.api.v1.ProcessImageRequest\x1a).velony.asset.api.v1.ProcessImageResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/{name=images/*}:process\x12r\n" +
-	"\vDeleteImage\x12'.velony.asset.api.v1.DeleteImageRequest\x1a\x16.google.protobuf.Empty\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15*\x13/v1/{name=images/*}\x1a\x13\xcaA\x10asset.velony.appB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\vDeleteImage\x12'.velony.asset.api.v1.DeleteImageRequest\x1a\x16.google.protobuf.Empty\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15*\x13/v1/{name=images/*}\x1a\x11\xcaA\x0eapi.velony.appB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_asset_proto_rawDescOnce sync.Once

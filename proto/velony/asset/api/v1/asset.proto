@@ -14,7 +14,7 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
 service AssetService {
-  option (google.api.default_host) = "asset.velony.app";
+  option (google.api.default_host) = "api.velony.app";
 
   rpc GetImage(GetImageRequest) returns (Image) {
     option (google.api.http) = {
@@ -132,7 +132,7 @@ message ImageEncoding {
 
 message Image {
   option (google.api.resource) = {
-    type    : "asset.velony.app/Image"
+    type    : "api.velony.app/Image"
     pattern : "images/{image}"
     singular: "image"
     plural  : "images"
@@ -152,7 +152,7 @@ message GetImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
+    type: "api.velony.app/Image"
     }
   ];
 }
@@ -165,7 +165,7 @@ message PresignImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
+    type: "api.velony.app/Image"
     }
   ];
 
@@ -182,7 +182,7 @@ message ProcessImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
+    type: "api.velony.app/Image"
     }
   ];
 
@@ -206,7 +206,7 @@ message ReconcileImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
+    type: "api.velony.app/Image"
     }
   ];
 }
@@ -219,7 +219,7 @@ message DeleteImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
-    type: "asset.velony.app/Image"
+    type: "api.velony.app/Image"
     }
   ];
 }

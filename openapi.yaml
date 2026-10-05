@@ -6,7 +6,7 @@ info:
     title: AssetService API
     version: 0.0.1
 servers:
-    - url: https://asset.velony.app
+    - url: https://api.velony.app
 paths:
     /v1/images:
         post:
