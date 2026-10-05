@@ -73,7 +73,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Telemetry, name, version, ins
 		var exporter trace.SpanExporter
 
 		switch c.Tracing.Protocol {
-		case conf.Telemetry_PROTOCOL_GRPC:
+		case conf.Telemetry_GRPC:
 			exporterOpts := []otlptracegrpc.Option{
 				otlptracegrpc.WithEndpointURL(c.Tracing.Endpoint),
 			}
@@ -92,7 +92,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Telemetry, name, version, ins
 				return nil, nil, err
 			}
 
-		case conf.Telemetry_PROTOCOL_HTTP_PROTOBUF:
+		case conf.Telemetry_HTTP_PROTOBUF:
 			exporterOpts := []otlptracehttp.Option{
 				otlptracehttp.WithEndpointURL(c.Tracing.Endpoint),
 			}
@@ -135,7 +135,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Telemetry, name, version, ins
 		var exporter metric.Exporter
 
 		switch c.Metrics.Protocol {
-		case conf.Telemetry_PROTOCOL_GRPC:
+		case conf.Telemetry_GRPC:
 			exporterOpts := []otlpmetricgrpc.Option{
 				otlpmetricgrpc.WithEndpointURL(c.Metrics.Endpoint),
 			}
@@ -156,7 +156,7 @@ func NewOpenTelemetry(ctx context.Context, c *conf.Telemetry, name, version, ins
 				return nil, nil, err
 			}
 
-		case conf.Telemetry_PROTOCOL_HTTP_PROTOBUF:
+		case conf.Telemetry_HTTP_PROTOBUF:
 			exporterOpts := []otlpmetrichttp.Option{
 				otlpmetrichttp.WithEndpointURL(c.Metrics.Endpoint),
 			}

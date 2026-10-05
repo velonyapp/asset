@@ -125,9 +125,9 @@ message Data {
 
 message Telemetry {
   enum Protocol {
-    PROTOCOL_UNSPECIFIED   = 0;
-    PROTOCOL_GRPC          = 1;
-    PROTOCOL_HTTP_PROTOBUF = 2;
+    PROTOCOL_UNSPECIFIED = 0;
+    GRPC                 = 1;
+    HTTP_PROTOBUF        = 2;
   }
 
   message Tracing {

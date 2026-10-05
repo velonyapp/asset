@@ -26,22 +26,22 @@ const (
 type Telemetry_Protocol int32
 
 const (
-	Telemetry_PROTOCOL_UNSPECIFIED   Telemetry_Protocol = 0
-	Telemetry_PROTOCOL_GRPC          Telemetry_Protocol = 1
-	Telemetry_PROTOCOL_HTTP_PROTOBUF Telemetry_Protocol = 2
+	Telemetry_PROTOCOL_UNSPECIFIED Telemetry_Protocol = 0
+	Telemetry_GRPC                 Telemetry_Protocol = 1
+	Telemetry_HTTP_PROTOBUF        Telemetry_Protocol = 2
 )
 
 // Enum value maps for Telemetry_Protocol.
 var (
 	Telemetry_Protocol_name = map[int32]string{
 		0: "PROTOCOL_UNSPECIFIED",
-		1: "PROTOCOL_GRPC",
-		2: "PROTOCOL_HTTP_PROTOBUF",
+		1: "GRPC",
+		2: "HTTP_PROTOBUF",
 	}
 	Telemetry_Protocol_value = map[string]int32{
-		"PROTOCOL_UNSPECIFIED":   0,
-		"PROTOCOL_GRPC":          1,
-		"PROTOCOL_HTTP_PROTOBUF": 2,
+		"PROTOCOL_UNSPECIFIED": 0,
+		"GRPC":                 1,
+		"HTTP_PROTOBUF":        2,
 	}
 )
 
@@ -853,7 +853,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\bendpoint\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x12+\n" +
 	"\raccess_key_id\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vaccessKeyId\x123\n" +
 	"\x11secret_access_key\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x0fsecretAccessKey\x12\x1f\n" +
-	"\x06bucket\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06bucket\"\xf3\x05\n" +
+	"\x06bucket\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x06bucket\"\xe1\x05\n" +
 	"\tTelemetry\x127\n" +
 	"\atracing\x18\x01 \x01(\v2\x1d.kratos.api.Telemetry.TracingR\atracing\x127\n" +
 	"\ametrics\x18\x02 \x01(\v2\x1d.kratos.api.Telemetry.MetricsR\ametrics\x1a\x8e\x02\n" +
@@ -871,11 +871,11 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\bendpoint\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bendpoint\x122\n" +
 	"\rauthorization\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x00R\rauthorization\x88\x01\x01\x12O\n" +
 	"\x0fexport_interval\x18\x04 \x01(\v2\x19.google.protobuf.DurationB\v\xbaH\b\xc8\x01\x01\xaa\x01\x02*\x00R\x0eexportIntervalB\x10\n" +
-	"\x0e_authorization\"S\n" +
+	"\x0e_authorization\"A\n" +
 	"\bProtocol\x12\x18\n" +
-	"\x14PROTOCOL_UNSPECIFIED\x10\x00\x12\x11\n" +
-	"\rPROTOCOL_GRPC\x10\x01\x12\x1a\n" +
-	"\x16PROTOCOL_HTTP_PROTOBUF\x10\x02B*Z(github.com/velonyapp/asset/internal/confb\x06proto3"
+	"\x14PROTOCOL_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04GRPC\x10\x01\x12\x11\n" +
+	"\rHTTP_PROTOBUF\x10\x02B*Z(github.com/velonyapp/asset/internal/confb\x06proto3"
 
 var (
 	file_conf_conf_proto_rawDescOnce sync.Once
