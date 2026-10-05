@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
@@ -49,12 +48,9 @@ func (h *presignImageHandler) Handle(
 		return PresignImageResult{}, err
 	}
 
-	image, err := h.imageRepo.FindByID(ctx, imageID)
+	image, err := h.imageRepo.GetByID(ctx, imageID)
 	if err != nil {
 		return PresignImageResult{}, err
-	}
-	if image.IsDeleted() {
-		return PresignImageResult{}, entity.ErrImageDeleted
 	}
 
 	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), qry.TTL)

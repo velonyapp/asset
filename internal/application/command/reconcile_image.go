@@ -6,7 +6,6 @@ import (
 
 	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
@@ -54,12 +53,9 @@ func (h *reconcileImageHandler) Handle(
 		return ReconcileImageResult{}, err
 	}
 
-	image, err := h.imageRepo.FindByID(ctx, imageID)
+	image, err := h.imageRepo.GetByID(ctx, imageID)
 	if err != nil {
 		return ReconcileImageResult{}, err
-	}
-	if image.IsDeleted() {
-		return ReconcileImageResult{}, entity.ErrImageDeleted
 	}
 
 	imageObjectExists, err := h.storage.Exists(ctx, image.ObjectKey())

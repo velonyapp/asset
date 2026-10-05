@@ -51,12 +51,9 @@ func (h *deleteImageHandler) Handle(
 		return DeleteImageResult{}, err
 	}
 
-	image, err := h.imageRepo.FindByID(ctx, imageID)
+	image, err := h.imageRepo.GetByID(ctx, imageID)
 	if err != nil {
 		return DeleteImageResult{}, err
-	}
-	if image == nil || image.IsDeleted() {
-		return DeleteImageResult{}, nil
 	}
 
 	if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {

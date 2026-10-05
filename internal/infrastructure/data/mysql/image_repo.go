@@ -36,7 +36,7 @@ type imageScanner interface {
 	Scan(dest ...any) error
 }
 
-func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error) {
+func (r *imageRepo) GetByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error) {
 	const query = `
 		SELECT
 			id,
