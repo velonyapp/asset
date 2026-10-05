@@ -52,11 +52,11 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	processImageHandler := command.NewProcessImageHandler(image, eventPublisher, storage, imageProcessor)
 	reconcileImageHandler := command.NewReconcileImageHandler(image, unitOfWork, storage)
 	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork, storage)
-	handlerRegistry := command.NewHandlerRegistry(createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
+	bus := command.NewBus(createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
 	getImageHandler := query.NewGetImageHandler(image)
 	presignImageHandler := query.NewPresignImageHandler(image, storage)
-	queryHandlerRegistry := query.NewHandlerRegistry(getImageHandler, presignImageHandler)
-	service := api.NewService(handlerRegistry, queryHandlerRegistry)
+	queryBus := query.NewBus(getImageHandler, presignImageHandler)
+	service := api.NewService(bus, queryBus)
 	tracing := middleware.NewTracing()
 	metrics, err := middleware.NewMetrics()
 	if err != nil {
@@ -66,7 +66,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	validation := middleware.NewValidation()
 	server := transport.NewGRPCServer(confTransport, service, tracing, metrics, errorMapper, validation)
 	httpServer := transport.NewHTTPServer(confTransport, service, tracing, metrics, errorMapper, validation)
-	rabbitMQConsumer := transport.NewRabbitMQConsumer(handlerRegistry, confTransport)
+	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, bus)
 	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {
 	}, nil
