@@ -23,8 +23,7 @@ func (p *imageProcessor) Process(src io.Reader, dst io.Writer, opts port.ImagePr
 		opts.Encoding == nil &&
 		!opts.AutoRotate &&
 		!opts.RemoveMetadata {
-		_, err := io.Copy(dst, src)
-		return err
+		return port.ErrNoImageProcessingOptions
 	}
 
 	imageRef, err := vips.NewImageFromReader(src)

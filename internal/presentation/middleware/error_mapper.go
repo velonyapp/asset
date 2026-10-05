@@ -84,6 +84,10 @@ func NewErrorMapper() ErrorMapper {
 					)
 
 				// Image Processor
+				case errors.Is(err, applicationport.ErrNoImageProcessingOptions):
+					return reply, kerrors.BadRequest("",
+						applicationport.ErrNoImageProcessingOptions.Error(),
+					)
 				case errors.Is(err, applicationport.ErrInvalidResizeDimensions):
 					return reply, kerrors.BadRequest("",
 						applicationport.ErrInvalidResizeDimensions.Error(),

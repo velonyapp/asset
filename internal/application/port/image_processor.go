@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrNoImageProcessingOptions    = errors.New("no image processing options provided")
 	ErrInvalidResizeDimensions     = errors.New("invalid image resize dimensions")
 	ErrUnsupportedResizeFit        = errors.New("unsupported image resize fit")
 	ErrUnsupportedImageGravity     = errors.New("unsupported image gravity")
