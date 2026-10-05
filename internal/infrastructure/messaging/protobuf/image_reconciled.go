@@ -5,8 +5,8 @@ import (
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 )
 
-func imageObjectExistenceUpdatedPayload(event integrationevent.ImageObjectExistenceUpdated) *v1.ImageObjectExistenceUpdatedPayload {
-	return &v1.ImageObjectExistenceUpdatedPayload{
+func imageReconciledPayload(event integrationevent.ImageReconciled) *v1.ImageReconciledPayload {
+	return &v1.ImageReconciledPayload{
 		ObjectExists: event.ObjectExists(),
 	}
 }

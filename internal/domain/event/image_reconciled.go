@@ -6,9 +6,9 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-var _ DomainEvent = (*ImageObjectExistenceUpdated)(nil)
+var _ DomainEvent = (*ImageReconciled)(nil)
 
-type ImageObjectExistenceUpdated struct {
+type ImageReconciled struct {
 	BaseDomainEvent
 
 	tags         vo.Tags
@@ -16,13 +16,13 @@ type ImageObjectExistenceUpdated struct {
 	updateTime   time.Time
 }
 
-func NewImageObjectExistenceUpdated(
+func NewImageReconciled(
 	imageID vo.ImageID,
 	tags vo.Tags,
 	objectExists bool,
 	updateTime time.Time,
-) ImageObjectExistenceUpdated {
-	return ImageObjectExistenceUpdated{
+) ImageReconciled {
+	return ImageReconciled{
 		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:         tags,
@@ -31,14 +31,14 @@ func NewImageObjectExistenceUpdated(
 	}
 }
 
-func (e ImageObjectExistenceUpdated) Tags() vo.Tags {
+func (e ImageReconciled) Tags() vo.Tags {
 	return e.tags
 }
 
-func (e ImageObjectExistenceUpdated) ObjectExists() bool {
+func (e ImageReconciled) ObjectExists() bool {
 	return e.objectExists
 }
 
-func (e ImageObjectExistenceUpdated) UpdateTime() time.Time {
+func (e ImageReconciled) UpdateTime() time.Time {
 	return e.updateTime
 }

@@ -63,7 +63,7 @@ func (h *reconcileImageHandler) Handle(
 		return ReconcileImageResult{}, err
 	}
 
-	if err := image.UpdateObjectExistence(imageObjectExists, now); err != nil {
+	if err := image.Reconcile(imageObjectExists, now); err != nil {
 		return ReconcileImageResult{}, err
 	}
 

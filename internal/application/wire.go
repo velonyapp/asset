@@ -19,6 +19,6 @@ var ProviderSet = wire.NewSet(
 	query.NewPresignImageHandler,
 	domainevent.NewDispatcher,
 	domainevent.NewImageCreatedHandler,
-	domainevent.NewImageObjectExistenceUpdatedHandler,
+	domainevent.NewImageReconciledHandler,
 	domainevent.NewImageDeletedHandler,
 )

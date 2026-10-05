@@ -9,7 +9,7 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-func TestImage_UpdateObjectExistence(t *testing.T) {
+func TestImage_Reconcile(t *testing.T) {
 	var (
 		imageID   vo.ImageID
 		tags      vo.Tags
@@ -27,7 +27,7 @@ func TestImage_UpdateObjectExistence(t *testing.T) {
 
 	now := time.Now().UTC()
 
-	err := image.UpdateObjectExistence(true, now)
+	err := image.Reconcile(true, now)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -42,15 +42,15 @@ func TestImage_UpdateObjectExistence(t *testing.T) {
 		t.Fatalf("expected 1 event, got %d", len(events))
 	}
 
-	if _, ok := events[0].(event.ImageObjectExistenceUpdated); !ok {
+	if _, ok := events[0].(event.ImageReconciled); !ok {
 		t.Errorf(
-			"expected ImageObjectExistenceUpdated, got %T",
+			"expected ImageReconciled, got %T",
 			events[0],
 		)
 	}
 }
 
-func TestImage_UpdateObjectExistence_WhenValueDoesNotChange(t *testing.T) {
+func TestImage_Reconcile_WhenValueDoesNotChange(t *testing.T) {
 	image := ReconstituteImage(
 		vo.ImageID{},
 		vo.Tags{},
@@ -60,7 +60,7 @@ func TestImage_UpdateObjectExistence_WhenValueDoesNotChange(t *testing.T) {
 		nil,
 	)
 
-	err := image.UpdateObjectExistence(true, time.Now().UTC())
+	err := image.Reconcile(true, time.Now().UTC())
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -72,7 +72,7 @@ func TestImage_UpdateObjectExistence_WhenValueDoesNotChange(t *testing.T) {
 	}
 }
 
-func TestImage_UpdateObjectExistence_WhenDeleted(t *testing.T) {
+func TestImage_Reconcile_WhenDeleted(t *testing.T) {
 	deleteTime := time.Now().UTC()
 
 	image := ReconstituteImage(
@@ -84,7 +84,7 @@ func TestImage_UpdateObjectExistence_WhenDeleted(t *testing.T) {
 		&deleteTime,
 	)
 
-	err := image.UpdateObjectExistence(true, time.Now().UTC())
+	err := image.Reconcile(true, time.Now().UTC())
 
 	if !errors.Is(err, ErrImageDeleted) {
 		t.Fatalf("expected ErrImageDeleted, got %v", err)

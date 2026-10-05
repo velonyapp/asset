@@ -107,7 +107,7 @@ func (i *Image) IsDeleted() bool {
 	return i.deleteTime != nil
 }
 
-func (i *Image) UpdateObjectExistence(value bool, now time.Time) error {
+func (i *Image) Reconcile(value bool, now time.Time) error {
 	if i.IsDeleted() {
 		return ErrImageDeleted
 	}
@@ -119,7 +119,7 @@ func (i *Image) UpdateObjectExistence(value bool, now time.Time) error {
 	i.objectExists = value
 
 	i.recordEvent(
-		event.NewImageObjectExistenceUpdated(
+		event.NewImageReconciled(
 			i.id,
 			i.tags,
 			value,
