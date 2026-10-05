@@ -29,7 +29,8 @@ const (
 var _ transport.Server = (*RabbitMQConsumer)(nil)
 
 type RabbitMQConsumer struct {
-	c *conf.Transport
+	c          *conf.Transport
+	commandBus *command.Bus
 
 	conn      *rabbitmqamqp.AmqpConnection
 	consumers map[string]*rabbitmqamqp.Consumer
@@ -38,11 +39,12 @@ type RabbitMQConsumer struct {
 }
 
 func NewRabbitMQConsumer(
-	_ *command.HandlerRegistry,
 	c *conf.Transport,
+	commandBus *command.Bus,
 ) *RabbitMQConsumer {
 	return &RabbitMQConsumer{
-		c: c,
+		c:          c,
+		commandBus: commandBus,
 	}
 }
 
@@ -74,7 +76,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		if _, err := command.Send(ctx, command.CreateImage{
+		if _, err := command.Send(ctx, rc.commandBus, command.CreateImage{
 			Tags:      req.Image.Tags,
 			ObjectKey: req.Image.ObjectKey,
 		}); err != nil {
@@ -168,7 +170,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			}
 		}
 
-		if _, err := command.Send(ctx, command.ProcessImage{
+		if _, err := command.Send(ctx, rc.commandBus, command.ProcessImage{
 			ImageID: imageID,
 			Options: port.ImageProcessOptions{
 				Resize:         resize,
@@ -192,7 +194,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		if _, err := command.Send(ctx, command.ReconcileImage{
+		if _, err := command.Send(ctx, rc.commandBus, command.ReconcileImage{
 			ImageID: imageID,
 		}); err != nil {
 			return err
@@ -210,7 +212,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		if _, err := command.Send(ctx, command.DeleteImage{
+		if _, err := command.Send(ctx, rc.commandBus, command.DeleteImage{
 			ImageID: imageID,
 		}); err != nil {
 			return err

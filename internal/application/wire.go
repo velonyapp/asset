@@ -9,12 +9,12 @@ import (
 )
 
 var ProviderSet = wire.NewSet(
-	command.NewHandlerRegistry,
+	command.NewBus,
 	command.NewCreateImageHandler,
 	command.NewProcessImageHandler,
 	command.NewReconcileImageHandler,
 	command.NewDeleteImageHandler,
-	query.NewHandlerRegistry,
+	query.NewBus,
 	query.NewGetImageHandler,
 	query.NewPresignImageHandler,
 	domainevent.NewDispatcher,

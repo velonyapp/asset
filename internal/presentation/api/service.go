@@ -24,13 +24,19 @@ const (
 
 type Service struct {
 	v1.UnimplementedAssetServiceServer
+
+	commandBus *command.Bus
+	queryBus   *query.Bus
 }
 
 func NewService(
-	_ *command.HandlerRegistry,
-	_ *query.HandlerRegistry,
+	commandBus *command.Bus,
+	queryBus *query.Bus,
 ) *Service {
-	return &Service{}
+	return &Service{
+		commandBus: commandBus,
+		queryBus:   queryBus,
+	}
 }
 
 func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image, error) {
@@ -39,7 +45,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 		return nil, ErrInvalidImageResourceName
 	}
 
-	result, err := query.Send(ctx, query.GetImage{ImageID: imageID})
+	result, err := query.Send(ctx, s.queryBus, query.GetImage{ImageID: imageID})
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +60,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 }
 
 func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (*v1.Image, error) {
-	result, err := command.Send(ctx, command.CreateImage{
+	result, err := command.Send(ctx, s.commandBus, command.CreateImage{
 		Tags:      req.Image.Tags,
 		ObjectKey: req.Image.ObjectKey,
 	})
@@ -77,7 +83,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 		return nil, ErrInvalidImageResourceName
 	}
 
-	result, err := query.Send(ctx, query.PresignImage{
+	result, err := query.Send(ctx, s.queryBus, query.PresignImage{
 		ImageID: imageID,
 		TTL:     req.Ttl.AsDuration(),
 	})
@@ -171,7 +177,7 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 		}
 	}
 
-	if _, err := command.Send(ctx, command.ProcessImage{
+	if _, err := command.Send(ctx, s.commandBus, command.ProcessImage{
 		ImageID: imageID,
 		Options: port.ImageProcessOptions{
 			Resize:         resize,
@@ -192,7 +198,7 @@ func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequ
 		return nil, ErrInvalidImageResourceName
 	}
 
-	result, err := command.Send(ctx, command.ReconcileImage{
+	result, err := command.Send(ctx, s.commandBus, command.ReconcileImage{
 		ImageID: imageID,
 	})
 	if err != nil {
@@ -216,7 +222,7 @@ func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (
 		return nil, ErrInvalidImageResourceName
 	}
 
-	if _, err := command.Send(ctx, command.DeleteImage{
+	if _, err := command.Send(ctx, s.commandBus, command.DeleteImage{
 		ImageID: imageID,
 	}); err != nil {
 		return nil, err
