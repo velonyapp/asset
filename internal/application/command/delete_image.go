@@ -44,7 +44,7 @@ func (h *deleteImageHandler) Handle(
 	ctx context.Context,
 	cmd DeleteImage,
 ) (DeleteImageResult, error) {
-	now := time.Now()
+	now := time.Now().UTC()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {

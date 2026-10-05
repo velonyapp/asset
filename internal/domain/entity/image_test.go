@@ -25,7 +25,7 @@ func TestImage_UpdateObjectExistence(t *testing.T) {
 		nil,
 	)
 
-	now := time.Now()
+	now := time.Now().UTC()
 
 	err := image.UpdateObjectExistence(true, now)
 	if err != nil {
@@ -60,7 +60,7 @@ func TestImage_UpdateObjectExistence_WhenValueDoesNotChange(t *testing.T) {
 		nil,
 	)
 
-	err := image.UpdateObjectExistence(true, time.Now())
+	err := image.UpdateObjectExistence(true, time.Now().UTC())
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -73,7 +73,7 @@ func TestImage_UpdateObjectExistence_WhenValueDoesNotChange(t *testing.T) {
 }
 
 func TestImage_UpdateObjectExistence_WhenDeleted(t *testing.T) {
-	deleteTime := time.Now()
+	deleteTime := time.Now().UTC()
 
 	image := ReconstituteImage(
 		vo.ImageID{},
@@ -84,7 +84,7 @@ func TestImage_UpdateObjectExistence_WhenDeleted(t *testing.T) {
 		&deleteTime,
 	)
 
-	err := image.UpdateObjectExistence(true, time.Now())
+	err := image.UpdateObjectExistence(true, time.Now().UTC())
 
 	if !errors.Is(err, ErrImageDeleted) {
 		t.Fatalf("expected ErrImageDeleted, got %v", err)
@@ -109,7 +109,7 @@ func TestImage_Delete(t *testing.T) {
 		nil,
 	)
 
-	now := time.Now()
+	now := time.Now().UTC()
 
 	image.Delete(now)
 
@@ -141,7 +141,7 @@ func TestImage_Delete(t *testing.T) {
 }
 
 func TestImage_Delete_WhenAlreadyDeleted(t *testing.T) {
-	firstDeleteTime := time.Now()
+	firstDeleteTime := time.Now().UTC()
 
 	image := ReconstituteImage(
 		vo.ImageID{},
@@ -182,7 +182,7 @@ func TestImage_PullEvents(t *testing.T) {
 		nil,
 	)
 
-	image.Delete(time.Now())
+	image.Delete(time.Now().UTC())
 
 	first := image.PullEvents()
 

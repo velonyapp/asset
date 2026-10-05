@@ -52,7 +52,7 @@ func (h *processImageHandler) Handle(
 	ctx context.Context,
 	cmd ProcessImage,
 ) (ProcessImageResult, error) {
-	now := time.Now()
+	now := time.Now().UTC()
 
 	imageID, err := vo.NewImageID(cmd.ImageID)
 	if err != nil {

@@ -45,7 +45,7 @@ func (h *createImageHandler) Handle(
 	ctx context.Context,
 	cmd CreateImage,
 ) (CreateImageResult, error) {
-	now := time.Now()
+	now := time.Now().UTC()
 
 	tags, err := vo.NewTags(cmd.Tags)
 	if err != nil {
