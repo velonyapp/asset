@@ -287,7 +287,7 @@ func (rc *RabbitMQConsumer) Start(ctx context.Context) error {
 						delivery.Discard(ctx, nil)
 
 					default:
-						if err := delivery.Requeue(ctx); err != nil {
+						if err := delivery.RequeueWithAnnotationsAndDeliveryFailed(ctx, nil, true); err != nil {
 							errCh <- err
 							return
 						}
