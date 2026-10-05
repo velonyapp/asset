@@ -879,11 +879,11 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
 	"\x14api.velony.app/ImageR\x04name\"K\n" +
 	"\x12CreateImageRequest\x125\n" +
-	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"~\n" +
+	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"y\n" +
 	"\x13PresignImageRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14api.velony.app/ImageR\x04name\x125\n" +
-	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\x03ttl\"5\n" +
+	"\x14api.velony.app/ImageR\x04name\x120\n" +
+	"\x03ttl\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x03\xe0A\x02R\x03ttl\"5\n" +
 	"\x14PresignImageResponse\x12\x1d\n" +
 	"\n" +
 	"upload_url\x18\x01 \x01(\tR\tuploadUrl\"\x9f\x02\n" +

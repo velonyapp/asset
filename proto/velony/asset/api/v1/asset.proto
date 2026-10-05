@@ -138,14 +138,24 @@ message Image {
     plural  : "images"
   };
 
-  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+  string name = 1 [
+    (google.api.field_behavior) = IDENTIFIER
+  ];
 
-  repeated string tags = 2 [(google.api.field_behavior) = REQUIRED];
+  repeated string tags = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
 
-  string object_key    = 3 [(google.api.field_behavior) = REQUIRED];
-  bool   object_exists = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  string object_key = 3 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+  bool object_exists = 4 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
 
-  google.protobuf.Timestamp create_time = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  google.protobuf.Timestamp create_time = 5 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
 }
 
 message GetImageRequest {
@@ -158,7 +168,9 @@ message GetImageRequest {
 }
 
 message CreateImageRequest {
-  Image image = 1 [(google.api.field_behavior) = REQUIRED];
+  Image image = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
 }
 
 message PresignImageRequest {
@@ -170,7 +182,7 @@ message PresignImageRequest {
   ];
 
   google.protobuf.Duration ttl = 2 [
-    (buf.validate.field).duration.gt = {}
+    (google.api.field_behavior) = REQUIRED
   ];
 }
 
