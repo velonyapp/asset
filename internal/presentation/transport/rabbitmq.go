@@ -54,10 +54,10 @@ func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.CreateImage); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ProcessImage); err != nil {
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ConfirmImageUpload); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ReconcileImage); err != nil {
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ProcessImage); err != nil {
 		errs = append(errs, err)
 	}
 	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.DeleteImage); err != nil {
@@ -79,6 +79,24 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 		if _, err := command.Send(ctx, rc.commandBus, command.CreateImage{
 			Tags:      req.Image.Tags,
 			ObjectKey: req.Image.ObjectKey,
+		}); err != nil {
+			return err
+		}
+
+	case rc.c.Rabbitmq.Queues.ConfirmImageUpload:
+		req := new(v1.ConfirmImageUploadRequest)
+
+		if err := proto.Unmarshal(data, req); err != nil {
+			return ErrInvalidMessage
+		}
+
+		var imageID string
+		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+			return err
+		}
+
+		if _, err := command.Send(ctx, rc.commandBus, command.ConfirmImageUpload{
+			ImageID: imageID,
 		}); err != nil {
 			return err
 		}
@@ -178,24 +196,6 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 				AutoRotate:     req.AutoRotate,
 				RemoveMetadata: req.RemoveMetadata,
 			},
-		}); err != nil {
-			return err
-		}
-
-	case rc.c.Rabbitmq.Queues.ReconcileImage:
-		req := new(v1.ReconcileImageRequest)
-
-		if err := proto.Unmarshal(data, req); err != nil {
-			return ErrInvalidMessage
-		}
-
-		var imageID string
-		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-			return err
-		}
-
-		if _, err := command.Send(ctx, rc.commandBus, command.ReconcileImage{
-			ImageID: imageID,
 		}); err != nil {
 			return err
 		}

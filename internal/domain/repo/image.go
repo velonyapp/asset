@@ -2,19 +2,14 @@ package repo
 
 import (
 	"context"
-	"errors"
 
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-var (
-	ErrImageNotFound          = errors.New("image not found")
-	ErrObjectKeyAlreadyExists = errors.New("object key already exists")
-)
-
 type Image interface {
-	GetByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error)
+	FindByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error)
+	FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error)
 
 	Save(ctx context.Context, image *entity.Image) error
 }

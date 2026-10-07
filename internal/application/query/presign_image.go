@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
@@ -43,17 +44,21 @@ func (h *presignImageHandler) Handle(
 	ctx context.Context,
 	qry PresignImage,
 ) (PresignImageResult, error) {
-	imageID, err := vo.NewImageID(qry.ImageID)
+	imageID, _ := vo.NewImageID(qry.ImageID)
+
+	image, err := h.imageRepo.FindByID(ctx, imageID)
 	if err != nil {
 		return PresignImageResult{}, err
 	}
+	if image == nil {
+		return PresignImageResult{}, common.ErrImageNotFound
+	}
 
-	image, err := h.imageRepo.GetByID(ctx, imageID)
-	if err != nil {
+	if err := image.CanUpload(); err != nil {
 		return PresignImageResult{}, err
 	}
 
-	uploadURL, err := h.storage.PresignPut(ctx, image.ObjectKey(), qry.TTL)
+	uploadURL, err := h.storage.PresignPut(ctx, image.SourceObjectKey(), qry.TTL)
 	if err != nil {
 		return PresignImageResult{}, err
 	}

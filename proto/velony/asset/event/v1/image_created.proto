@@ -8,4 +8,5 @@ option go_package = "github.com/velonyapp/asset/gen/event/v1;eventv1";
 
 message ImageCreatedPayload {
   string object_key = 1;
+  string state      = 2;
 }

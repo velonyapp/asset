@@ -9,120 +9,191 @@ import (
 )
 
 var (
-	ErrImageDeleted = errors.New("image is deleted")
+	ErrImageDeleted          = errors.New("image is deleted")
+	ErrImageAlreadyDeleted   = errors.New("image is already deleted")
+	ErrImageNotPending       = errors.New("image is not pending")
+	ErrImageAlreadyUploaded  = errors.New("image is already uploaded")
+	ErrImageNotUploaded      = errors.New("image is not uploaded")
+	ErrImageProcessed        = errors.New("image is processed")
+	ErrImageAlreadyProcessed = errors.New("image is already processed")
+	ErrImageObjectKeysEqual  = errors.New("image source object key and object key must differ")
 )
 
 type Image struct {
-	id           vo.ImageID
-	tags         vo.Tags
-	objectKey    vo.ObjectKey
-	objectExists bool
-	createTime   time.Time
-	deleteTime   *time.Time
+	id              vo.ImageID
+	tags            vo.Tags
+	sourceObjectKey vo.ObjectKey
+	objectKey       vo.ObjectKey
+	state           vo.ImageState
+	createTime      time.Time
+	deleteTime      *time.Time
 
 	domainEvents []event.DomainEvent
 }
 
 func NewImage(
 	tags vo.Tags,
+	sourceObjectKey vo.ObjectKey,
 	objectKey vo.ObjectKey,
 	now time.Time,
-) *Image {
-	imageID := vo.GenerateImageID()
-
-	i := &Image{
-		id:           imageID,
-		tags:         tags,
-		objectKey:    objectKey,
-		objectExists: false,
-		createTime:   now,
+) (*Image, error) {
+	if sourceObjectKey.Equal(objectKey) {
+		return nil, ErrImageObjectKeysEqual
 	}
 
-	i.recordEvent(
+	id := vo.GenerateImageID()
+	state := vo.ImageStatePending
+
+	a := &Image{
+		id:              id,
+		tags:            tags,
+		sourceObjectKey: sourceObjectKey,
+		objectKey:       objectKey,
+		state:           state,
+		createTime:      now,
+	}
+
+	a.recordEvent(
 		event.NewImageCreated(
-			imageID,
+			id,
 			tags,
 			objectKey,
+			state,
 			now,
 		),
 	)
 
-	return i
+	return a, nil
 }
 
 func ReconstituteImage(
 	id vo.ImageID,
 	tags vo.Tags,
+	sourceObjectKey vo.ObjectKey,
 	objectKey vo.ObjectKey,
-	objectExist bool,
+	state vo.ImageState,
 	createTime time.Time,
 	deleteTime *time.Time,
 ) *Image {
-	i := &Image{
-		id:           id,
-		tags:         tags,
-		objectKey:    objectKey,
-		objectExists: objectExist,
-		createTime:   createTime,
+	a := &Image{
+		id:              id,
+		tags:            tags,
+		sourceObjectKey: sourceObjectKey,
+		objectKey:       objectKey,
+		state:           state,
+		createTime:      createTime,
 	}
 
 	if deleteTime != nil {
 		value := *deleteTime
-		i.deleteTime = &value
+		a.deleteTime = &value
 	}
 
-	return i
+	return a
 }
 
-func (i *Image) ID() vo.ImageID {
-	return i.id
+func (a *Image) ID() vo.ImageID {
+	return a.id
 }
 
-func (i *Image) Tags() vo.Tags {
-	return i.tags
+func (a *Image) Tags() vo.Tags {
+	return a.tags
 }
 
-func (i *Image) ObjectKey() vo.ObjectKey {
-	return i.objectKey
+func (a *Image) SourceObjectKey() vo.ObjectKey {
+	return a.sourceObjectKey
 }
 
-func (i *Image) ObjectExists() bool {
-	return i.objectExists
+func (a *Image) ObjectKey() vo.ObjectKey {
+	return a.objectKey
 }
 
-func (i *Image) CreateTime() time.Time {
-	return i.createTime
+func (a *Image) State() vo.ImageState {
+	return a.state
 }
 
-func (i *Image) DeleteTime() *time.Time {
-	if i.deleteTime == nil {
+func (a *Image) CreateTime() time.Time {
+	return a.createTime
+}
+
+func (a *Image) DeleteTime() *time.Time {
+	if a.deleteTime == nil {
 		return nil
 	}
 
-	value := *i.deleteTime
+	value := *a.deleteTime
 	return &value
 }
 
-func (i *Image) IsDeleted() bool {
-	return i.deleteTime != nil
+func (a *Image) IsPending() bool {
+	return a.state.Equal(vo.ImageStatePending)
 }
 
-func (i *Image) Reconcile(value bool, now time.Time) error {
-	if i.IsDeleted() {
+func (a *Image) IsUploaded() bool {
+	return a.state.Equal(vo.ImageStateUploaded)
+}
+
+func (a *Image) IsProcessed() bool {
+	return a.state.Equal(vo.ImageStateProcessed)
+}
+
+func (a *Image) IsDeleted() bool {
+	return a.deleteTime != nil
+}
+
+func (a *Image) CanUpload() error {
+	if a.IsDeleted() {
 		return ErrImageDeleted
 	}
-
-	if value == i.objectExists {
-		return nil
+	if a.IsUploaded() {
+		return ErrImageAlreadyUploaded
+	}
+	if a.IsProcessed() {
+		return ErrImageProcessed
+	}
+	if !a.IsPending() {
+		return ErrImageNotPending
 	}
 
-	i.objectExists = value
+	return nil
+}
 
-	i.recordEvent(
-		event.NewImageReconciled(
-			i.id,
-			i.tags,
-			value,
+func (a *Image) CanProcess() error {
+	if a.IsDeleted() {
+		return ErrImageDeleted
+	}
+	if a.IsProcessed() {
+		return ErrImageAlreadyProcessed
+	}
+	if !a.IsUploaded() {
+		return ErrImageNotUploaded
+	}
+
+	return nil
+}
+
+func (a *Image) CanDelete() error {
+	if a.IsDeleted() {
+		return ErrImageAlreadyDeleted
+	}
+
+	return nil
+}
+
+func (a *Image) Upload(now time.Time) error {
+	if err := a.CanUpload(); err != nil {
+		return err
+	}
+
+	newState := vo.ImageStateUploaded
+
+	a.state = newState
+
+	a.recordEvent(
+		event.NewImageUpdated(
+			a.id,
+			a.tags,
+			newState,
 			now,
 		),
 	)
@@ -130,28 +201,51 @@ func (i *Image) Reconcile(value bool, now time.Time) error {
 	return nil
 }
 
-func (i *Image) Delete(now time.Time) {
-	if i.IsDeleted() {
-		return
+func (a *Image) Process(now time.Time) error {
+	if err := a.CanProcess(); err != nil {
+		return err
 	}
 
-	i.deleteTime = &now
+	newState := vo.ImageStateProcessed
 
-	i.recordEvent(
-		event.NewImageDeleted(
-			i.id,
-			i.tags,
+	a.state = newState
+
+	a.recordEvent(
+		event.NewImageUpdated(
+			a.id,
+			a.tags,
+			newState,
 			now,
 		),
 	)
+
+	return nil
 }
 
-func (i *Image) PullEvents() []event.DomainEvent {
-	pulled := i.domainEvents
-	i.domainEvents = nil
+func (a *Image) Delete(now time.Time) error {
+	if err := a.CanDelete(); err != nil {
+		return err
+	}
+
+	a.deleteTime = &now
+
+	a.recordEvent(
+		event.NewImageDeleted(
+			a.id,
+			a.tags,
+			now,
+		),
+	)
+
+	return nil
+}
+
+func (a *Image) PullEvents() []event.DomainEvent {
+	pulled := a.domainEvents
+	a.domainEvents = nil
 	return pulled
 }
 
-func (i *Image) recordEvent(domainEvent event.DomainEvent) {
-	i.domainEvents = append(i.domainEvents, domainEvent)
+func (a *Image) recordEvent(domainEvent event.DomainEvent) {
+	a.domainEvents = append(a.domainEvents, domainEvent)
 }

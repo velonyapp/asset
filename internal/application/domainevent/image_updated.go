@@ -8,26 +8,26 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[event.ImageReconciled] = (*ImageReconciledHandler)(nil)
+var _ Handler[event.ImageUpdated] = (*ImageUpdatedHandler)(nil)
 
-type ImageReconciledHandler struct {
+type ImageUpdatedHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewImageReconciledHandler(
+func NewImageUpdatedHandler(
 	eventPublisher port.EventPublisher,
-) *ImageReconciledHandler {
-	return &ImageReconciledHandler{
+) *ImageUpdatedHandler {
+	return &ImageUpdatedHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *ImageReconciledHandler) Execute(ctx context.Context, domainEvent event.ImageReconciled) error {
-	integrationEvent := integrationevent.NewImageReconciled(
+func (h *ImageUpdatedHandler) Execute(ctx context.Context, domainEvent event.ImageUpdated) error {
+	integrationEvent := integrationevent.NewImageUpdated(
 		domainEvent.AggregateID(),
 		domainEvent.Tags().Strings(),
 		domainEvent.UpdateTime(),
-		domainEvent.ObjectExists(),
+		domainEvent.State().String(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

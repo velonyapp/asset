@@ -51,11 +51,11 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 	}
 
 	return &v1.Image{
-		Name:         resourcename.Sprint(imageResourcePattern, result.Image.ID),
-		Tags:         result.Image.Tags,
-		ObjectKey:    result.Image.ObjectKey,
-		ObjectExists: result.Image.ObjectExists,
-		CreateTime:   timestamppb.New(result.Image.CreateTime),
+		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:       result.Image.Tags,
+		ObjectKey:  result.Image.ObjectKey,
+		State:      result.Image.State,
+		CreateTime: timestamppb.New(result.Image.CreateTime),
 	}, nil
 }
 
@@ -69,11 +69,11 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 	}
 
 	return &v1.Image{
-		Name:         resourcename.Sprint(imageResourcePattern, result.Image.ID),
-		Tags:         result.Image.Tags,
-		ObjectKey:    result.Image.ObjectKey,
-		ObjectExists: result.Image.ObjectExists,
-		CreateTime:   timestamppb.New(result.Image.CreateTime),
+		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:       result.Image.Tags,
+		ObjectKey:  result.Image.ObjectKey,
+		State:      result.Image.State,
+		CreateTime: timestamppb.New(result.Image.CreateTime),
 	}, nil
 }
 
@@ -93,6 +93,30 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 
 	return &v1.PresignImageResponse{
 		UploadUrl: result.UploadURL,
+	}, nil
+}
+
+func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUploadRequest) (*v1.ConfirmImageUploadResponse, error) {
+	var imageID string
+	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		return nil, ErrInvalidImageResourceName
+	}
+
+	result, err := command.Send(ctx, s.commandBus, command.ConfirmImageUpload{
+		ImageID: imageID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.ConfirmImageUploadResponse{
+		Image: &v1.Image{
+			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+			Tags:       result.Image.Tags,
+			ObjectKey:  result.Image.ObjectKey,
+			State:      result.Image.State,
+			CreateTime: timestamppb.New(result.Image.CreateTime),
+		},
 	}, nil
 }
 
@@ -177,7 +201,7 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 		}
 	}
 
-	if _, err := command.Send(ctx, s.commandBus, command.ProcessImage{
+	result, err := command.Send(ctx, s.commandBus, command.ProcessImage{
 		ImageID: imageID,
 		Options: port.ImageProcessOptions{
 			Resize:         resize,
@@ -185,33 +209,18 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 			AutoRotate:     req.AutoRotate,
 			RemoveMetadata: req.RemoveMetadata,
 		},
-	}); err != nil {
-		return nil, err
-	}
-
-	return &v1.ProcessImageResponse{}, nil
-}
-
-func (s *Service) ReconcileImage(ctx context.Context, req *v1.ReconcileImageRequest) (*v1.ReconcileImageResponse, error) {
-	var imageID string
-	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, ErrInvalidImageResourceName
-	}
-
-	result, err := command.Send(ctx, s.commandBus, command.ReconcileImage{
-		ImageID: imageID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &v1.ReconcileImageResponse{
+	return &v1.ProcessImageResponse{
 		Image: &v1.Image{
-			Name:         resourcename.Sprint(imageResourcePattern, result.Image.ID),
-			Tags:         result.Image.Tags,
-			ObjectKey:    result.Image.ObjectKey,
-			ObjectExists: result.Image.ObjectExists,
-			CreateTime:   timestamppb.New(result.Image.CreateTime),
+			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+			Tags:       result.Image.Tags,
+			ObjectKey:  result.Image.ObjectKey,
+			State:      result.Image.State,
+			CreateTime: timestamppb.New(result.Image.CreateTime),
 		},
 	}, nil
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/velonyapp/asset/internal/application"
 	"github.com/velonyapp/asset/internal/conf"
+	"github.com/velonyapp/asset/internal/domain"
 	"github.com/velonyapp/asset/internal/infrastructure"
 	"github.com/velonyapp/asset/internal/presentation"
 
@@ -24,9 +25,10 @@ func wireApp(
 	*slog.Logger,
 ) (*kratos.App, func(), error) {
 	panic(wire.Build(
-		presentation.ProviderSet,
-		infrastructure.ProviderSet,
+		domain.ProviderSet,
 		application.ProviderSet,
+		infrastructure.ProviderSet,
+		presentation.ProviderSet,
 		newApp,
 	))
 }

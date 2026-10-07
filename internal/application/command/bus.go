@@ -9,15 +9,15 @@ import (
 
 func NewBus(
 	createImage CreateImageHandler,
+	confirmImageUpload ConfirmImageUploadHandler,
 	processImage ProcessImageHandler,
-	reconcileImage ReconcileImageHandler,
 	deleteImage DeleteImageHandler,
 ) *Bus {
 	bus := &Bus{}
 
 	Register(bus, createImage)
+	Register(bus, confirmImageUpload)
 	Register(bus, processImage)
-	Register(bus, reconcileImage)
 	Register(bus, deleteImage)
 
 	return bus

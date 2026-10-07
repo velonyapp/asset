@@ -2,24 +2,24 @@ package command
 
 import (
 	"context"
-	"errors"
 	"io"
 	"time"
 
-	"github.com/velonyapp/asset/internal/application/integrationevent"
+	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
+	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
-
-var ErrImageObjectDoesntExist = errors.New("image object doesn't exist")
 
 type ProcessImage struct {
 	ImageID string
 	Options port.ImageProcessOptions
 }
 
-type ProcessImageResult struct{}
+type ProcessImageResult struct {
+	Image common.ImageResult
+}
 
 func (ProcessImage) resultType() ProcessImageResult {
 	return ProcessImageResult{}
@@ -29,20 +29,20 @@ type ProcessImageHandler Handler[ProcessImage, ProcessImageResult]
 
 type processImageHandler struct {
 	imageRepo      repo.Image
-	eventPublisher port.EventPublisher
+	unitOfWork     port.UnitOfWork
 	storage        port.Storage
 	imageProcessor port.ImageProcessor
 }
 
 func NewProcessImageHandler(
 	imageRepo repo.Image,
-	eventPublisher port.EventPublisher,
+	unitOfWork port.UnitOfWork,
 	storage port.Storage,
 	imageProcessor port.ImageProcessor,
 ) ProcessImageHandler {
 	return &processImageHandler{
 		imageRepo:      imageRepo,
-		eventPublisher: eventPublisher,
+		unitOfWork:     unitOfWork,
 		storage:        storage,
 		imageProcessor: imageProcessor,
 	}
@@ -52,57 +52,74 @@ func (h *processImageHandler) Handle(
 	ctx context.Context,
 	cmd ProcessImage,
 ) (ProcessImageResult, error) {
-	now := time.Now().UTC()
+	imageID, _ := vo.NewImageID(cmd.ImageID)
 
-	imageID, err := vo.NewImageID(cmd.ImageID)
-	if err != nil {
+	var image *entity.Image
+
+	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+		var err error
+
+		image, err = h.imageRepo.FindByID(ctx, imageID)
+		if err != nil {
+			return err
+		}
+		if image == nil {
+			return common.ErrImageNotFound
+		}
+
+		if err := image.CanProcess(); err != nil {
+			return err
+		}
+
+		src, err := h.storage.Get(ctx, image.SourceObjectKey())
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		pr, pw := io.Pipe()
+
+		processErrChan := make(chan error, 1)
+
+		go func() {
+			err := h.imageProcessor.Process(src, pw, cmd.Options)
+			_ = pw.CloseWithError(err)
+			processErrChan <- err
+		}()
+
+		putErr := h.storage.Put(ctx, image.ObjectKey(), pr)
+		if putErr != nil {
+			_ = pr.CloseWithError(putErr)
+		} else {
+			_ = pr.Close()
+		}
+
+		processErr := <-processErrChan
+		if processErr != nil {
+			return processErr
+		}
+		if putErr != nil {
+			return putErr
+		}
+
+		now := time.Now().UTC()
+
+		if err := image.Process(now); err != nil {
+			return err
+		}
+
+		return h.imageRepo.Save(ctx, image)
+	}); err != nil {
 		return ProcessImageResult{}, err
 	}
 
-	image, err := h.imageRepo.GetByID(ctx, imageID)
-	if err != nil {
-		return ProcessImageResult{}, err
-	}
-	if !image.ObjectExists() {
-		return ProcessImageResult{}, ErrImageObjectDoesntExist
-	}
-
-	src, err := h.storage.Get(ctx, image.ObjectKey())
-	if err != nil {
-		return ProcessImageResult{}, err
-	}
-	defer src.Close()
-
-	pr, pw := io.Pipe()
-
-	processErrCh := make(chan error, 1)
-
-	go func() {
-		err := h.imageProcessor.Process(src, pw, cmd.Options)
-		_ = pw.CloseWithError(err)
-		processErrCh <- err
-	}()
-
-	putErr := h.storage.Put(ctx, image.ObjectKey(), pr)
-	if putErr != nil {
-		_ = pr.CloseWithError(putErr)
-	} else {
-		_ = pr.Close()
-	}
-
-	processErr := <-processErrCh
-	if processErr != nil {
-		return ProcessImageResult{}, processErr
-	}
-	if putErr != nil {
-		return ProcessImageResult{}, putErr
-	}
-
-	h.eventPublisher.Publish(ctx, integrationevent.NewImageProcessed(
-		image.ID().String(),
-		image.Tags().Strings(),
-		now,
-	))
-
-	return ProcessImageResult{}, nil
+	return ProcessImageResult{
+		Image: common.ImageResult{
+			ID:         image.ID().String(),
+			Tags:       image.Tags().Strings(),
+			ObjectKey:  image.ObjectKey().String(),
+			State:      image.State().String(),
+			CreateTime: image.CreateTime(),
+		},
+	}, nil
 }

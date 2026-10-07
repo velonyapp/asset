@@ -18,20 +18,20 @@ var _ = new(context.Context)
 
 const _ = http.SupportPackageIsVersion3
 
+const OperationAssetServiceConfirmImageUpload = "/velony.asset.api.v1.AssetService/ConfirmImageUpload"
 const OperationAssetServiceCreateImage = "/velony.asset.api.v1.AssetService/CreateImage"
 const OperationAssetServiceDeleteImage = "/velony.asset.api.v1.AssetService/DeleteImage"
 const OperationAssetServiceGetImage = "/velony.asset.api.v1.AssetService/GetImage"
 const OperationAssetServicePresignImage = "/velony.asset.api.v1.AssetService/PresignImage"
 const OperationAssetServiceProcessImage = "/velony.asset.api.v1.AssetService/ProcessImage"
-const OperationAssetServiceReconcileImage = "/velony.asset.api.v1.AssetService/ReconcileImage"
 
 type AssetServiceHTTPServer interface {
+	ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*ConfirmImageUploadResponse, error)
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
 	ProcessImage(context.Context, *ProcessImageRequest) (*ProcessImageResponse, error)
-	ReconcileImage(context.Context, *ReconcileImageRequest) (*ReconcileImageResponse, error)
 }
 
 func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) {
@@ -39,7 +39,7 @@ func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) 
 	r.Handle("GET", "/v1/{name:images/[^/]+}", _AssetService_GetImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images", _AssetService_CreateImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:images/[^/]+}:presign", _AssetService_PresignImage0_HTTP_Handler(srv))
-	r.Handle("POST", "/v1/{name:images/[^/]+}:reconcile", _AssetService_ReconcileImage0_HTTP_Handler(srv))
+	r.Handle("POST", "/v1/{name:images/[^/]+}:confirmUpload", _AssetService_ConfirmImageUpload0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:images/[^/]+}:process", _AssetService_ProcessImage0_HTTP_Handler(srv))
 	r.Handle("DELETE", "/v1/{name:images/[^/]+}", _AssetService_DeleteImage0_HTTP_Handler(srv))
 }
@@ -110,24 +110,24 @@ func _AssetService_PresignImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(c
 	}
 }
 
-func _AssetService_ReconcileImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+func _AssetService_ConfirmImageUpload0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ReconcileImageRequest
+		var in ConfirmImageUploadRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAssetServiceReconcileImage)
+		http.SetOperation(ctx, OperationAssetServiceConfirmImageUpload)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ReconcileImage(ctx, req.(*ReconcileImageRequest))
+			return srv.ConfirmImageUpload(ctx, req.(*ConfirmImageUploadRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*ReconcileImageResponse)
+		reply := out.(*ConfirmImageUploadResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -177,12 +177,12 @@ func _AssetService_DeleteImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ct
 }
 
 type AssetServiceHTTPClient interface {
+	ConfirmImageUpload(ctx context.Context, req *ConfirmImageUploadRequest, opts ...http.CallOption) (rsp *ConfirmImageUploadResponse, err error)
 	CreateImage(ctx context.Context, req *CreateImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	DeleteImage(ctx context.Context, req *DeleteImageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetImage(ctx context.Context, req *GetImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 	PresignImage(ctx context.Context, req *PresignImageRequest, opts ...http.CallOption) (rsp *PresignImageResponse, err error)
 	ProcessImage(ctx context.Context, req *ProcessImageRequest, opts ...http.CallOption) (rsp *ProcessImageResponse, err error)
-	ReconcileImage(ctx context.Context, req *ReconcileImageRequest, opts ...http.CallOption) (rsp *ReconcileImageResponse, err error)
 }
 
 type AssetServiceHTTPClientImpl struct {
@@ -191,6 +191,23 @@ type AssetServiceHTTPClientImpl struct {
 
 func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 	return &AssetServiceHTTPClientImpl{client}
+}
+
+func (c *AssetServiceHTTPClientImpl) ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...http.CallOption) (*ConfirmImageUploadResponse, error) {
+	var out ConfirmImageUploadResponse
+	pattern := "/v1/{name=images/*}:confirmUpload"
+	path := http.BuildPath(pattern, in)
+	opts = append([]http.CallOption{
+		http.Accept("application/protojson"),
+		http.ContentType("application/protojson"),
+		http.Operation(OperationAssetServiceConfirmImageUpload),
+		http.PathTemplate(pattern),
+	}, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AssetServiceHTTPClientImpl) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...http.CallOption) (*Image, error) {
@@ -267,23 +284,6 @@ func (c *AssetServiceHTTPClientImpl) ProcessImage(ctx context.Context, in *Proce
 		http.Accept("application/protojson"),
 		http.ContentType("application/protojson"),
 		http.Operation(OperationAssetServiceProcessImage),
-		http.PathTemplate(pattern),
-	}, opts...)
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *AssetServiceHTTPClientImpl) ReconcileImage(ctx context.Context, in *ReconcileImageRequest, opts ...http.CallOption) (*ReconcileImageResponse, error) {
-	var out ReconcileImageResponse
-	pattern := "/v1/{name=images/*}:reconcile"
-	path := http.BuildPath(pattern, in)
-	opts = append([]http.CallOption{
-		http.Accept("application/protojson"),
-		http.ContentType("application/protojson"),
-		http.Operation(OperationAssetServiceReconcileImage),
 		http.PathTemplate(pattern),
 	}, opts...)
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)

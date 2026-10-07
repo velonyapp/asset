@@ -9,5 +9,5 @@ enum ErrorReason {
 
   IMAGE_NOT_FOUND           = 1;
   OBJECT_KEY_ALREADY_EXISTS = 2;
-  OBJECT_NOT_FOUND          = 3;
+  SOURCE_OBJECT_NOT_FOUND   = 3;
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
@@ -25,18 +26,15 @@ type DeleteImageHandler Handler[DeleteImage, DeleteImageResult]
 type deleteImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
-	storage    port.Storage
 }
 
 func NewDeleteImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
-	storage port.Storage,
 ) DeleteImageHandler {
 	return &deleteImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
-		storage:    storage,
 	}
 }
 
@@ -46,23 +44,21 @@ func (h *deleteImageHandler) Handle(
 ) (DeleteImageResult, error) {
 	now := time.Now().UTC()
 
-	imageID, err := vo.NewImageID(cmd.ImageID)
-	if err != nil {
-		return DeleteImageResult{}, err
-	}
-
-	image, err := h.imageRepo.GetByID(ctx, imageID)
-	if err != nil {
-		return DeleteImageResult{}, err
-	}
-
-	if err := h.storage.Delete(ctx, image.ObjectKey()); err != nil {
-		return DeleteImageResult{}, err
-	}
-
-	image.Delete(now)
+	imageID, _ := vo.NewImageID(cmd.ImageID)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+		image, err := h.imageRepo.FindByID(ctx, imageID)
+		if err != nil {
+			return err
+		}
+		if image == nil {
+			return common.ErrImageNotFound
+		}
+
+		if err := image.Delete(now); err != nil {
+			return err
+		}
+
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return DeleteImageResult{}, err

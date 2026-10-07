@@ -39,10 +39,10 @@ service AssetService {
     };
   }
 
-  rpc ReconcileImage(ReconcileImageRequest)
-  returns (ReconcileImageResponse) {
+  rpc ConfirmImageUpload(ConfirmImageUploadRequest)
+  returns (ConfirmImageUploadResponse) {
     option (google.api.http) = {
-      post: "/v1/{name=images/*}:reconcile"
+      post: "/v1/{name=images/*}:confirmUpload"
       body: "*"
     };
   }
@@ -149,7 +149,8 @@ message Image {
   string object_key = 3 [
     (google.api.field_behavior) = REQUIRED
   ];
-  bool object_exists = 4 [
+
+  string state = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
@@ -190,6 +191,19 @@ message PresignImageResponse {
   string upload_url = 1;
 }
 
+message ConfirmImageUploadRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Image"
+    }
+  ];
+}
+
+message ConfirmImageUploadResponse {
+  Image image = 1;
+}
+
 message ProcessImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -212,18 +226,7 @@ message ProcessImageRequest {
   ];
 }
 
-message ProcessImageResponse {}
-
-message ReconcileImageRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/Image"
-    }
-  ];
-}
-
-message ReconcileImageResponse {
+message ProcessImageResponse {
   Image image = 1;
 }
 

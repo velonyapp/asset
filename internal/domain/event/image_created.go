@@ -13,6 +13,7 @@ type ImageCreated struct {
 
 	tags       vo.Tags
 	objectKey  vo.ObjectKey
+	state      vo.ImageState
 	createTime time.Time
 }
 
@@ -20,6 +21,7 @@ func NewImageCreated(
 	imageID vo.ImageID,
 	tags vo.Tags,
 	objectKey vo.ObjectKey,
+	state vo.ImageState,
 	createTime time.Time,
 ) ImageCreated {
 	return ImageCreated{
@@ -27,6 +29,7 @@ func NewImageCreated(
 
 		tags:       tags,
 		objectKey:  objectKey,
+		state:      state,
 		createTime: createTime,
 	}
 }
@@ -37,6 +40,10 @@ func (e ImageCreated) Tags() vo.Tags {
 
 func (e ImageCreated) ObjectKey() vo.ObjectKey {
 	return e.objectKey
+}
+
+func (e ImageCreated) State() vo.ImageState {
+	return e.state
 }
 
 func (e ImageCreated) CreateTime() time.Time {

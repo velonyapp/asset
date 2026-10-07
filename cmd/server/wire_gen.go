@@ -12,6 +12,7 @@ import (
 	"github.com/velonyapp/asset/internal/application/domainevent"
 	"github.com/velonyapp/asset/internal/application/query"
 	"github.com/velonyapp/asset/internal/conf"
+	"github.com/velonyapp/asset/internal/domain/service"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
@@ -37,26 +38,27 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	encoder := protobuf.NewEncoder()
 	eventPublisher := mysql.NewEventPublisher(db, encoder)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
-	imageReconciledHandler := domainevent.NewImageReconciledHandler(eventPublisher)
+	imageUpdatedHandler := domainevent.NewImageUpdatedHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageReconciledHandler, imageDeletedHandler)
+	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageUpdatedHandler, imageDeletedHandler)
 	image := mysql.NewImageRepo(db, dispatcher)
+	objectKeyPolicy := service.NewObjectKeyPolicy(image)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	createImageHandler := command.NewCreateImageHandler(image, unitOfWork)
 	client, err := s3.NewConnection(data)
 	if err != nil {
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
+	createImageHandler := command.NewCreateImageHandler(image, objectKeyPolicy, unitOfWork, storage)
+	confirmImageUploadHandler := command.NewConfirmImageUploadHandler(image, unitOfWork, storage)
 	imageProcessor := processing.NewImageProcessor()
-	processImageHandler := command.NewProcessImageHandler(image, eventPublisher, storage, imageProcessor)
-	reconcileImageHandler := command.NewReconcileImageHandler(image, unitOfWork, storage)
-	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork, storage)
-	bus := command.NewBus(createImageHandler, processImageHandler, reconcileImageHandler, deleteImageHandler)
+	processImageHandler := command.NewProcessImageHandler(image, unitOfWork, storage, imageProcessor)
+	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork)
+	bus := command.NewBus(createImageHandler, confirmImageUploadHandler, processImageHandler, deleteImageHandler)
 	getImageHandler := query.NewGetImageHandler(image)
 	presignImageHandler := query.NewPresignImageHandler(image, storage)
 	queryBus := query.NewBus(getImageHandler, presignImageHandler)
-	service := api.NewService(bus, queryBus)
+	apiService := api.NewService(bus, queryBus)
 	tracing := middleware.NewTracing()
 	metrics, err := middleware.NewMetrics()
 	if err != nil {
@@ -64,8 +66,8 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	}
 	errorMapper := middleware.NewErrorMapper()
 	validation := middleware.NewValidation()
-	server := transport.NewGRPCServer(confTransport, service, tracing, metrics, errorMapper, validation)
-	httpServer := transport.NewHTTPServer(confTransport, service, tracing, metrics, errorMapper, validation)
+	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
+	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, bus)
 	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {

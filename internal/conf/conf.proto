@@ -42,10 +42,10 @@ message Transport {
       string create_image = 1 [
         (buf.validate.field).string.min_len = 1
       ];
-      string process_image = 2 [
+      string confirm_image_upload = 2 [
         (buf.validate.field).string.min_len = 1
       ];
-      string reconcile_image = 3 [
+      string process_image = 3 [
         (buf.validate.field).string.min_len = 1
       ];
       string delete_image = 4 [

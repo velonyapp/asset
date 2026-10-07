@@ -8,6 +8,7 @@ type ImageCreated struct {
 	BaseIntegrationEvent
 
 	objectKey string
+	state     string
 }
 
 func NewImageCreated(
@@ -15,11 +16,13 @@ func NewImageCreated(
 	tags []string,
 	occurTime time.Time,
 	objectKey string,
+	state string,
 ) ImageCreated {
 	return ImageCreated{
 		BaseIntegrationEvent: NewBaseIntegrationEvent(imageID, tags, occurTime),
 
 		objectKey: objectKey,
+		state:     state,
 	}
 }
 
@@ -33,4 +36,8 @@ func (e ImageCreated) AggregateType() string {
 
 func (e ImageCreated) ObjectKey() string {
 	return e.objectKey
+}
+
+func (e ImageCreated) State() string {
+	return e.state
 }

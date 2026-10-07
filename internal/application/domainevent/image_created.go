@@ -28,6 +28,7 @@ func (h *ImageCreatedHandler) Execute(ctx context.Context, domainEvent event.Ima
 		domainEvent.Tags().Strings(),
 		domainEvent.CreateTime(),
 		domainEvent.ObjectKey().String(),
+		domainEvent.State().String(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

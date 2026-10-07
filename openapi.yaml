@@ -60,6 +60,31 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /v1/images/{image}:confirmUpload:
+        post:
+            tags:
+                - AssetService
+            operationId: AssetService_ConfirmImageUpload
+            parameters:
+                - name: image
+                  in: path
+                  description: The image id.
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/velony.asset.api.v1.ConfirmImageUploadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/velony.asset.api.v1.ConfirmImageUploadResponse'
     /v1/images/{image}:presign:
         post:
             tags:
@@ -110,33 +135,20 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.ProcessImageResponse'
-    /v1/images/{image}:reconcile:
-        post:
-            tags:
-                - AssetService
-            operationId: AssetService_ReconcileImage
-            parameters:
-                - name: image
-                  in: path
-                  description: The image id.
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.ReconcileImageRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.ReconcileImageResponse'
 components:
     schemas:
+        velony.asset.api.v1.ConfirmImageUploadRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
+        velony.asset.api.v1.ConfirmImageUploadResponse:
+            type: object
+            properties:
+                image:
+                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
         velony.asset.api.v1.Image:
             required:
                 - tags
@@ -151,9 +163,9 @@ components:
                         type: string
                 objectKey:
                     type: string
-                objectExists:
+                state:
                     readOnly: true
-                    type: boolean
+                    type: string
                 createTime:
                     readOnly: true
                     type: string
@@ -218,16 +230,6 @@ components:
                 removeMetadata:
                     type: boolean
         velony.asset.api.v1.ProcessImageResponse:
-            type: object
-            properties: {}
-        velony.asset.api.v1.ReconcileImageRequest:
-            required:
-                - name
-            type: object
-            properties:
-                name:
-                    type: string
-        velony.asset.api.v1.ReconcileImageResponse:
             type: object
             properties:
                 image:
