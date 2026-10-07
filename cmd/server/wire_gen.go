@@ -49,7 +49,8 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 		return nil, nil, err
 	}
 	storage := s3.NewStorage(client, data)
-	createImageHandler := command.NewCreateImageHandler(image, objectKeyPolicy, unitOfWork, storage)
+	sourceObjectKeyGenerator := s3.NewSourceObjectKeyGenerator()
+	createImageHandler := command.NewCreateImageHandler(image, objectKeyPolicy, unitOfWork, storage, sourceObjectKeyGenerator)
 	confirmImageUploadHandler := command.NewConfirmImageUploadHandler(image, unitOfWork, storage)
 	imageProcessor := processing.NewImageProcessor()
 	processImageHandler := command.NewProcessImageHandler(image, unitOfWork, storage, imageProcessor)

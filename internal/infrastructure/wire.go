@@ -17,5 +17,6 @@ var ProviderSet = wire.NewSet(
 	mysql.NewEventPublisher,
 	s3.NewConnection,
 	s3.NewStorage,
+	s3.NewSourceObjectKeyGenerator,
 	protobuf.NewEncoder,
 )

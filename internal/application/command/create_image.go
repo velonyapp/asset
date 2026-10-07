@@ -34,10 +34,11 @@ func (CreateImage) resultType() CreateImageResult {
 type CreateImageHandler Handler[CreateImage, CreateImageResult]
 
 type createImageHandler struct {
-	imageRepo       repo.Image
-	objectKeyPolicy *service.ObjectKeyPolicy
-	unitOfWork      port.UnitOfWork
-	storage         port.Storage
+	imageRepo                repo.Image
+	objectKeyPolicy          *service.ObjectKeyPolicy
+	unitOfWork               port.UnitOfWork
+	storage                  port.Storage
+	sourceObjectKeyGenerator port.SourceObjectKeyGenerator
 }
 
 func NewCreateImageHandler(
@@ -45,12 +46,14 @@ func NewCreateImageHandler(
 	objectKeyPolicy *service.ObjectKeyPolicy,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
+	sourceObjectKeyGenerator port.SourceObjectKeyGenerator,
 ) CreateImageHandler {
 	return &createImageHandler{
-		imageRepo:       imageRepo,
-		objectKeyPolicy: objectKeyPolicy,
-		unitOfWork:      unitOfWork,
-		storage:         storage,
+		imageRepo:                imageRepo,
+		objectKeyPolicy:          objectKeyPolicy,
+		unitOfWork:               unitOfWork,
+		storage:                  storage,
+		sourceObjectKeyGenerator: sourceObjectKeyGenerator,
 	}
 }
 
@@ -68,9 +71,10 @@ func (h *createImageHandler) Handle(
 	if err != nil {
 		return CreateImageResult{}, err
 	}
-
-	// make generation port later
-	sourceObjectKey := vo.ObjectKey{}
+	sourceObjectKey, err := h.sourceObjectKeyGenerator.Generate()
+	if err != nil {
+		return CreateImageResult{}, err
+	}
 
 	var image *entity.Image
 
