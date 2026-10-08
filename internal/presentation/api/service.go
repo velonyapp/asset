@@ -56,6 +56,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 		ObjectKey:  result.Image.ObjectKey,
 		State:      result.Image.State,
 		CreateTime: timestamppb.New(result.Image.CreateTime),
+		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
 }
 
@@ -74,6 +75,7 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 		ObjectKey:  result.Image.ObjectKey,
 		State:      result.Image.State,
 		CreateTime: timestamppb.New(result.Image.CreateTime),
+		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
 }
 
@@ -98,6 +100,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 			ObjectKey:  result.Image.ObjectKey,
 			State:      result.Image.State,
 			CreateTime: timestamppb.New(result.Image.CreateTime),
+			UpdateTime: timestamppb.New(result.Image.UpdateTime),
 		},
 		UploadUrl: result.UploadURL,
 	}, nil
@@ -123,6 +126,7 @@ func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUp
 			ObjectKey:  result.Image.ObjectKey,
 			State:      result.Image.State,
 			CreateTime: timestamppb.New(result.Image.CreateTime),
+			UpdateTime: timestamppb.New(result.Image.UpdateTime),
 		},
 	}, nil
 }
@@ -228,6 +232,7 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 			ObjectKey:  result.Image.ObjectKey,
 			State:      result.Image.State,
 			CreateTime: timestamppb.New(result.Image.CreateTime),
+			UpdateTime: timestamppb.New(result.Image.UpdateTime),
 		},
 	}, nil
 }

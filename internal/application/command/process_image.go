@@ -53,10 +53,7 @@ func (h *processImageHandler) Handle(
 	ctx context.Context,
 	cmd ProcessImage,
 ) (ProcessImageResult, error) {
-	imageID, err := vo.NewImageID(cmd.ImageID)
-	if err != nil {
-		return ProcessImageResult{}, err
-	}
+	imageID, _ := vo.NewImageID(cmd.ImageID)
 
 	var image *entity.Image
 
@@ -171,6 +168,7 @@ func (h *processImageHandler) Handle(
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
 			CreateTime: image.CreateTime(),
+			UpdateTime: image.UpdateTime(),
 		},
 	}, nil
 }

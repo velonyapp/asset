@@ -8,4 +8,5 @@ type ImageResult struct {
 	ObjectKey  string
 	State      string
 	CreateTime time.Time
+	UpdateTime time.Time
 }

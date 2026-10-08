@@ -5,9 +5,9 @@ CREATE TABLE images (
     object_key        VARCHAR(128) NOT NULL,
     state             VARCHAR(32) NOT NULL,
     create_time       DATETIME(6) NOT NULL,
-    delete_time       DATETIME(6),
+    update_time       DATETIME(6) NOT NULL,
 
-    INDEX idx_images_delete_time       (delete_time),
+    INDEX idx_images_update_time       (update_time),
     INDEX idx_images_source_object_key (source_object_key),
     INDEX idx_images_object_key        (object_key)
 ) ENGINE = InnoDB;

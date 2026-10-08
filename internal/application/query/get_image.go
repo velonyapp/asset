@@ -55,6 +55,7 @@ func (h *getImageHandler) Handle(
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
 			CreateTime: image.CreateTime(),
+			UpdateTime: image.UpdateTime(),
 		},
 	}, nil
 }

@@ -46,7 +46,7 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 			update_time
 		FROM images
 		WHERE id = ?
-			AND state IS NOT DELETED
+			AND state <> 'DELETED'
 		LIMIT 1
 		FOR UPDATE
 	`
@@ -79,7 +79,7 @@ func (r *imageRepo) FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectK
 			update_time
 		FROM images
 		WHERE (source_object_key = ? OR object_key = ?)
-  			AND state IS NOT DELETED
+  			AND state <> 'DELETED'
 		LIMIT 1
 		FOR UPDATE
 	`
