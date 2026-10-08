@@ -8,6 +8,5 @@ import (
 func imageCreatedPayload(event integrationevent.ImageCreated) *v1.ImageCreatedPayload {
 	return &v1.ImageCreatedPayload{
 		ObjectKey: event.ObjectKey(),
-		State:     event.State(),
 	}
 }

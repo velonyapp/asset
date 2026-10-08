@@ -17,7 +17,8 @@ type Dispatcher struct {
 
 func NewDispatcher(
 	imageCreatedHandler *ImageCreatedHandler,
-	imageUpdatedHandler *ImageUpdatedHandler,
+	imageUploadedHandler *ImageUploadedHandler,
+	imageProcessedHandler *ImageProcessedHandler,
 	imageDeletedHandler *ImageDeletedHandler,
 ) *Dispatcher {
 	dispatcher := &Dispatcher{
@@ -30,7 +31,8 @@ func NewDispatcher(
 	}
 
 	registerHandler(dispatcher, imageCreatedHandler)
-	registerHandler(dispatcher, imageUpdatedHandler)
+	registerHandler(dispatcher, imageUploadedHandler)
+	registerHandler(dispatcher, imageProcessedHandler)
 	registerHandler(dispatcher, imageDeletedHandler)
 
 	return dispatcher

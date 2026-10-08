@@ -170,6 +170,10 @@ components:
                     readOnly: true
                     type: string
                     format: date-time
+                updateTime:
+                    readOnly: true
+                    type: string
+                    format: date-time
         velony.asset.api.v1.ImageEncoding:
             type: object
             properties:
@@ -212,6 +216,8 @@ components:
         velony.asset.api.v1.PresignImageResponse:
             type: object
             properties:
+                image:
+                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
                 uploadUrl:
                     type: string
         velony.asset.api.v1.ProcessImageRequest:

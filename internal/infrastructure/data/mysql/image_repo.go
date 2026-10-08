@@ -43,10 +43,10 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 			object_key,
 			state,
 			create_time,
-			delete_time
+			update_time
 		FROM images
 		WHERE id = ?
-			AND delete_time IS NULL
+			AND state IS NOT DELETED
 		LIMIT 1
 		FOR UPDATE
 	`
@@ -76,10 +76,10 @@ func (r *imageRepo) FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectK
 			object_key,
 			state,
 			create_time,
-			delete_time
+			update_time
 		FROM images
 		WHERE (source_object_key = ? OR object_key = ?)
-  			AND delete_time IS NULL
+  			AND state IS NOT DELETED
 		LIMIT 1
 		FOR UPDATE
 	`
@@ -110,12 +110,12 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	        object_key,
 	        state,
 	        create_time,
-	        delete_time
+	        update_time
 	    )
 	    VALUES (?, ?, ?, ?, ?, ?, ?) AS new
 	    ON DUPLICATE KEY UPDATE
 	        state = new.state,
-	        delete_time = new.delete_time
+	        update_time = new.update_time
 	`
 
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
@@ -125,7 +125,7 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 		image.ObjectKey().String(),
 		image.State().String(),
 		image.CreateTime(),
-		image.DeleteTime(),
+		image.UpdateTime(),
 	); err != nil {
 		return err
 	}
@@ -147,7 +147,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		objectKeyRaw       string
 		stateRaw           string
 		createTimeRaw      time.Time
-		deleteTimeRaw      sql.NullTime
+		updateTimeRaw      time.Time
 	)
 
 	if err := scanner.Scan(
@@ -157,7 +157,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		&objectKeyRaw,
 		&stateRaw,
 		&createTimeRaw,
-		&deleteTimeRaw,
+		&updateTimeRaw,
 	); err != nil {
 		return nil, err
 	}
@@ -171,10 +171,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	objectKey, _ := vo.NewObjectKey(objectKeyRaw)
 	state, _ := vo.NewImageState(stateRaw)
 	createTime := createTimeRaw
-	var deleteTime *time.Time
-	if deleteTimeRaw.Valid {
-		deleteTime = &deleteTimeRaw.Time
-	}
+	updateTime := updateTimeRaw
 
 	return entity.ReconstituteImage(
 		id,
@@ -183,6 +180,6 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		objectKey,
 		state,
 		createTime,
-		deleteTime,
+		updateTime,
 	), nil
 }

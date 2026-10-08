@@ -157,6 +157,9 @@ message Image {
   google.protobuf.Timestamp create_time = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
+  google.protobuf.Timestamp update_time = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
 }
 
 message GetImageRequest {
@@ -188,7 +191,9 @@ message PresignImageRequest {
 }
 
 message PresignImageResponse {
-  string upload_url = 1;
+  Image image = 1;
+
+  string upload_url = 2;
 }
 
 message ConfirmImageUploadRequest {

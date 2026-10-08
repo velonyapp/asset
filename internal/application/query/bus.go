@@ -9,12 +9,10 @@ import (
 
 func NewBus(
 	getImage GetImageHandler,
-	presignImage PresignImageHandler,
 ) *Bus {
 	bus := &Bus{}
 
 	Register(bus, getImage)
-	Register(bus, presignImage)
 
 	return bus
 }

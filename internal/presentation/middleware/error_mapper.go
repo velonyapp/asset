@@ -93,9 +93,17 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageAlreadyDeleted.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageNotPending):
+				case errors.Is(err, domainentity.ErrImageAlreadyUploading):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageNotPending.Error(),
+						domainentity.ErrImageAlreadyUploading.Error(),
+					)
+				case errors.Is(err, domainentity.ErrImageNotUploading):
+					return reply, kerrors.BadRequest("",
+						domainentity.ErrImageNotUploading.Error(),
+					)
+				case errors.Is(err, domainentity.ErrImageUploaded):
+					return reply, kerrors.BadRequest("",
+						domainentity.ErrImageUploaded.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageAlreadyUploaded):
 					return reply, kerrors.BadRequest("",

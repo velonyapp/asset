@@ -12,9 +12,14 @@ func TestNewImageState(t *testing.T) {
 		expected ImageState
 	}{
 		{
-			name:     "pending",
-			value:    "PENDING",
-			expected: ImageStatePending,
+			name:     "created",
+			value:    "CREATED",
+			expected: ImageStateCreated,
+		},
+		{
+			name:     "uploading",
+			value:    "UPLOADING",
+			expected: ImageStateUploading,
 		},
 		{
 			name:     "uploaded",
@@ -22,9 +27,19 @@ func TestNewImageState(t *testing.T) {
 			expected: ImageStateUploaded,
 		},
 		{
+			name:     "processing",
+			value:    "PROCESSING",
+			expected: ImageStateProcessing,
+		},
+		{
 			name:     "processed",
 			value:    "PROCESSED",
 			expected: ImageStateProcessed,
+		},
+		{
+			name:     "deleted",
+			value:    "DELETED",
+			expected: ImageStateDeleted,
 		},
 	}
 
@@ -67,7 +82,7 @@ func TestImageState_Equal(t *testing.T) {
 		t.Error("expected states to be equal")
 	}
 
-	if ImageStateProcessed.Equal(ImageStatePending) {
+	if ImageStateProcessed.Equal(ImageStateCreated) {
 		t.Error("expected states to be different")
 	}
 }

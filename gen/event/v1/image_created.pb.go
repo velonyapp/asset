@@ -25,7 +25,6 @@ const (
 type ImageCreatedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ObjectKey     string                 `protobuf:"bytes,1,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
-	State         string                 `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,22 +66,14 @@ func (x *ImageCreatedPayload) GetObjectKey() string {
 	return ""
 }
 
-func (x *ImageCreatedPayload) GetState() string {
-	if x != nil {
-		return x.State
-	}
-	return ""
-}
-
 var File_velony_asset_event_v1_image_created_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_image_created_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/image_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"J\n" +
+	")velony/asset/event/v1/image_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"4\n" +
 	"\x13ImageCreatedPayload\x12\x1d\n" +
 	"\n" +
-	"object_key\x18\x01 \x01(\tR\tobjectKey\x12\x14\n" +
-	"\x05state\x18\x02 \x01(\tR\x05stateB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"object_key\x18\x01 \x01(\tR\tobjectKeyB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_image_created_proto_rawDescOnce sync.Once
