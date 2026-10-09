@@ -54,7 +54,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 		Tags:       result.Image.Tags,
 		ObjectKey:  result.Image.ObjectKey,
-		State:      result.Image.State,
+		State:      mapState(result.Image.State),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
 		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
@@ -73,7 +73,7 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 		Tags:       result.Image.Tags,
 		ObjectKey:  result.Image.ObjectKey,
-		State:      result.Image.State,
+		State:      mapState(result.Image.State),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
 		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
@@ -98,7 +98,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 			Tags:       result.Image.Tags,
 			ObjectKey:  result.Image.ObjectKey,
-			State:      result.Image.State,
+			State:      mapState(result.Image.State),
 			CreateTime: timestamppb.New(result.Image.CreateTime),
 			UpdateTime: timestamppb.New(result.Image.UpdateTime),
 		},
@@ -106,7 +106,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 	}, nil
 }
 
-func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUploadRequest) (*v1.ConfirmImageUploadResponse, error) {
+func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUploadRequest) (*v1.Image, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
 		return nil, ErrInvalidImageResourceName
@@ -119,19 +119,17 @@ func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUp
 		return nil, err
 	}
 
-	return &v1.ConfirmImageUploadResponse{
-		Image: &v1.Image{
-			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
-			Tags:       result.Image.Tags,
-			ObjectKey:  result.Image.ObjectKey,
-			State:      result.Image.State,
-			CreateTime: timestamppb.New(result.Image.CreateTime),
-			UpdateTime: timestamppb.New(result.Image.UpdateTime),
-		},
+	return &v1.Image{
+		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:       result.Image.Tags,
+		ObjectKey:  result.Image.ObjectKey,
+		State:      mapState(result.Image.State),
+		CreateTime: timestamppb.New(result.Image.CreateTime),
+		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
 }
 
-func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest) (*v1.ProcessImageResponse, error) {
+func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest) (*v1.Image, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
 		return nil, ErrInvalidImageResourceName
@@ -225,15 +223,13 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 		return nil, err
 	}
 
-	return &v1.ProcessImageResponse{
-		Image: &v1.Image{
-			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
-			Tags:       result.Image.Tags,
-			ObjectKey:  result.Image.ObjectKey,
-			State:      result.Image.State,
-			CreateTime: timestamppb.New(result.Image.CreateTime),
-			UpdateTime: timestamppb.New(result.Image.UpdateTime),
-		},
+	return &v1.Image{
+		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:       result.Image.Tags,
+		ObjectKey:  result.Image.ObjectKey,
+		State:      mapState(result.Image.State),
+		CreateTime: timestamppb.New(result.Image.CreateTime),
+		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
 }
 
@@ -250,4 +246,21 @@ func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func mapState(state string) v1.Image_State {
+	switch state {
+	case "CREATED":
+		return v1.Image_CREATED
+	case "UPLOADING":
+		return v1.Image_UPLOADING
+	case "UPLOADED":
+		return v1.Image_UPLOADED
+	case "PROCESSING":
+		return v1.Image_PROCESSING
+	case "PROCESSED":
+		return v1.Image_PROCESSED
+	default:
+		return v1.Image_STATE_UNSPECIFIED
+	}
 }

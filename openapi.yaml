@@ -84,7 +84,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.ConfirmImageUploadResponse'
+                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
     /v1/images/{image}:presign:
         post:
             tags:
@@ -134,7 +134,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.ProcessImageResponse'
+                                $ref: '#/components/schemas/velony.asset.api.v1.Image'
 components:
     schemas:
         velony.asset.api.v1.ConfirmImageUploadRequest:
@@ -144,11 +144,6 @@ components:
             properties:
                 name:
                     type: string
-        velony.asset.api.v1.ConfirmImageUploadResponse:
-            type: object
-            properties:
-                image:
-                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
         velony.asset.api.v1.Image:
             required:
                 - tags
@@ -165,7 +160,8 @@ components:
                     type: string
                 state:
                     readOnly: true
-                    type: string
+                    type: integer
+                    format: enum
                 createTime:
                     readOnly: true
                     type: string
@@ -235,10 +231,5 @@ components:
                     type: boolean
                 removeMetadata:
                     type: boolean
-        velony.asset.api.v1.ProcessImageResponse:
-            type: object
-            properties:
-                image:
-                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
 tags:
     - name: AssetService

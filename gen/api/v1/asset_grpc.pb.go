@@ -35,8 +35,8 @@ type AssetServiceClient interface {
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*Image, error)
 	PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error)
-	ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...grpc.CallOption) (*ConfirmImageUploadResponse, error)
-	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*ProcessImageResponse, error)
+	ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...grpc.CallOption) (*Image, error)
+	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*Image, error)
 	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -78,9 +78,9 @@ func (c *assetServiceClient) PresignImage(ctx context.Context, in *PresignImageR
 	return out, nil
 }
 
-func (c *assetServiceClient) ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...grpc.CallOption) (*ConfirmImageUploadResponse, error) {
+func (c *assetServiceClient) ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...grpc.CallOption) (*Image, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfirmImageUploadResponse)
+	out := new(Image)
 	err := c.cc.Invoke(ctx, AssetService_ConfirmImageUpload_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -88,9 +88,9 @@ func (c *assetServiceClient) ConfirmImageUpload(ctx context.Context, in *Confirm
 	return out, nil
 }
 
-func (c *assetServiceClient) ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*ProcessImageResponse, error) {
+func (c *assetServiceClient) ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*Image, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ProcessImageResponse)
+	out := new(Image)
 	err := c.cc.Invoke(ctx, AssetService_ProcessImage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -115,8 +115,8 @@ type AssetServiceServer interface {
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
 	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
-	ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*ConfirmImageUploadResponse, error)
-	ProcessImage(context.Context, *ProcessImageRequest) (*ProcessImageResponse, error)
+	ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*Image, error)
+	ProcessImage(context.Context, *ProcessImageRequest) (*Image, error)
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAssetServiceServer()
 }
@@ -137,10 +137,10 @@ func (UnimplementedAssetServiceServer) CreateImage(context.Context, *CreateImage
 func (UnimplementedAssetServiceServer) PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PresignImage not implemented")
 }
-func (UnimplementedAssetServiceServer) ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*ConfirmImageUploadResponse, error) {
+func (UnimplementedAssetServiceServer) ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmImageUpload not implemented")
 }
-func (UnimplementedAssetServiceServer) ProcessImage(context.Context, *ProcessImageRequest) (*ProcessImageResponse, error) {
+func (UnimplementedAssetServiceServer) ProcessImage(context.Context, *ProcessImageRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessImage not implemented")
 }
 func (UnimplementedAssetServiceServer) DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error) {

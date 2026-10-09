@@ -31,24 +31,21 @@ service AssetService {
     option (google.api.method_signature) = "image";
   }
 
-  rpc PresignImage(PresignImageRequest)
-  returns (PresignImageResponse) {
+  rpc PresignImage(PresignImageRequest) returns (PresignImageResponse) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:presign"
       body: "*"
     };
   }
 
-  rpc ConfirmImageUpload(ConfirmImageUploadRequest)
-  returns (ConfirmImageUploadResponse) {
+  rpc ConfirmImageUpload(ConfirmImageUploadRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:confirmUpload"
       body: "*"
     };
   }
 
-  rpc ProcessImage(ProcessImageRequest)
-  returns (ProcessImageResponse) {
+  rpc ProcessImage(ProcessImageRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:process"
       body: "*"
@@ -131,6 +128,16 @@ message ImageEncoding {
 }
 
 message Image {
+  enum State {
+    STATE_UNSPECIFIED = 0;
+
+    CREATED    = 1;
+    UPLOADING  = 2;
+    UPLOADED   = 3;
+    PROCESSING = 4;
+    PROCESSED  = 5;
+  }
+
   option (google.api.resource) = {
     type    : "api.velony.app/Image"
     pattern : "images/{image}"
@@ -150,7 +157,7 @@ message Image {
     (google.api.field_behavior) = REQUIRED
   ];
 
-  string state = 4 [
+  State state = 4 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
@@ -205,10 +212,6 @@ message ConfirmImageUploadRequest {
   ];
 }
 
-message ConfirmImageUploadResponse {
-  Image image = 1;
-}
-
 message ProcessImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -229,10 +232,6 @@ message ProcessImageRequest {
   bool remove_metadata = 5 [
     (google.api.field_behavior) = OPTIONAL
   ];
-}
-
-message ProcessImageResponse {
-  Image image = 1;
 }
 
 message DeleteImageRequest {
