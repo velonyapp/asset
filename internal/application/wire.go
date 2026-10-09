@@ -11,7 +11,7 @@ import (
 var ProviderSet = wire.NewSet(
 	command.NewBus,
 	command.NewCreateImageHandler,
-	command.NewPresignImageHandler,
+	command.NewInitiateImageUploadHandler,
 	command.NewConfirmImageUploadHandler,
 	command.NewProcessImageHandler,
 	command.NewDeleteImageHandler,

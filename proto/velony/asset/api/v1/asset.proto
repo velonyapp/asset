@@ -31,9 +31,9 @@ service AssetService {
     option (google.api.method_signature) = "image";
   }
 
-  rpc PresignImage(PresignImageRequest) returns (PresignImageResponse) {
+  rpc InitiateImageUpload(InitiateImageUploadRequest) returns (InitiateImageUploadResponse) {
     option (google.api.http) = {
-      post: "/v1/{name=images/*}:presign"
+      post: "/v1/{name=images/*}:initiateUpload"
       body: "*"
     };
   }
@@ -184,7 +184,7 @@ message CreateImageRequest {
   ];
 }
 
-message PresignImageRequest {
+message InitiateImageUploadRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -197,7 +197,7 @@ message PresignImageRequest {
   ];
 }
 
-message PresignImageResponse {
+message InitiateImageUploadResponse {
   Image image = 1;
 
   string upload_url = 2;

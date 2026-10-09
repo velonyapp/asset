@@ -20,12 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetService_GetImage_FullMethodName           = "/velony.asset.api.v1.AssetService/GetImage"
-	AssetService_CreateImage_FullMethodName        = "/velony.asset.api.v1.AssetService/CreateImage"
-	AssetService_PresignImage_FullMethodName       = "/velony.asset.api.v1.AssetService/PresignImage"
-	AssetService_ConfirmImageUpload_FullMethodName = "/velony.asset.api.v1.AssetService/ConfirmImageUpload"
-	AssetService_ProcessImage_FullMethodName       = "/velony.asset.api.v1.AssetService/ProcessImage"
-	AssetService_DeleteImage_FullMethodName        = "/velony.asset.api.v1.AssetService/DeleteImage"
+	AssetService_GetImage_FullMethodName            = "/velony.asset.api.v1.AssetService/GetImage"
+	AssetService_CreateImage_FullMethodName         = "/velony.asset.api.v1.AssetService/CreateImage"
+	AssetService_InitiateImageUpload_FullMethodName = "/velony.asset.api.v1.AssetService/InitiateImageUpload"
+	AssetService_ConfirmImageUpload_FullMethodName  = "/velony.asset.api.v1.AssetService/ConfirmImageUpload"
+	AssetService_ProcessImage_FullMethodName        = "/velony.asset.api.v1.AssetService/ProcessImage"
+	AssetService_DeleteImage_FullMethodName         = "/velony.asset.api.v1.AssetService/DeleteImage"
 )
 
 // AssetServiceClient is the client API for AssetService service.
@@ -34,7 +34,7 @@ const (
 type AssetServiceClient interface {
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*Image, error)
-	PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error)
+	InitiateImageUpload(ctx context.Context, in *InitiateImageUploadRequest, opts ...grpc.CallOption) (*InitiateImageUploadResponse, error)
 	ConfirmImageUpload(ctx context.Context, in *ConfirmImageUploadRequest, opts ...grpc.CallOption) (*Image, error)
 	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*Image, error)
 	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -68,10 +68,10 @@ func (c *assetServiceClient) CreateImage(ctx context.Context, in *CreateImageReq
 	return out, nil
 }
 
-func (c *assetServiceClient) PresignImage(ctx context.Context, in *PresignImageRequest, opts ...grpc.CallOption) (*PresignImageResponse, error) {
+func (c *assetServiceClient) InitiateImageUpload(ctx context.Context, in *InitiateImageUploadRequest, opts ...grpc.CallOption) (*InitiateImageUploadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PresignImageResponse)
-	err := c.cc.Invoke(ctx, AssetService_PresignImage_FullMethodName, in, out, cOpts...)
+	out := new(InitiateImageUploadResponse)
+	err := c.cc.Invoke(ctx, AssetService_InitiateImageUpload_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (c *assetServiceClient) DeleteImage(ctx context.Context, in *DeleteImageReq
 type AssetServiceServer interface {
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
-	PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error)
+	InitiateImageUpload(context.Context, *InitiateImageUploadRequest) (*InitiateImageUploadResponse, error)
 	ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*Image, error)
 	ProcessImage(context.Context, *ProcessImageRequest) (*Image, error)
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
@@ -134,8 +134,8 @@ func (UnimplementedAssetServiceServer) GetImage(context.Context, *GetImageReques
 func (UnimplementedAssetServiceServer) CreateImage(context.Context, *CreateImageRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateImage not implemented")
 }
-func (UnimplementedAssetServiceServer) PresignImage(context.Context, *PresignImageRequest) (*PresignImageResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method PresignImage not implemented")
+func (UnimplementedAssetServiceServer) InitiateImageUpload(context.Context, *InitiateImageUploadRequest) (*InitiateImageUploadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InitiateImageUpload not implemented")
 }
 func (UnimplementedAssetServiceServer) ConfirmImageUpload(context.Context, *ConfirmImageUploadRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmImageUpload not implemented")
@@ -203,20 +203,20 @@ func _AssetService_CreateImage_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetService_PresignImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PresignImageRequest)
+func _AssetService_InitiateImageUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitiateImageUploadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetServiceServer).PresignImage(ctx, in)
+		return srv.(AssetServiceServer).InitiateImageUpload(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetService_PresignImage_FullMethodName,
+		FullMethod: AssetService_InitiateImageUpload_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).PresignImage(ctx, req.(*PresignImageRequest))
+		return srv.(AssetServiceServer).InitiateImageUpload(ctx, req.(*InitiateImageUploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -291,8 +291,8 @@ var AssetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssetService_CreateImage_Handler,
 		},
 		{
-			MethodName: "PresignImage",
-			Handler:    _AssetService_PresignImage_Handler,
+			MethodName: "InitiateImageUpload",
+			Handler:    _AssetService_InitiateImageUpload_Handler,
 		},
 		{
 			MethodName: "ConfirmImageUpload",

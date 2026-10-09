@@ -11,21 +11,21 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
-type PresignImage struct {
+type InitiateImageUpload struct {
 	ImageID string
 	TTL     time.Duration
 }
 
-type PresignImageResult struct {
+type InitiateImageUploadResult struct {
 	Image     common.ImageResult
 	UploadURL string
 }
 
-func (PresignImage) resultType() PresignImageResult {
-	return PresignImageResult{}
+func (InitiateImageUpload) resultType() InitiateImageUploadResult {
+	return InitiateImageUploadResult{}
 }
 
-type PresignImageHandler Handler[PresignImage, PresignImageResult]
+type InitiateImageUploadHandler Handler[InitiateImageUpload, InitiateImageUploadResult]
 
 type presignImageHandler struct {
 	imageRepo  repo.Image
@@ -33,11 +33,11 @@ type presignImageHandler struct {
 	storage    port.Storage
 }
 
-func NewPresignImageHandler(
+func NewInitiateImageUploadHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
-) PresignImageHandler {
+) InitiateImageUploadHandler {
 	return &presignImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
@@ -47,8 +47,8 @@ func NewPresignImageHandler(
 
 func (h *presignImageHandler) Handle(
 	ctx context.Context,
-	cmd PresignImage,
-) (PresignImageResult, error) {
+	cmd InitiateImageUpload,
+) (InitiateImageUploadResult, error) {
 	now := time.Now()
 
 	imageID, _ := vo.NewImageID(cmd.ImageID)
@@ -82,10 +82,10 @@ func (h *presignImageHandler) Handle(
 
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return PresignImageResult{}, err
+		return InitiateImageUploadResult{}, err
 	}
 
-	return PresignImageResult{
+	return InitiateImageUploadResult{
 		Image: common.ImageResult{
 			ID:         image.ID().String(),
 			Tags:       image.Tags().Strings(),

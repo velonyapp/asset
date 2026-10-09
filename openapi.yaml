@@ -85,11 +85,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.Image'
-    /v1/images/{image}:presign:
+    /v1/images/{image}:initiateUpload:
         post:
             tags:
                 - AssetService
-            operationId: AssetService_PresignImage
+            operationId: AssetService_InitiateImageUpload
             parameters:
                 - name: image
                   in: path
@@ -101,7 +101,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.PresignImageRequest'
+                            $ref: '#/components/schemas/velony.asset.api.v1.InitiateImageUploadRequest'
                 required: true
             responses:
                 "200":
@@ -109,7 +109,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.PresignImageResponse'
+                                $ref: '#/components/schemas/velony.asset.api.v1.InitiateImageUploadResponse'
     /v1/images/{image}:process:
         post:
             tags:
@@ -198,7 +198,7 @@ components:
                     type: string
                 allowUpscale:
                     type: boolean
-        velony.asset.api.v1.PresignImageRequest:
+        velony.asset.api.v1.InitiateImageUploadRequest:
             required:
                 - name
                 - ttl
@@ -209,7 +209,7 @@ components:
                 ttl:
                     pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
                     type: string
-        velony.asset.api.v1.PresignImageResponse:
+        velony.asset.api.v1.InitiateImageUploadResponse:
             type: object
             properties:
                 image:

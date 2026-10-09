@@ -79,13 +79,13 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 	}, nil
 }
 
-func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest) (*v1.PresignImageResponse, error) {
+func (s *Service) InitiateImageUpload(ctx context.Context, req *v1.InitiateImageUploadRequest) (*v1.InitiateImageUploadResponse, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
 		return nil, ErrInvalidImageResourceName
 	}
 
-	result, err := command.Send(ctx, s.commandBus, command.PresignImage{
+	result, err := command.Send(ctx, s.commandBus, command.InitiateImageUpload{
 		ImageID: imageID,
 		TTL:     req.Ttl.AsDuration(),
 	})
@@ -93,7 +93,7 @@ func (s *Service) PresignImage(ctx context.Context, req *v1.PresignImageRequest)
 		return nil, err
 	}
 
-	return &v1.PresignImageResponse{
+	return &v1.InitiateImageUploadResponse{
 		Image: &v1.Image{
 			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 			Tags:       result.Image.Tags,
