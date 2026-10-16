@@ -11,16 +11,14 @@ import (
 var (
 	ErrImageDeleted           = errors.New("image is deleted")
 	ErrImageAlreadyDeleted    = errors.New("image is already deleted")
-	ErrImageAlreadyUploading  = errors.New("image is already uploading")
-	ErrImageNotUploading      = errors.New("image is not uploading")
-	ErrImageUploaded          = errors.New("image is uploaded")
-	ErrImageAlreadyUploaded   = errors.New("image is already uploaded")
-	ErrImageNotUploaded       = errors.New("image is not uploaded")
+	ErrImageNotPending        = errors.New("image is not pending")
+	ErrImageAlreadyConfirmed  = errors.New("image is already confirmed")
+	ErrImageNotConfirmed      = errors.New("image is not confirmed")
 	ErrImageProcessing        = errors.New("image is processing")
 	ErrImageAlreadyProcessing = errors.New("image is already processing")
 	ErrImageNotProcessing     = errors.New("image is not processing")
-	ErrImageProcessed         = errors.New("image is processed")
-	ErrImageAlreadyProcessed  = errors.New("image is already processed")
+	ErrImageActive            = errors.New("image is active")
+	ErrImageAlreadyActive     = errors.New("image is already active")
 	ErrImageObjectKeysEqual   = errors.New("image source object key and object key must differ")
 )
 
@@ -47,7 +45,7 @@ func NewImage(
 	}
 
 	id := vo.GenerateImageID()
-	state := vo.ImageStateCreated
+	state := vo.ImageStatePending
 
 	a := &Image{
 		id:              id,
@@ -112,65 +110,41 @@ func (a *Image) UpdateTime() time.Time {
 	return a.updateTime
 }
 
-func (a *Image) IsCreated() bool {
-	return a.state.Equal(vo.ImageStateCreated)
+func (a *Image) IsPending() bool {
+	return a.state.Equal(vo.ImageStatePending)
 }
 
-func (a *Image) IsUploading() bool {
-	return a.state.Equal(vo.ImageStateUploading)
-}
-
-func (a *Image) IsUploaded() bool {
-	return a.state.Equal(vo.ImageStateUploaded)
+func (a *Image) IsConfirmed() bool {
+	return a.state.Equal(vo.ImageStateConfirmed)
 }
 
 func (a *Image) IsProcessing() bool {
 	return a.state.Equal(vo.ImageStateProcessing)
 }
 
-func (a *Image) IsProcessed() bool {
-	return a.state.Equal(vo.ImageStateProcessed)
+func (a *Image) IsActive() bool {
+	return a.state.Equal(vo.ImageStateActive)
 }
 
 func (a *Image) IsDeleted() bool {
 	return a.state.Equal(vo.ImageStateDeleted)
 }
 
-func (a *Image) CanStartUploading() error {
-	if a.IsDeleted() {
-		return ErrImageDeleted
-	}
-	if a.IsUploaded() {
-		return ErrImageUploaded
-	}
-	if a.IsProcessing() {
-		return ErrImageProcessing
-	}
-	if a.IsProcessed() {
-		return ErrImageProcessed
-	}
-	if a.IsUploading() {
-		return ErrImageAlreadyUploading
-	}
-
-	return nil
-}
-
-func (a *Image) CanConfirmUpload() error {
+func (a *Image) CanConfirm() error {
 	if a.IsDeleted() {
 		return ErrImageDeleted
 	}
 	if a.IsProcessing() {
 		return ErrImageProcessing
 	}
-	if a.IsProcessed() {
-		return ErrImageProcessed
+	if a.IsActive() {
+		return ErrImageActive
 	}
-	if a.IsUploaded() {
-		return ErrImageAlreadyUploaded
+	if a.IsConfirmed() {
+		return ErrImageAlreadyConfirmed
 	}
-	if !a.IsUploading() {
-		return ErrImageNotUploading
+	if !a.IsPending() {
+		return ErrImageNotPending
 	}
 
 	return nil
@@ -180,14 +154,14 @@ func (a *Image) CanStartProcessing() error {
 	if a.IsDeleted() {
 		return ErrImageDeleted
 	}
-	if a.IsProcessed() {
-		return ErrImageProcessed
+	if a.IsActive() {
+		return ErrImageActive
 	}
 	if a.IsProcessing() {
 		return ErrImageAlreadyProcessing
 	}
-	if !a.IsUploaded() {
-		return ErrImageNotUploaded
+	if !a.IsConfirmed() {
+		return ErrImageNotConfirmed
 	}
 
 	return nil
@@ -208,8 +182,8 @@ func (a *Image) CanCompleteProcessing() error {
 	if a.IsDeleted() {
 		return ErrImageDeleted
 	}
-	if a.IsProcessed() {
-		return ErrImageAlreadyProcessed
+	if a.IsActive() {
+		return ErrImageAlreadyActive
 	}
 	if !a.IsProcessing() {
 		return ErrImageNotProcessing
@@ -226,30 +200,17 @@ func (a *Image) CanDelete() error {
 	return nil
 }
 
-func (a *Image) StartUploading(now time.Time) error {
-	if err := a.CanStartUploading(); err != nil {
+func (a *Image) Confirm(now time.Time) error {
+	if err := a.CanConfirm(); err != nil {
 		return err
 	}
 
-	newState := vo.ImageStateUploading
+	newState := vo.ImageStateConfirmed
 
 	a.state = newState
 	a.updateTime = now
 
-	return nil
-}
-
-func (a *Image) ConfirmUpload(now time.Time) error {
-	if err := a.CanConfirmUpload(); err != nil {
-		return err
-	}
-
-	newState := vo.ImageStateUploaded
-
-	a.state = newState
-	a.updateTime = now
-
-	a.recordEvent(event.NewImageUploaded(a.id, a.tags, now))
+	a.recordEvent(event.NewImageConfirmed(a.id, a.tags, now))
 
 	return nil
 }
@@ -272,7 +233,7 @@ func (a *Image) CancelProcessing(now time.Time) error {
 		return err
 	}
 
-	newState := vo.ImageStateUploaded
+	newState := vo.ImageStateConfirmed
 
 	a.state = newState
 	a.updateTime = now
@@ -285,12 +246,12 @@ func (a *Image) CompleteProcessing(now time.Time) error {
 		return err
 	}
 
-	newState := vo.ImageStateProcessed
+	newState := vo.ImageStateActive
 
 	a.state = newState
 	a.updateTime = now
 
-	a.recordEvent(event.NewImageProcessed(a.id, a.tags, now))
+	a.recordEvent(event.NewImageActive(a.id, a.tags, now))
 
 	return nil
 }

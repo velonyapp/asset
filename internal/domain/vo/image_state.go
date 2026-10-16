@@ -9,11 +9,10 @@ var (
 type ImageState string
 
 const (
-	ImageStateCreated    ImageState = "CREATED"
-	ImageStateUploading  ImageState = "UPLOADING"
-	ImageStateUploaded   ImageState = "UPLOADED"
+	ImageStatePending    ImageState = "PENDING"
+	ImageStateConfirmed  ImageState = "CONFIRMED"
 	ImageStateProcessing ImageState = "PROCESSING"
-	ImageStateProcessed  ImageState = "PROCESSED"
+	ImageStateActive     ImageState = "ACTIVE"
 	ImageStateDeleted    ImageState = "DELETED"
 )
 
@@ -21,11 +20,10 @@ func NewImageState(value string) (ImageState, error) {
 	state := ImageState(value)
 
 	switch state {
-	case ImageStateCreated,
-		ImageStateUploading,
-		ImageStateUploaded,
+	case ImageStatePending,
+		ImageStateConfirmed,
 		ImageStateProcessing,
-		ImageStateProcessed,
+		ImageStateActive,
 		ImageStateDeleted:
 		return state, nil
 	default:

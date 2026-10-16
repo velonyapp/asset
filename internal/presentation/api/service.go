@@ -57,6 +57,7 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 		State:      mapState(result.Image.State),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
 		UpdateTime: timestamppb.New(result.Image.UpdateTime),
+		UploadUrl:  result.UploadURL,
 	}, nil
 }
 
@@ -76,43 +77,17 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 		State:      mapState(result.Image.State),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
 		UpdateTime: timestamppb.New(result.Image.UpdateTime),
+		UploadUrl:  &result.UploadURL,
 	}, nil
 }
 
-func (s *Service) InitiateImageUpload(ctx context.Context, req *v1.InitiateImageUploadRequest) (*v1.InitiateImageUploadResponse, error) {
+func (s *Service) ConfirmImage(ctx context.Context, req *v1.ConfirmImageRequest) (*v1.Image, error) {
 	var imageID string
 	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
 		return nil, ErrInvalidImageResourceName
 	}
 
-	result, err := command.Send(ctx, s.commandBus, command.InitiateImageUpload{
-		ImageID: imageID,
-		TTL:     req.Ttl.AsDuration(),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &v1.InitiateImageUploadResponse{
-		Image: &v1.Image{
-			Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
-			Tags:       result.Image.Tags,
-			ObjectKey:  result.Image.ObjectKey,
-			State:      mapState(result.Image.State),
-			CreateTime: timestamppb.New(result.Image.CreateTime),
-			UpdateTime: timestamppb.New(result.Image.UpdateTime),
-		},
-		UploadUrl: result.UploadURL,
-	}, nil
-}
-
-func (s *Service) ConfirmImageUpload(ctx context.Context, req *v1.ConfirmImageUploadRequest) (*v1.Image, error) {
-	var imageID string
-	if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
-		return nil, ErrInvalidImageResourceName
-	}
-
-	result, err := command.Send(ctx, s.commandBus, command.ConfirmImageUpload{
+	result, err := command.Send(ctx, s.commandBus, command.ConfirmImage{
 		ImageID: imageID,
 	})
 	if err != nil {
@@ -250,16 +225,14 @@ func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (
 
 func mapState(state string) v1.Image_State {
 	switch state {
-	case "CREATED":
-		return v1.Image_CREATED
-	case "UPLOADING":
-		return v1.Image_UPLOADING
-	case "UPLOADED":
+	case "PENDING":
+		return v1.Image_PENDING
+	case "CONFIRMED":
 		return v1.Image_UPLOADED
 	case "PROCESSING":
 		return v1.Image_PROCESSING
-	case "PROCESSED":
-		return v1.Image_PROCESSED
+	case "ACTIVE":
+		return v1.Image_ACTIVE
 	default:
 		return v1.Image_STATE_UNSPECIFIED
 	}

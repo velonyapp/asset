@@ -12,19 +12,14 @@ func TestNewImageState(t *testing.T) {
 		expected ImageState
 	}{
 		{
-			name:     "created",
-			value:    "CREATED",
-			expected: ImageStateCreated,
+			name:     "pending",
+			value:    "PENDING",
+			expected: ImageStatePending,
 		},
 		{
-			name:     "uploading",
-			value:    "UPLOADING",
-			expected: ImageStateUploading,
-		},
-		{
-			name:     "uploaded",
-			value:    "UPLOADED",
-			expected: ImageStateUploaded,
+			name:     "confirmed",
+			value:    "CONFIRMED",
+			expected: ImageStateConfirmed,
 		},
 		{
 			name:     "processing",
@@ -32,9 +27,9 @@ func TestNewImageState(t *testing.T) {
 			expected: ImageStateProcessing,
 		},
 		{
-			name:     "processed",
-			value:    "PROCESSED",
-			expected: ImageStateProcessed,
+			name:     "active",
+			value:    "ACTIVE",
+			expected: ImageStateActive,
 		},
 		{
 			name:     "deleted",
@@ -70,19 +65,19 @@ func TestNewImageState_WhenInvalid(t *testing.T) {
 }
 
 func TestImageState_String(t *testing.T) {
-	state := ImageStateUploaded
+	state := ImageStateConfirmed
 
-	if state.String() != "UPLOADED" {
-		t.Errorf("expected UPLOADED, got %s", state.String())
+	if state.String() != "CONFIRMED" {
+		t.Errorf("expected CONFIRMED, got %s", state.String())
 	}
 }
 
 func TestImageState_Equal(t *testing.T) {
-	if !ImageStateProcessed.Equal(ImageStateProcessed) {
+	if !ImageStateActive.Equal(ImageStateActive) {
 		t.Error("expected states to be equal")
 	}
 
-	if ImageStateProcessed.Equal(ImageStateCreated) {
+	if ImageStateActive.Equal(ImageStateConfirmed) {
 		t.Error("expected states to be different")
 	}
 }

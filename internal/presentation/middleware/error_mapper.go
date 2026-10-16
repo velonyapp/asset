@@ -93,25 +93,17 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageAlreadyDeleted.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageAlreadyUploading):
+				case errors.Is(err, domainentity.ErrImageNotPending):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyUploading.Error(),
+						domainentity.ErrImageNotPending.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageNotUploading):
+				case errors.Is(err, domainentity.ErrImageAlreadyConfirmed):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageNotUploading.Error(),
+						domainentity.ErrImageAlreadyConfirmed.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageUploaded):
+				case errors.Is(err, domainentity.ErrImageNotConfirmed):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageUploaded.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageAlreadyUploaded):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyUploaded.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageNotUploaded):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageNotUploaded.Error(),
+						domainentity.ErrImageNotConfirmed.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageProcessing):
 					return reply, kerrors.BadRequest("",
@@ -125,13 +117,13 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageNotProcessing.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageProcessed):
+				case errors.Is(err, domainentity.ErrImageActive):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageProcessed.Error(),
+						domainentity.ErrImageActive.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageAlreadyProcessed):
+				case errors.Is(err, domainentity.ErrImageAlreadyActive):
 					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyProcessed.Error(),
+						domainentity.ErrImageAlreadyActive.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageObjectKeysEqual):
 					return reply, kerrors.BadRequest("",

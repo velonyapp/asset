@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/velonyapp/asset/internal/application/common"
+	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
@@ -13,7 +14,8 @@ type GetImage struct {
 }
 
 type GetImageResult struct {
-	Image common.ImageResult
+	Image     common.ImageResult
+	UploadURL *string
 }
 
 func (GetImage) resultType() GetImageResult {
@@ -24,13 +26,16 @@ type GetImageHandler Handler[GetImage, GetImageResult]
 
 type getImageHandler struct {
 	imageRepo repo.Image
+	storage   port.Storage
 }
 
 func NewGetImageHandler(
 	imageRepo repo.Image,
+	storage port.Storage,
 ) GetImageHandler {
 	return &getImageHandler{
 		imageRepo: imageRepo,
+		storage:   storage,
 	}
 }
 
@@ -48,6 +53,20 @@ func (h *getImageHandler) Handle(
 		return GetImageResult{}, common.ErrImageNotFound
 	}
 
+	var uploadURL *string
+
+	if image.IsPending() {
+		url, err := h.storage.PresignPut(ctx,
+			image.SourceObjectKey(),
+			common.PresignTTL,
+		)
+		if err != nil {
+			return GetImageResult{}, err
+		}
+
+		uploadURL = &url
+	}
+
 	return GetImageResult{
 		Image: common.ImageResult{
 			ID:         image.ID().String(),
@@ -57,5 +76,6 @@ func (h *getImageHandler) Handle(
 			CreateTime: image.CreateTime(),
 			UpdateTime: image.UpdateTime(),
 		},
+		UploadURL: uploadURL,
 	}, nil
 }

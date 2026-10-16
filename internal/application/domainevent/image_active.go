@@ -8,25 +8,25 @@ import (
 	"github.com/velonyapp/asset/internal/domain/event"
 )
 
-var _ Handler[event.ImageUploaded] = (*ImageUploadedHandler)(nil)
+var _ Handler[event.ImageActive] = (*ImageActiveHandler)(nil)
 
-type ImageUploadedHandler struct {
+type ImageActiveHandler struct {
 	eventPublisher port.EventPublisher
 }
 
-func NewImageUploadedHandler(
+func NewImageActiveHandler(
 	eventPublisher port.EventPublisher,
-) *ImageUploadedHandler {
-	return &ImageUploadedHandler{
+) *ImageActiveHandler {
+	return &ImageActiveHandler{
 		eventPublisher: eventPublisher,
 	}
 }
 
-func (h *ImageUploadedHandler) Execute(ctx context.Context, domainEvent event.ImageUploaded) error {
-	integrationEvent := integrationevent.NewImageUploaded(
+func (h *ImageActiveHandler) Execute(ctx context.Context, domainEvent event.ImageActive) error {
+	integrationEvent := integrationevent.NewImageActive(
 		domainEvent.AggregateID(),
 		domainEvent.Tags().Strings(),
-		domainEvent.UploadTime(),
+		domainEvent.ActiveTime(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

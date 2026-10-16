@@ -42,7 +42,7 @@ message Transport {
       string create_image = 1 [
         (buf.validate.field).string.min_len = 1
       ];
-      string confirm_image_upload = 2 [
+      string confirm_image = 2 [
         (buf.validate.field).string.min_len = 1
       ];
       string process_image = 3 [

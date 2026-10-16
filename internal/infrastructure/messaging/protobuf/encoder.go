@@ -43,10 +43,10 @@ func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Messag
 	switch event := event.(type) {
 	case integrationevent.ImageCreated:
 		return imageCreatedPayload(event), nil
-	case integrationevent.ImageUploaded:
-		return imageUploadedPayload(event), nil
-	case integrationevent.ImageProcessed:
-		return imageProcessedPayload(event), nil
+	case integrationevent.ImageConfirmed:
+		return imageConfirmedPayload(event), nil
+	case integrationevent.ImageActive:
+		return imageActivePayload(event), nil
 	case integrationevent.ImageDeleted:
 		return imageDeletedPayload(event), nil
 	default:

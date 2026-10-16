@@ -30,16 +30,9 @@ service AssetService {
     option (google.api.method_signature) = "image";
   }
 
-  rpc InitiateImageUpload(InitiateImageUploadRequest) returns (InitiateImageUploadResponse) {
+  rpc ConfirmImage(ConfirmImageRequest) returns (Image) {
     option (google.api.http) = {
-      post: "/v1/{name=images/*}:initiateUpload"
-      body: "*"
-    };
-  }
-
-  rpc ConfirmImageUpload(ConfirmImageUploadRequest) returns (Image) {
-    option (google.api.http) = {
-      post: "/v1/{name=images/*}:confirmUpload"
+      post: "/v1/{name=images/*}:confirm"
       body: "*"
     };
   }
@@ -93,7 +86,6 @@ message ImageResize {
   Fit fit = 3 [
     (google.api.field_behavior) = OPTIONAL
   ];
-
   Gravity gravity = 4 [
     (google.api.field_behavior) = OPTIONAL
   ];
@@ -130,11 +122,10 @@ message Image {
   enum State {
     STATE_UNSPECIFIED = 0;
 
-    CREATED    = 1;
-    UPLOADING  = 2;
-    UPLOADED   = 3;
-    PROCESSING = 4;
-    PROCESSED  = 5;
+    PENDING    = 1;
+    UPLOADED   = 2;
+    PROCESSING = 3;
+    ACTIVE     = 4;
   }
 
   option (google.api.resource) = {
@@ -149,11 +140,13 @@ message Image {
   ];
 
   repeated string tags = 2 [
-    (google.api.field_behavior) = REQUIRED
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE
   ];
 
   string object_key = 3 [
-    (google.api.field_behavior) = REQUIRED
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE
   ];
 
   State state = 4 [
@@ -164,6 +157,10 @@ message Image {
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
   google.protobuf.Timestamp update_time = 6 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+
+  optional string upload_url = 7 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }
@@ -183,26 +180,7 @@ message CreateImageRequest {
   ];
 }
 
-message InitiateImageUploadRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/Image"
-    }
-  ];
-
-  google.protobuf.Duration ttl = 2 [
-    (google.api.field_behavior) = REQUIRED
-  ];
-}
-
-message InitiateImageUploadResponse {
-  Image image = 1;
-
-  string upload_url = 2;
-}
-
-message ConfirmImageUploadRequest {
+message ConfirmImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

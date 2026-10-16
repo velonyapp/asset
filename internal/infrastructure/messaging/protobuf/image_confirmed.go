@@ -5,6 +5,6 @@ import (
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 )
 
-func imageUploadedPayload(event integrationevent.ImageUploaded) *v1.ImageUploadedPayload {
-	return &v1.ImageUploadedPayload{}
+func imageConfirmedPayload(event integrationevent.ImageConfirmed) *v1.ImageConfirmedPayload {
+	return &v1.ImageConfirmedPayload{}
 }

@@ -60,11 +60,11 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /v1/images/{image}:confirmUpload:
+    /v1/images/{image}:confirm:
         post:
             tags:
                 - AssetService
-            operationId: AssetService_ConfirmImageUpload
+            operationId: AssetService_ConfirmImage
             parameters:
                 - name: image
                   in: path
@@ -76,7 +76,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.ConfirmImageUploadRequest'
+                            $ref: '#/components/schemas/velony.asset.api.v1.ConfirmImageRequest'
                 required: true
             responses:
                 "200":
@@ -85,31 +85,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/velony.asset.api.v1.Image'
-    /v1/images/{image}:initiateUpload:
-        post:
-            tags:
-                - AssetService
-            operationId: AssetService_InitiateImageUpload
-            parameters:
-                - name: image
-                  in: path
-                  description: The image id.
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/velony.asset.api.v1.InitiateImageUploadRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/velony.asset.api.v1.InitiateImageUploadResponse'
     /v1/images/{image}:process:
         post:
             tags:
@@ -137,7 +112,7 @@ paths:
                                 $ref: '#/components/schemas/velony.asset.api.v1.Image'
 components:
     schemas:
-        velony.asset.api.v1.ConfirmImageUploadRequest:
+        velony.asset.api.v1.ConfirmImageRequest:
             required:
                 - name
             type: object
@@ -170,6 +145,9 @@ components:
                     readOnly: true
                     type: string
                     format: date-time
+                uploadUrl:
+                    readOnly: true
+                    type: string
         velony.asset.api.v1.ImageEncoding:
             type: object
             properties:
@@ -198,24 +176,6 @@ components:
                     type: string
                 allowUpscale:
                     type: boolean
-        velony.asset.api.v1.InitiateImageUploadRequest:
-            required:
-                - name
-                - ttl
-            type: object
-            properties:
-                name:
-                    type: string
-                ttl:
-                    pattern: ^-?(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,9})?s$
-                    type: string
-        velony.asset.api.v1.InitiateImageUploadResponse:
-            type: object
-            properties:
-                image:
-                    $ref: '#/components/schemas/velony.asset.api.v1.Image'
-                uploadUrl:
-                    type: string
         velony.asset.api.v1.ProcessImageRequest:
             required:
                 - name

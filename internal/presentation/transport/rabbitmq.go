@@ -54,7 +54,7 @@ func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.CreateImage); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ConfirmImageUpload); err != nil {
+	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ConfirmImage); err != nil {
 		errs = append(errs, err)
 	}
 	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ProcessImage); err != nil {
@@ -83,8 +83,8 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-	case rc.c.Rabbitmq.Queues.ConfirmImageUpload:
-		req := new(v1.ConfirmImageUploadRequest)
+	case rc.c.Rabbitmq.Queues.ConfirmImage:
+		req := new(v1.ConfirmImageRequest)
 
 		if err := proto.Unmarshal(data, req); err != nil {
 			return ErrInvalidMessage
@@ -95,7 +95,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return err
 		}
 
-		if _, err := command.Send(ctx, rc.commandBus, command.ConfirmImageUpload{
+		if _, err := command.Send(ctx, rc.commandBus, command.ConfirmImage{
 			ImageID: imageID,
 		}); err != nil {
 			return err

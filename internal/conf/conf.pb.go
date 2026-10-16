@@ -469,13 +469,13 @@ func (x *Transport_RabbitMQ) GetQueues() *Transport_RabbitMQ_Queues {
 }
 
 type Transport_RabbitMQ_Queues struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	CreateImage        string                 `protobuf:"bytes,1,opt,name=create_image,json=createImage,proto3" json:"create_image,omitempty"`
-	ConfirmImageUpload string                 `protobuf:"bytes,2,opt,name=confirm_image_upload,json=confirmImageUpload,proto3" json:"confirm_image_upload,omitempty"`
-	ProcessImage       string                 `protobuf:"bytes,3,opt,name=process_image,json=processImage,proto3" json:"process_image,omitempty"`
-	DeleteImage        string                 `protobuf:"bytes,4,opt,name=delete_image,json=deleteImage,proto3" json:"delete_image,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CreateImage   string                 `protobuf:"bytes,1,opt,name=create_image,json=createImage,proto3" json:"create_image,omitempty"`
+	ConfirmImage  string                 `protobuf:"bytes,2,opt,name=confirm_image,json=confirmImage,proto3" json:"confirm_image,omitempty"`
+	ProcessImage  string                 `protobuf:"bytes,3,opt,name=process_image,json=processImage,proto3" json:"process_image,omitempty"`
+	DeleteImage   string                 `protobuf:"bytes,4,opt,name=delete_image,json=deleteImage,proto3" json:"delete_image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Transport_RabbitMQ_Queues) Reset() {
@@ -515,9 +515,9 @@ func (x *Transport_RabbitMQ_Queues) GetCreateImage() string {
 	return ""
 }
 
-func (x *Transport_RabbitMQ_Queues) GetConfirmImageUpload() string {
+func (x *Transport_RabbitMQ_Queues) GetConfirmImage() string {
 	if x != nil {
-		return x.ConfirmImageUpload
+		return x.ConfirmImage
 	}
 	return ""
 }
@@ -817,7 +817,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\tBootstrap\x12;\n" +
 	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x123\n" +
-	"\ttelemetry\x18\x03 \x01(\v2\x15.kratos.api.TelemetryR\ttelemetry\"\xa2\x06\n" +
+	"\ttelemetry\x18\x03 \x01(\v2\x15.kratos.api.TelemetryR\ttelemetry\"\x95\x06\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x12B\n" +
@@ -827,15 +827,15 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\x8a\x03\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xfd\x02\n" +
 	"\bRabbitMQ\x12!\n" +
 	"\aaddress\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\aaddress\x12#\n" +
 	"\busername\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\busername\x12#\n" +
 	"\bpassword\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bpassword\x12E\n" +
-	"\x06queues\x18\x04 \x01(\v2%.kratos.api.Transport.RabbitMQ.QueuesB\x06\xbaH\x03\xc8\x01\x01R\x06queues\x1a\xc9\x01\n" +
+	"\x06queues\x18\x04 \x01(\v2%.kratos.api.Transport.RabbitMQ.QueuesB\x06\xbaH\x03\xc8\x01\x01R\x06queues\x1a\xbc\x01\n" +
 	"\x06Queues\x12*\n" +
-	"\fcreate_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vcreateImage\x129\n" +
-	"\x14confirm_image_upload\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x12confirmImageUpload\x12,\n" +
+	"\fcreate_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vcreateImage\x12,\n" +
+	"\rconfirm_image\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fconfirmImage\x12,\n" +
 	"\rprocess_image\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fprocessImage\x12*\n" +
 	"\fdelete_image\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vdeleteImage\"\x8c\x06\n" +
 	"\x04Data\x124\n" +

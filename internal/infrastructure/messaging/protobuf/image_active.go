@@ -5,6 +5,6 @@ import (
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 )
 
-func imageProcessedPayload(event integrationevent.ImageProcessed) *v1.ImageProcessedPayload {
-	return &v1.ImageProcessedPayload{}
+func imageActivePayload(event integrationevent.ImageActive) *v1.ImageActivePayload {
+	return &v1.ImageActivePayload{}
 }

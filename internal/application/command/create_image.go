@@ -24,7 +24,8 @@ type CreateImage struct {
 }
 
 type CreateImageResult struct {
-	Image common.ImageResult
+	Image     common.ImageResult
+	UploadURL string
 }
 
 func (CreateImage) resultType() CreateImageResult {
@@ -77,6 +78,7 @@ func (h *createImageHandler) Handle(
 	}
 
 	var image *entity.Image
+	var uploadURL string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		if err := h.objectKeyPolicy.CanUse(ctx, objectKey); err != nil {
@@ -119,6 +121,14 @@ func (h *createImageHandler) Handle(
 			return err
 		}
 
+		uploadURL, err = h.storage.PresignPut(ctx,
+			sourceObjectKey,
+			common.PresignTTL,
+		)
+		if err != nil {
+			return err
+		}
+
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return CreateImageResult{}, err
@@ -133,5 +143,6 @@ func (h *createImageHandler) Handle(
 			CreateTime: image.CreateTime(),
 			UpdateTime: image.UpdateTime(),
 		},
+		UploadURL: uploadURL,
 	}, nil
 }

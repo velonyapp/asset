@@ -11,15 +11,14 @@ import (
 var ProviderSet = wire.NewSet(
 	command.NewBus,
 	command.NewCreateImageHandler,
-	command.NewInitiateImageUploadHandler,
-	command.NewConfirmImageUploadHandler,
+	command.NewConfirmImageHandler,
 	command.NewProcessImageHandler,
 	command.NewDeleteImageHandler,
 	query.NewBus,
 	query.NewGetImageHandler,
 	domainevent.NewDispatcher,
 	domainevent.NewImageCreatedHandler,
-	domainevent.NewImageUploadedHandler,
-	domainevent.NewImageProcessedHandler,
+	domainevent.NewImageConfirmedHandler,
+	domainevent.NewImageActiveHandler,
 	domainevent.NewImageDeletedHandler,
 )

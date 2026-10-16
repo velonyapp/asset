@@ -16,42 +16,42 @@ var (
 	ErrSourceObjectNotFound = errors.New("source object not found")
 )
 
-type ConfirmImageUpload struct {
+type ConfirmImage struct {
 	ImageID string
 }
 
-type ConfirmImageUploadResult struct {
+type ConfirmImageResult struct {
 	Image common.ImageResult
 }
 
-func (ConfirmImageUpload) resultType() ConfirmImageUploadResult {
-	return ConfirmImageUploadResult{}
+func (ConfirmImage) resultType() ConfirmImageResult {
+	return ConfirmImageResult{}
 }
 
-type ConfirmImageUploadHandler Handler[ConfirmImageUpload, ConfirmImageUploadResult]
+type ConfirmImageHandler Handler[ConfirmImage, ConfirmImageResult]
 
-type confirmImageUploadHandler struct {
+type confirmImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
 	storage    port.Storage
 }
 
-func NewConfirmImageUploadHandler(
+func NewConfirmImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
-) ConfirmImageUploadHandler {
-	return &confirmImageUploadHandler{
+) ConfirmImageHandler {
+	return &confirmImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
 		storage:    storage,
 	}
 }
 
-func (h *confirmImageUploadHandler) Handle(
+func (h *confirmImageHandler) Handle(
 	ctx context.Context,
-	cmd ConfirmImageUpload,
-) (ConfirmImageUploadResult, error) {
+	cmd ConfirmImage,
+) (ConfirmImageResult, error) {
 	now := time.Now().UTC()
 
 	imageID, _ := vo.NewImageID(cmd.ImageID)
@@ -69,7 +69,7 @@ func (h *confirmImageUploadHandler) Handle(
 			return common.ErrImageNotFound
 		}
 
-		if err := image.CanConfirmUpload(); err != nil {
+		if err := image.CanConfirm(); err != nil {
 			return err
 		}
 
@@ -81,16 +81,16 @@ func (h *confirmImageUploadHandler) Handle(
 			return ErrSourceObjectNotFound
 		}
 
-		if err := image.ConfirmUpload(now); err != nil {
+		if err := image.Confirm(now); err != nil {
 			return err
 		}
 
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return ConfirmImageUploadResult{}, err
+		return ConfirmImageResult{}, err
 	}
 
-	return ConfirmImageUploadResult{
+	return ConfirmImageResult{
 		Image: common.ImageResult{
 			ID:         image.ID().String(),
 			Tags:       image.Tags().Strings(),
