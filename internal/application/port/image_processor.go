@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	ErrNoImageProcessingOptions    = errors.New("no image processing options provided")
-	ErrInvalidResizeDimensions     = errors.New("invalid image resize dimensions")
-	ErrUnsupportedResizeFit        = errors.New("unsupported image resize fit")
-	ErrUnsupportedImageGravity     = errors.New("unsupported image gravity")
-	ErrUnsupportedImageFormat      = errors.New("unsupported image format")
-	ErrInvalidImageQuality         = errors.New("invalid image quality")
-	ErrInvalidImageBackgroundColor = errors.New("invalid image background color")
+	ErrNoImageProcessingOptions       = errors.New("no image processing options provided")
+	ErrInvalidResizeDimensions        = errors.New("invalid image resize dimensions")
+	ErrUnsupportedResizeFit           = errors.New("unsupported image resize fit")
+	ErrUnsupportedImageResizeGravity  = errors.New("unsupported image gravity")
+	ErrUnsupportedImageEncodingFormat = errors.New("unsupported image format")
+	ErrInvalidImageQuality            = errors.New("invalid image quality")
+	ErrInvalidImageBackgroundColor    = errors.New("invalid image background color")
 )
 
 type ImageResizeFit string
@@ -24,27 +24,27 @@ const (
 	ImageResizeFitStretch ImageResizeFit = "stretch"
 )
 
-type ImageGravity string
+type ImageResizeGravity string
 
 const (
-	ImageGravityCenter      ImageGravity = "center"
-	ImageGravityTop         ImageGravity = "top"
-	ImageGravityTopRight    ImageGravity = "top_right"
-	ImageGravityRight       ImageGravity = "right"
-	ImageGravityBottomRight ImageGravity = "bottom_right"
-	ImageGravityBottom      ImageGravity = "bottom"
-	ImageGravityBottomLeft  ImageGravity = "bottom_left"
-	ImageGravityLeft        ImageGravity = "left"
-	ImageGravityTopLeft     ImageGravity = "top_left"
+	ImageResizeGravityCenter      ImageResizeGravity = "center"
+	ImageResizeGravityTop         ImageResizeGravity = "top"
+	ImageResizeGravityTopRight    ImageResizeGravity = "top_right"
+	ImageResizeGravityRight       ImageResizeGravity = "right"
+	ImageResizeGravityBottomRight ImageResizeGravity = "bottom_right"
+	ImageResizeGravityBottom      ImageResizeGravity = "bottom"
+	ImageResizeGravityBottomLeft  ImageResizeGravity = "bottom_left"
+	ImageResizeGravityLeft        ImageResizeGravity = "left"
+	ImageResizeGravityTopLeft     ImageResizeGravity = "top_left"
 )
 
-type ImageFormat string
+type ImageEncodingFormat string
 
 const (
-	ImageFormatJPEG ImageFormat = "jpeg"
-	ImageFormatPNG  ImageFormat = "png"
-	ImageFormatWebP ImageFormat = "webp"
-	ImageFormatAVIF ImageFormat = "avif"
+	ImageEncodingFormatJPEG ImageEncodingFormat = "jpeg"
+	ImageEncodingFormatPNG  ImageEncodingFormat = "png"
+	ImageEncodingFormatWebP ImageEncodingFormat = "webp"
+	ImageEncodingFormatAVIF ImageEncodingFormat = "avif"
 )
 
 type ImageResize struct {
@@ -52,14 +52,14 @@ type ImageResize struct {
 	Height *uint32
 
 	Fit     ImageResizeFit
-	Gravity ImageGravity
+	Gravity ImageResizeGravity
 
 	BackgroundColor *string
 	AllowUpscale    bool
 }
 
 type ImageEncoding struct {
-	Format  ImageFormat
+	Format  ImageEncodingFormat
 	Quality *uint32
 }
 

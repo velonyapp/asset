@@ -7,7 +7,6 @@
 package apiv1
 
 import (
-	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -26,80 +25,80 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ImageResizeFit int32
+type ImageResize_Fit int32
 
 const (
-	ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED ImageResizeFit = 0
-	ImageResizeFit_CONTAIN                      ImageResizeFit = 1
-	ImageResizeFit_COVER                        ImageResizeFit = 2
-	ImageResizeFit_PAD                          ImageResizeFit = 3
-	ImageResizeFit_STRETCH                      ImageResizeFit = 4
+	ImageResize_FIT_UNSPECIFIED ImageResize_Fit = 0
+	ImageResize_CONTAIN         ImageResize_Fit = 1
+	ImageResize_COVER           ImageResize_Fit = 2
+	ImageResize_PAD             ImageResize_Fit = 3
+	ImageResize_STRETCH         ImageResize_Fit = 4
 )
 
-// Enum value maps for ImageResizeFit.
+// Enum value maps for ImageResize_Fit.
 var (
-	ImageResizeFit_name = map[int32]string{
-		0: "IMAGE_RESIZE_FIT_UNSPECIFIED",
+	ImageResize_Fit_name = map[int32]string{
+		0: "FIT_UNSPECIFIED",
 		1: "CONTAIN",
 		2: "COVER",
 		3: "PAD",
 		4: "STRETCH",
 	}
-	ImageResizeFit_value = map[string]int32{
-		"IMAGE_RESIZE_FIT_UNSPECIFIED": 0,
-		"CONTAIN":                      1,
-		"COVER":                        2,
-		"PAD":                          3,
-		"STRETCH":                      4,
+	ImageResize_Fit_value = map[string]int32{
+		"FIT_UNSPECIFIED": 0,
+		"CONTAIN":         1,
+		"COVER":           2,
+		"PAD":             3,
+		"STRETCH":         4,
 	}
 )
 
-func (x ImageResizeFit) Enum() *ImageResizeFit {
-	p := new(ImageResizeFit)
+func (x ImageResize_Fit) Enum() *ImageResize_Fit {
+	p := new(ImageResize_Fit)
 	*p = x
 	return p
 }
 
-func (x ImageResizeFit) String() string {
+func (x ImageResize_Fit) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ImageResizeFit) Descriptor() protoreflect.EnumDescriptor {
+func (ImageResize_Fit) Descriptor() protoreflect.EnumDescriptor {
 	return file_velony_asset_api_v1_asset_proto_enumTypes[0].Descriptor()
 }
 
-func (ImageResizeFit) Type() protoreflect.EnumType {
+func (ImageResize_Fit) Type() protoreflect.EnumType {
 	return &file_velony_asset_api_v1_asset_proto_enumTypes[0]
 }
 
-func (x ImageResizeFit) Number() protoreflect.EnumNumber {
+func (x ImageResize_Fit) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ImageResizeFit.Descriptor instead.
-func (ImageResizeFit) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use ImageResize_Fit.Descriptor instead.
+func (ImageResize_Fit) EnumDescriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type ImageGravity int32
+type ImageResize_Gravity int32
 
 const (
-	ImageGravity_IMAGE_GRAVITY_UNSPECIFIED ImageGravity = 0
-	ImageGravity_CENTER                    ImageGravity = 1
-	ImageGravity_TOP                       ImageGravity = 2
-	ImageGravity_TOP_RIGHT                 ImageGravity = 3
-	ImageGravity_RIGHT                     ImageGravity = 4
-	ImageGravity_BOTTOM_RIGHT              ImageGravity = 5
-	ImageGravity_BOTTOM                    ImageGravity = 6
-	ImageGravity_BOTTOM_LEFT               ImageGravity = 7
-	ImageGravity_LEFT                      ImageGravity = 8
-	ImageGravity_TOP_LEFT                  ImageGravity = 9
+	ImageResize_GRAVITY_UNSPECIFIED ImageResize_Gravity = 0
+	ImageResize_CENTER              ImageResize_Gravity = 1
+	ImageResize_TOP                 ImageResize_Gravity = 2
+	ImageResize_TOP_RIGHT           ImageResize_Gravity = 3
+	ImageResize_RIGHT               ImageResize_Gravity = 4
+	ImageResize_BOTTOM_RIGHT        ImageResize_Gravity = 5
+	ImageResize_BOTTOM              ImageResize_Gravity = 6
+	ImageResize_BOTTOM_LEFT         ImageResize_Gravity = 7
+	ImageResize_LEFT                ImageResize_Gravity = 8
+	ImageResize_TOP_LEFT            ImageResize_Gravity = 9
 )
 
-// Enum value maps for ImageGravity.
+// Enum value maps for ImageResize_Gravity.
 var (
-	ImageGravity_name = map[int32]string{
-		0: "IMAGE_GRAVITY_UNSPECIFIED",
+	ImageResize_Gravity_name = map[int32]string{
+		0: "GRAVITY_UNSPECIFIED",
 		1: "CENTER",
 		2: "TOP",
 		3: "TOP_RIGHT",
@@ -110,100 +109,100 @@ var (
 		8: "LEFT",
 		9: "TOP_LEFT",
 	}
-	ImageGravity_value = map[string]int32{
-		"IMAGE_GRAVITY_UNSPECIFIED": 0,
-		"CENTER":                    1,
-		"TOP":                       2,
-		"TOP_RIGHT":                 3,
-		"RIGHT":                     4,
-		"BOTTOM_RIGHT":              5,
-		"BOTTOM":                    6,
-		"BOTTOM_LEFT":               7,
-		"LEFT":                      8,
-		"TOP_LEFT":                  9,
+	ImageResize_Gravity_value = map[string]int32{
+		"GRAVITY_UNSPECIFIED": 0,
+		"CENTER":              1,
+		"TOP":                 2,
+		"TOP_RIGHT":           3,
+		"RIGHT":               4,
+		"BOTTOM_RIGHT":        5,
+		"BOTTOM":              6,
+		"BOTTOM_LEFT":         7,
+		"LEFT":                8,
+		"TOP_LEFT":            9,
 	}
 )
 
-func (x ImageGravity) Enum() *ImageGravity {
-	p := new(ImageGravity)
+func (x ImageResize_Gravity) Enum() *ImageResize_Gravity {
+	p := new(ImageResize_Gravity)
 	*p = x
 	return p
 }
 
-func (x ImageGravity) String() string {
+func (x ImageResize_Gravity) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ImageGravity) Descriptor() protoreflect.EnumDescriptor {
+func (ImageResize_Gravity) Descriptor() protoreflect.EnumDescriptor {
 	return file_velony_asset_api_v1_asset_proto_enumTypes[1].Descriptor()
 }
 
-func (ImageGravity) Type() protoreflect.EnumType {
+func (ImageResize_Gravity) Type() protoreflect.EnumType {
 	return &file_velony_asset_api_v1_asset_proto_enumTypes[1]
 }
 
-func (x ImageGravity) Number() protoreflect.EnumNumber {
+func (x ImageResize_Gravity) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ImageGravity.Descriptor instead.
-func (ImageGravity) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use ImageResize_Gravity.Descriptor instead.
+func (ImageResize_Gravity) EnumDescriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 1}
 }
 
-type ImageFormat int32
+type ImageEncoding_Format int32
 
 const (
-	ImageFormat_IMAGE_FORMAT_UNSPECIFIED ImageFormat = 0
-	ImageFormat_JPEG                     ImageFormat = 1
-	ImageFormat_PNG                      ImageFormat = 2
-	ImageFormat_WEBP                     ImageFormat = 3
-	ImageFormat_AVIF                     ImageFormat = 4
+	ImageEncoding_FORMAT_UNSPECIFIED ImageEncoding_Format = 0
+	ImageEncoding_JPEG               ImageEncoding_Format = 1
+	ImageEncoding_PNG                ImageEncoding_Format = 2
+	ImageEncoding_WEBP               ImageEncoding_Format = 3
+	ImageEncoding_AVIF               ImageEncoding_Format = 4
 )
 
-// Enum value maps for ImageFormat.
+// Enum value maps for ImageEncoding_Format.
 var (
-	ImageFormat_name = map[int32]string{
-		0: "IMAGE_FORMAT_UNSPECIFIED",
+	ImageEncoding_Format_name = map[int32]string{
+		0: "FORMAT_UNSPECIFIED",
 		1: "JPEG",
 		2: "PNG",
 		3: "WEBP",
 		4: "AVIF",
 	}
-	ImageFormat_value = map[string]int32{
-		"IMAGE_FORMAT_UNSPECIFIED": 0,
-		"JPEG":                     1,
-		"PNG":                      2,
-		"WEBP":                     3,
-		"AVIF":                     4,
+	ImageEncoding_Format_value = map[string]int32{
+		"FORMAT_UNSPECIFIED": 0,
+		"JPEG":               1,
+		"PNG":                2,
+		"WEBP":               3,
+		"AVIF":               4,
 	}
 )
 
-func (x ImageFormat) Enum() *ImageFormat {
-	p := new(ImageFormat)
+func (x ImageEncoding_Format) Enum() *ImageEncoding_Format {
+	p := new(ImageEncoding_Format)
 	*p = x
 	return p
 }
 
-func (x ImageFormat) String() string {
+func (x ImageEncoding_Format) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ImageFormat) Descriptor() protoreflect.EnumDescriptor {
+func (ImageEncoding_Format) Descriptor() protoreflect.EnumDescriptor {
 	return file_velony_asset_api_v1_asset_proto_enumTypes[2].Descriptor()
 }
 
-func (ImageFormat) Type() protoreflect.EnumType {
+func (ImageEncoding_Format) Type() protoreflect.EnumType {
 	return &file_velony_asset_api_v1_asset_proto_enumTypes[2]
 }
 
-func (x ImageFormat) Number() protoreflect.EnumNumber {
+func (x ImageEncoding_Format) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ImageFormat.Descriptor instead.
-func (ImageFormat) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use ImageEncoding_Format.Descriptor instead.
+func (ImageEncoding_Format) EnumDescriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1, 0}
 }
 
 type Image_State int32
@@ -268,8 +267,8 @@ type ImageResize struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Width           *uint32                `protobuf:"varint,1,opt,name=width,proto3,oneof" json:"width,omitempty"`
 	Height          *uint32                `protobuf:"varint,2,opt,name=height,proto3,oneof" json:"height,omitempty"`
-	Fit             ImageResizeFit         `protobuf:"varint,3,opt,name=fit,proto3,enum=velony.asset.api.v1.ImageResizeFit" json:"fit,omitempty"`
-	Gravity         ImageGravity           `protobuf:"varint,4,opt,name=gravity,proto3,enum=velony.asset.api.v1.ImageGravity" json:"gravity,omitempty"`
+	Fit             ImageResize_Fit        `protobuf:"varint,3,opt,name=fit,proto3,enum=velony.asset.api.v1.ImageResize_Fit" json:"fit,omitempty"`
+	Gravity         ImageResize_Gravity    `protobuf:"varint,4,opt,name=gravity,proto3,enum=velony.asset.api.v1.ImageResize_Gravity" json:"gravity,omitempty"`
 	BackgroundColor *string                `protobuf:"bytes,5,opt,name=background_color,json=backgroundColor,proto3,oneof" json:"background_color,omitempty"`
 	AllowUpscale    bool                   `protobuf:"varint,6,opt,name=allow_upscale,json=allowUpscale,proto3" json:"allow_upscale,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -320,18 +319,18 @@ func (x *ImageResize) GetHeight() uint32 {
 	return 0
 }
 
-func (x *ImageResize) GetFit() ImageResizeFit {
+func (x *ImageResize) GetFit() ImageResize_Fit {
 	if x != nil {
 		return x.Fit
 	}
-	return ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED
+	return ImageResize_FIT_UNSPECIFIED
 }
 
-func (x *ImageResize) GetGravity() ImageGravity {
+func (x *ImageResize) GetGravity() ImageResize_Gravity {
 	if x != nil {
 		return x.Gravity
 	}
-	return ImageGravity_IMAGE_GRAVITY_UNSPECIFIED
+	return ImageResize_GRAVITY_UNSPECIFIED
 }
 
 func (x *ImageResize) GetBackgroundColor() string {
@@ -350,7 +349,7 @@ func (x *ImageResize) GetAllowUpscale() bool {
 
 type ImageEncoding struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Format        ImageFormat            `protobuf:"varint,1,opt,name=format,proto3,enum=velony.asset.api.v1.ImageFormat" json:"format,omitempty"`
+	Format        ImageEncoding_Format   `protobuf:"varint,1,opt,name=format,proto3,enum=velony.asset.api.v1.ImageEncoding_Format" json:"format,omitempty"`
 	Quality       *uint32                `protobuf:"varint,2,opt,name=quality,proto3,oneof" json:"quality,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -386,11 +385,11 @@ func (*ImageEncoding) Descriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ImageEncoding) GetFormat() ImageFormat {
+func (x *ImageEncoding) GetFormat() ImageEncoding_Format {
 	if x != nil {
 		return x.Format
 	}
-	return ImageFormat_IMAGE_FORMAT_UNSPECIFIED
+	return ImageEncoding_FORMAT_UNSPECIFIED
 }
 
 func (x *ImageEncoding) GetQuality() uint32 {
@@ -844,20 +843,45 @@ var File_velony_asset_api_v1_asset_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\n" +
-	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x17google/api/client.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xd6\x02\n" +
+	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x17google/api/client.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xc3\x04\n" +
 	"\vImageResize\x12\x1e\n" +
 	"\x05width\x18\x01 \x01(\rB\x03\xe0A\x01H\x00R\x05width\x88\x01\x01\x12 \n" +
-	"\x06height\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\x06height\x88\x01\x01\x12:\n" +
-	"\x03fit\x18\x03 \x01(\x0e2#.velony.asset.api.v1.ImageResizeFitB\x03\xe0A\x01R\x03fit\x12@\n" +
-	"\agravity\x18\x04 \x01(\x0e2!.velony.asset.api.v1.ImageGravityB\x03\xe0A\x01R\agravity\x123\n" +
+	"\x06height\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\x06height\x88\x01\x01\x12;\n" +
+	"\x03fit\x18\x03 \x01(\x0e2$.velony.asset.api.v1.ImageResize.FitB\x03\xe0A\x01R\x03fit\x12G\n" +
+	"\agravity\x18\x04 \x01(\x0e2(.velony.asset.api.v1.ImageResize.GravityB\x03\xe0A\x01R\agravity\x123\n" +
 	"\x10background_color\x18\x05 \x01(\tB\x03\xe0A\x01H\x02R\x0fbackgroundColor\x88\x01\x01\x12(\n" +
-	"\rallow_upscale\x18\x06 \x01(\bB\x03\xe0A\x01R\fallowUpscaleB\b\n" +
+	"\rallow_upscale\x18\x06 \x01(\bB\x03\xe0A\x01R\fallowUpscale\"H\n" +
+	"\x03Fit\x12\x13\n" +
+	"\x0fFIT_UNSPECIFIED\x10\x00\x12\v\n" +
+	"\aCONTAIN\x10\x01\x12\t\n" +
+	"\x05COVER\x10\x02\x12\a\n" +
+	"\x03PAD\x10\x03\x12\v\n" +
+	"\aSTRETCH\x10\x04\"\x98\x01\n" +
+	"\aGravity\x12\x17\n" +
+	"\x13GRAVITY_UNSPECIFIED\x10\x00\x12\n" +
+	"\n" +
+	"\x06CENTER\x10\x01\x12\a\n" +
+	"\x03TOP\x10\x02\x12\r\n" +
+	"\tTOP_RIGHT\x10\x03\x12\t\n" +
+	"\x05RIGHT\x10\x04\x12\x10\n" +
+	"\fBOTTOM_RIGHT\x10\x05\x12\n" +
+	"\n" +
+	"\x06BOTTOM\x10\x06\x12\x0f\n" +
+	"\vBOTTOM_LEFT\x10\a\x12\b\n" +
+	"\x04LEFT\x10\b\x12\f\n" +
+	"\bTOP_LEFT\x10\tB\b\n" +
 	"\x06_widthB\t\n" +
 	"\a_heightB\x13\n" +
-	"\x11_background_color\"~\n" +
-	"\rImageEncoding\x12=\n" +
-	"\x06format\x18\x01 \x01(\x0e2 .velony.asset.api.v1.ImageFormatB\x03\xe0A\x01R\x06format\x12\"\n" +
-	"\aquality\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\aquality\x88\x01\x01B\n" +
+	"\x11_background_color\"\xd0\x01\n" +
+	"\rImageEncoding\x12F\n" +
+	"\x06format\x18\x01 \x01(\x0e2).velony.asset.api.v1.ImageEncoding.FormatB\x03\xe0A\x01R\x06format\x12\"\n" +
+	"\aquality\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\aquality\x88\x01\x01\"G\n" +
+	"\x06Format\x12\x16\n" +
+	"\x12FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04JPEG\x10\x01\x12\a\n" +
+	"\x03PNG\x10\x02\x12\b\n" +
+	"\x04WEBP\x10\x03\x12\b\n" +
+	"\x04AVIF\x10\x04B\n" +
 	"\n" +
 	"\b_quality\"\xc1\x03\n" +
 	"\x05Image\x12\x17\n" +
@@ -905,32 +929,7 @@ const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\x0fremove_metadata\x18\x05 \x01(\bB\x03\xe0A\x01R\x0eremoveMetadata\"F\n" +
 	"\x12DeleteImageRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14api.velony.app/ImageR\x04name*`\n" +
-	"\x0eImageResizeFit\x12 \n" +
-	"\x1cIMAGE_RESIZE_FIT_UNSPECIFIED\x10\x00\x12\v\n" +
-	"\aCONTAIN\x10\x01\x12\t\n" +
-	"\x05COVER\x10\x02\x12\a\n" +
-	"\x03PAD\x10\x03\x12\v\n" +
-	"\aSTRETCH\x10\x04*\xa3\x01\n" +
-	"\fImageGravity\x12\x1d\n" +
-	"\x19IMAGE_GRAVITY_UNSPECIFIED\x10\x00\x12\n" +
-	"\n" +
-	"\x06CENTER\x10\x01\x12\a\n" +
-	"\x03TOP\x10\x02\x12\r\n" +
-	"\tTOP_RIGHT\x10\x03\x12\t\n" +
-	"\x05RIGHT\x10\x04\x12\x10\n" +
-	"\fBOTTOM_RIGHT\x10\x05\x12\n" +
-	"\n" +
-	"\x06BOTTOM\x10\x06\x12\x0f\n" +
-	"\vBOTTOM_LEFT\x10\a\x12\b\n" +
-	"\x04LEFT\x10\b\x12\f\n" +
-	"\bTOP_LEFT\x10\t*R\n" +
-	"\vImageFormat\x12\x1c\n" +
-	"\x18IMAGE_FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
-	"\x04JPEG\x10\x01\x12\a\n" +
-	"\x03PNG\x10\x02\x12\b\n" +
-	"\x04WEBP\x10\x03\x12\b\n" +
-	"\x04AVIF\x10\x042\xb7\x06\n" +
+	"\x14api.velony.app/ImageR\x04name2\xb7\x06\n" +
 	"\fAssetService\x12p\n" +
 	"\bGetImage\x12$.velony.asset.api.v1.GetImageRequest\x1a\x1a.velony.asset.api.v1.Image\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/{name=images/*}\x12u\n" +
 	"\vCreateImage\x12'.velony.asset.api.v1.CreateImageRequest\x1a\x1a.velony.asset.api.v1.Image\"!\xdaA\x05image\x82\xd3\xe4\x93\x02\x13:\x05image\"\n" +
@@ -955,9 +954,9 @@ func file_velony_asset_api_v1_asset_proto_rawDescGZIP() []byte {
 var file_velony_asset_api_v1_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_velony_asset_api_v1_asset_proto_goTypes = []any{
-	(ImageResizeFit)(0),                 // 0: velony.asset.api.v1.ImageResizeFit
-	(ImageGravity)(0),                   // 1: velony.asset.api.v1.ImageGravity
-	(ImageFormat)(0),                    // 2: velony.asset.api.v1.ImageFormat
+	(ImageResize_Fit)(0),                // 0: velony.asset.api.v1.ImageResize.Fit
+	(ImageResize_Gravity)(0),            // 1: velony.asset.api.v1.ImageResize.Gravity
+	(ImageEncoding_Format)(0),           // 2: velony.asset.api.v1.ImageEncoding.Format
 	(Image_State)(0),                    // 3: velony.asset.api.v1.Image.State
 	(*ImageResize)(nil),                 // 4: velony.asset.api.v1.ImageResize
 	(*ImageEncoding)(nil),               // 5: velony.asset.api.v1.ImageEncoding
@@ -974,9 +973,9 @@ var file_velony_asset_api_v1_asset_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),               // 16: google.protobuf.Empty
 }
 var file_velony_asset_api_v1_asset_proto_depIdxs = []int32{
-	0,  // 0: velony.asset.api.v1.ImageResize.fit:type_name -> velony.asset.api.v1.ImageResizeFit
-	1,  // 1: velony.asset.api.v1.ImageResize.gravity:type_name -> velony.asset.api.v1.ImageGravity
-	2,  // 2: velony.asset.api.v1.ImageEncoding.format:type_name -> velony.asset.api.v1.ImageFormat
+	0,  // 0: velony.asset.api.v1.ImageResize.fit:type_name -> velony.asset.api.v1.ImageResize.Fit
+	1,  // 1: velony.asset.api.v1.ImageResize.gravity:type_name -> velony.asset.api.v1.ImageResize.Gravity
+	2,  // 2: velony.asset.api.v1.ImageEncoding.format:type_name -> velony.asset.api.v1.ImageEncoding.Format
 	3,  // 3: velony.asset.api.v1.Image.state:type_name -> velony.asset.api.v1.Image.State
 	14, // 4: velony.asset.api.v1.Image.create_time:type_name -> google.protobuf.Timestamp
 	14, // 5: velony.asset.api.v1.Image.update_time:type_name -> google.protobuf.Timestamp

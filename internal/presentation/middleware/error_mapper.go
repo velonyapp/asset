@@ -151,13 +151,13 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						applicationport.ErrUnsupportedResizeFit.Error(),
 					)
-				case errors.Is(err, applicationport.ErrUnsupportedImageGravity):
+				case errors.Is(err, applicationport.ErrUnsupportedImageResizeGravity):
 					return reply, kerrors.BadRequest("",
-						applicationport.ErrUnsupportedImageGravity.Error(),
+						applicationport.ErrUnsupportedImageResizeGravity.Error(),
 					)
-				case errors.Is(err, applicationport.ErrUnsupportedImageFormat):
+				case errors.Is(err, applicationport.ErrUnsupportedImageEncodingFormat):
 					return reply, kerrors.BadRequest("",
-						applicationport.ErrUnsupportedImageFormat.Error(),
+						applicationport.ErrUnsupportedImageEncodingFormat.Error(),
 					)
 				case errors.Is(err, applicationport.ErrInvalidImageQuality):
 					return reply, kerrors.BadRequest("",

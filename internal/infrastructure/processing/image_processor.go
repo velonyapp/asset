@@ -59,7 +59,7 @@ func resize(imageRef *vips.ImageRef, opts port.ImageResize) error {
 		opts.Fit = port.ImageResizeFitContain
 	}
 	if opts.Gravity == "" {
-		opts.Gravity = port.ImageGravityCenter
+		opts.Gravity = port.ImageResizeGravityCenter
 	}
 
 	switch opts.Fit {
@@ -231,35 +231,35 @@ func resizeStretch(imageRef *vips.ImageRef, opts port.ImageResize) error {
 func gravityOffset(
 	maxX int,
 	maxY int,
-	gravity port.ImageGravity,
+	gravity port.ImageResizeGravity,
 ) (int, int, error) {
 	x := maxX / 2
 	y := maxY / 2
 
 	switch gravity {
-	case port.ImageGravityCenter:
-	case port.ImageGravityTop:
+	case port.ImageResizeGravityCenter:
+	case port.ImageResizeGravityTop:
 		y = 0
-	case port.ImageGravityTopRight:
+	case port.ImageResizeGravityTopRight:
 		x = maxX
 		y = 0
-	case port.ImageGravityRight:
+	case port.ImageResizeGravityRight:
 		x = maxX
-	case port.ImageGravityBottomRight:
+	case port.ImageResizeGravityBottomRight:
 		x = maxX
 		y = maxY
-	case port.ImageGravityBottom:
+	case port.ImageResizeGravityBottom:
 		y = maxY
-	case port.ImageGravityBottomLeft:
+	case port.ImageResizeGravityBottomLeft:
 		x = 0
 		y = maxY
-	case port.ImageGravityLeft:
+	case port.ImageResizeGravityLeft:
 		x = 0
-	case port.ImageGravityTopLeft:
+	case port.ImageResizeGravityTopLeft:
 		x = 0
 		y = 0
 	default:
-		return 0, 0, port.ErrUnsupportedImageGravity
+		return 0, 0, port.ErrUnsupportedImageResizeGravity
 	}
 
 	return x, y, nil
@@ -314,16 +314,16 @@ func encode(imageRef *vips.ImageRef, dst io.Writer, opts port.ImageEncoding) err
 	}
 
 	switch opts.Format {
-	case port.ImageFormatJPEG:
+	case port.ImageEncodingFormatJPEG:
 		return encodeJPEG(imageRef, dst, opts)
-	case port.ImageFormatPNG:
+	case port.ImageEncodingFormatPNG:
 		return encodePNG(imageRef, dst, opts)
-	case port.ImageFormatWebP:
+	case port.ImageEncodingFormatWebP:
 		return encodeWebP(imageRef, dst, opts)
-	case port.ImageFormatAVIF:
+	case port.ImageEncodingFormatAVIF:
 		return encodeAVIF(imageRef, dst, opts)
 	default:
-		return port.ErrUnsupportedImageFormat
+		return port.ErrUnsupportedImageEncodingFormat
 	}
 }
 

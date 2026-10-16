@@ -117,42 +117,42 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 		if req.Resize != nil {
 			var fit port.ImageResizeFit
 			switch req.Resize.Fit {
-			case v1.ImageResizeFit_IMAGE_RESIZE_FIT_UNSPECIFIED:
-			case v1.ImageResizeFit_CONTAIN:
+			case v1.ImageResize_FIT_UNSPECIFIED:
+			case v1.ImageResize_CONTAIN:
 				fit = port.ImageResizeFitContain
-			case v1.ImageResizeFit_COVER:
+			case v1.ImageResize_COVER:
 				fit = port.ImageResizeFitCover
-			case v1.ImageResizeFit_PAD:
+			case v1.ImageResize_PAD:
 				fit = port.ImageResizeFitPad
-			case v1.ImageResizeFit_STRETCH:
+			case v1.ImageResize_STRETCH:
 				fit = port.ImageResizeFitStretch
 			default:
 				return port.ErrUnsupportedResizeFit
 			}
 
-			var gravity port.ImageGravity
+			var gravity port.ImageResizeGravity
 			switch req.Resize.Gravity {
-			case v1.ImageGravity_IMAGE_GRAVITY_UNSPECIFIED:
-			case v1.ImageGravity_CENTER:
-				gravity = port.ImageGravityCenter
-			case v1.ImageGravity_TOP:
-				gravity = port.ImageGravityTop
-			case v1.ImageGravity_TOP_RIGHT:
-				gravity = port.ImageGravityTopRight
-			case v1.ImageGravity_RIGHT:
-				gravity = port.ImageGravityRight
-			case v1.ImageGravity_BOTTOM_RIGHT:
-				gravity = port.ImageGravityBottomRight
-			case v1.ImageGravity_BOTTOM:
-				gravity = port.ImageGravityBottom
-			case v1.ImageGravity_BOTTOM_LEFT:
-				gravity = port.ImageGravityBottomLeft
-			case v1.ImageGravity_LEFT:
-				gravity = port.ImageGravityLeft
-			case v1.ImageGravity_TOP_LEFT:
-				gravity = port.ImageGravityTopLeft
+			case v1.ImageResize_GRAVITY_UNSPECIFIED:
+			case v1.ImageResize_CENTER:
+				gravity = port.ImageResizeGravityCenter
+			case v1.ImageResize_TOP:
+				gravity = port.ImageResizeGravityTop
+			case v1.ImageResize_TOP_RIGHT:
+				gravity = port.ImageResizeGravityTopRight
+			case v1.ImageResize_RIGHT:
+				gravity = port.ImageResizeGravityRight
+			case v1.ImageResize_BOTTOM_RIGHT:
+				gravity = port.ImageResizeGravityBottomRight
+			case v1.ImageResize_BOTTOM:
+				gravity = port.ImageResizeGravityBottom
+			case v1.ImageResize_BOTTOM_LEFT:
+				gravity = port.ImageResizeGravityBottomLeft
+			case v1.ImageResize_LEFT:
+				gravity = port.ImageResizeGravityLeft
+			case v1.ImageResize_TOP_LEFT:
+				gravity = port.ImageResizeGravityTopLeft
 			default:
-				return port.ErrUnsupportedImageGravity
+				return port.ErrUnsupportedImageResizeGravity
 			}
 
 			resize = &port.ImageResize{
@@ -167,19 +167,19 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 
 		var encoding *port.ImageEncoding
 		if req.Encoding != nil {
-			var format port.ImageFormat
+			var format port.ImageEncodingFormat
 			switch req.Encoding.Format {
-			case v1.ImageFormat_IMAGE_FORMAT_UNSPECIFIED:
-			case v1.ImageFormat_JPEG:
-				format = port.ImageFormatJPEG
-			case v1.ImageFormat_PNG:
-				format = port.ImageFormatPNG
-			case v1.ImageFormat_WEBP:
-				format = port.ImageFormatWebP
-			case v1.ImageFormat_AVIF:
-				format = port.ImageFormatAVIF
+			case v1.ImageEncoding_FORMAT_UNSPECIFIED:
+			case v1.ImageEncoding_JPEG:
+				format = port.ImageEncodingFormatJPEG
+			case v1.ImageEncoding_PNG:
+				format = port.ImageEncodingFormatPNG
+			case v1.ImageEncoding_WEBP:
+				format = port.ImageEncodingFormatWebP
+			case v1.ImageEncoding_AVIF:
+				format = port.ImageEncodingFormatAVIF
 			default:
-				return port.ErrUnsupportedImageFormat
+				return port.ErrUnsupportedImageEncodingFormat
 			}
 
 			encoding = &port.ImageEncoding{
