@@ -6,13 +6,12 @@ import (
 	"sync"
 
 	v1 "github.com/velonyapp/asset/gen/job/v1"
-	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/conf"
+	"github.com/velonyapp/asset/internal/presentation/service"
 
 	"github.com/Azure/go-amqp"
 	"github.com/go-kratos/kratos/v3/transport"
 	"github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
-	"go.einride.tech/aip/resourcename"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -21,15 +20,11 @@ var (
 	ErrInvalidMessage     = errors.New("invalid message")
 )
 
-const (
-	imageResourcePattern = "images/{image}"
-)
-
 var _ transport.Server = (*RabbitMQConsumer)(nil)
 
 type RabbitMQConsumer struct {
 	c          *conf.Transport
-	commandBus *command.Bus
+	jobService *service.Job
 
 	conn      *rabbitmqamqp.AmqpConnection
 	consumers map[string]*rabbitmqamqp.Consumer
@@ -39,11 +34,11 @@ type RabbitMQConsumer struct {
 
 func NewRabbitMQConsumer(
 	c *conf.Transport,
-	commandBus *command.Bus,
+	jobService *service.Job,
 ) *RabbitMQConsumer {
 	return &RabbitMQConsumer{
 		c:          c,
-		commandBus: commandBus,
+		jobService: jobService,
 	}
 }
 
@@ -75,15 +70,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		if _, err := command.Send(ctx, rc.commandBus, command.CreateImage{
-			Tags:      req.Tags,
-			ObjectKey: req.ObjectKey,
-			Width:     int(req.Width),
-			Height:    int(req.Height),
-			Format:    req.Format.String(),
-		}); err != nil {
-			return err
-		}
+		return rc.jobService.CreateImage(ctx, req)
 
 	case rc.c.Rabbitmq.Queues.ConfirmImage:
 		req := new(v1.ConfirmImage)
@@ -92,16 +79,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		var imageID string
-		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
-			return err
-		}
-
-		if _, err := command.Send(ctx, rc.commandBus, command.ConfirmImage{
-			ImageID: imageID,
-		}); err != nil {
-			return err
-		}
+		return rc.jobService.ConfirmImage(ctx, req)
 
 	case rc.c.Rabbitmq.Queues.ProcessImage:
 		req := new(v1.ProcessImage)
@@ -110,16 +88,7 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		var imageID string
-		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
-			return err
-		}
-
-		if _, err := command.Send(ctx, rc.commandBus, command.ProcessImage{
-			ImageID: imageID,
-		}); err != nil {
-			return err
-		}
+		return rc.jobService.ProcessImage(ctx, req)
 
 	case rc.c.Rabbitmq.Queues.DeleteImage:
 		req := new(v1.DeleteImage)
@@ -128,22 +97,11 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 			return ErrInvalidMessage
 		}
 
-		var imageID string
-		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
-			return err
-		}
-
-		if _, err := command.Send(ctx, rc.commandBus, command.DeleteImage{
-			ImageID: imageID,
-		}); err != nil {
-			return err
-		}
+		return rc.jobService.DeleteImage(ctx, req)
 
 	default:
 		return ErrUnsupportedMessage
 	}
-
-	return nil
 }
 
 func (rc *RabbitMQConsumer) registerConsumer(ctx context.Context, queue string) error {

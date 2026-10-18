@@ -1,15 +1,16 @@
 package presentation
 
 import (
-	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
+	"github.com/velonyapp/asset/internal/presentation/service"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 
 	"github.com/google/wire"
 )
 
 var ProviderSet = wire.NewSet(
-	api.NewService,
+	service.NewAPI,
+	service.NewJob,
 	transport.NewGRPCServer,
 	transport.NewHTTPServer,
 	transport.NewRabbitMQConsumer,

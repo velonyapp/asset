@@ -17,8 +17,8 @@ import (
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/processing"
-	"github.com/velonyapp/asset/internal/presentation/api"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
+	service2 "github.com/velonyapp/asset/internal/presentation/service"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 	"log/slog"
 )
@@ -58,7 +58,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	bus := command.NewBus(createImageHandler, confirmImageHandler, processImageHandler, deleteImageHandler)
 	getImageHandler := query.NewGetImageHandler(image, storage)
 	queryBus := query.NewBus(getImageHandler)
-	apiService := api.NewService(bus, queryBus)
+	api := service2.NewAPI(bus, queryBus)
 	tracing := middleware.NewTracing()
 	metrics, err := middleware.NewMetrics()
 	if err != nil {
@@ -66,9 +66,10 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	}
 	errorMapper := middleware.NewErrorMapper()
 	validation := middleware.NewValidation()
-	server := transport.NewGRPCServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
-	httpServer := transport.NewHTTPServer(confTransport, apiService, tracing, metrics, errorMapper, validation)
-	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, bus)
+	server := transport.NewGRPCServer(confTransport, api, tracing, metrics, errorMapper, validation)
+	httpServer := transport.NewHTTPServer(confTransport, api, tracing, metrics, errorMapper, validation)
+	job := service2.NewJob(bus)
+	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, job)
 	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {
 	}, nil

@@ -10,7 +10,7 @@ import (
 	domainentity "github.com/velonyapp/asset/internal/domain/entity"
 	domainservice "github.com/velonyapp/asset/internal/domain/service"
 	domainvo "github.com/velonyapp/asset/internal/domain/vo"
-	presentationapi "github.com/velonyapp/asset/internal/presentation/api"
+	presentationservice "github.com/velonyapp/asset/internal/presentation/service"
 
 	kerrors "github.com/go-kratos/kratos/v3/errors"
 	"github.com/go-kratos/kratos/v3/middleware"
@@ -169,9 +169,9 @@ func NewErrorMapper() ErrorMapper {
 					)
 
 				// API Service
-				case errors.Is(err, presentationapi.ErrInvalidImageResourceName):
+				case errors.Is(err, presentationservice.ErrInvalidImageResourceName):
 					return reply, kerrors.BadRequest("",
-						presentationapi.ErrInvalidImageResourceName.Error(),
+						presentationservice.ErrInvalidImageResourceName.Error(),
 					)
 
 				default:
