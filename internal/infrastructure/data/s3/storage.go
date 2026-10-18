@@ -11,6 +11,7 @@ import (
 	"github.com/velonyapp/asset/internal/domain/vo"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/aws/smithy-go"
@@ -19,16 +20,21 @@ import (
 var _ port.Storage = (*storage)(nil)
 
 type storage struct {
-	client        *s3.Client
-	presignClient *s3.PresignClient
-	c             *conf.Data
+	client                *s3.Client
+	presignClient         *s3.PresignClient
+	transferManagerClient *transfermanager.Client
+	c                     *conf.Data
 }
 
-func NewStorage(client *s3.Client, c *conf.Data) port.Storage {
+func NewStorage(
+	client *s3.Client,
+	c *conf.Data,
+) port.Storage {
 	return &storage{
-		client:        client,
-		presignClient: s3.NewPresignClient(client),
-		c:             c,
+		client:                client,
+		presignClient:         s3.NewPresignClient(client),
+		transferManagerClient: transfermanager.New(client),
+		c:                     c,
 	}
 }
 
@@ -65,7 +71,7 @@ func (s *storage) Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, err
 }
 
 func (s *storage) Put(ctx context.Context, key vo.ObjectKey, body io.Reader) error {
-	if _, err := s.client.PutObject(ctx, &s3.PutObjectInput{
+	if _, err := s.transferManagerClient.UploadObject(ctx, &transfermanager.UploadObjectInput{
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.String()),
 		Body:   body,
