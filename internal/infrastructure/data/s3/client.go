@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-sdk-go-v2/otelaws"
 )
 
-func NewConnection(c *conf.Data) (*s3.Client, error) {
+func NewClient(c *conf.Data) (*s3.Client, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background(),
 		config.WithRegion("auto"),
 		config.WithCredentialsProvider(

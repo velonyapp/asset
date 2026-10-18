@@ -44,7 +44,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	image := mysql.NewImageRepo(db, dispatcher)
 	objectKeyPolicy := service.NewObjectKeyPolicy(image)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	client, err := s3.NewConnection(data)
+	client, err := s3.NewClient(data)
 	if err != nil {
 		return nil, nil, err
 	}
