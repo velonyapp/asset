@@ -5,9 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	v1 "github.com/velonyapp/asset/gen/api/v1"
+	v1 "github.com/velonyapp/asset/gen/job/v1"
 	"github.com/velonyapp/asset/internal/application/command"
-	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/conf"
 
 	"github.com/Azure/go-amqp"
@@ -70,28 +69,31 @@ func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, data []byte) error {
 	switch queue {
 	case rc.c.Rabbitmq.Queues.CreateImage:
-		req := new(v1.CreateImageRequest)
+		req := new(v1.CreateImage)
 
 		if err := proto.Unmarshal(data, req); err != nil {
 			return ErrInvalidMessage
 		}
 
 		if _, err := command.Send(ctx, rc.commandBus, command.CreateImage{
-			Tags:      req.Image.Tags,
-			ObjectKey: req.Image.ObjectKey,
+			Tags:      req.Tags,
+			ObjectKey: req.ObjectKey,
+			Width:     int(req.Width),
+			Height:    int(req.Height),
+			Format:    req.Format.String(),
 		}); err != nil {
 			return err
 		}
 
 	case rc.c.Rabbitmq.Queues.ConfirmImage:
-		req := new(v1.ConfirmImageRequest)
+		req := new(v1.ConfirmImage)
 
 		if err := proto.Unmarshal(data, req); err != nil {
 			return ErrInvalidMessage
 		}
 
 		var imageID string
-		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
 			return err
 		}
 
@@ -102,113 +104,32 @@ func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, dat
 		}
 
 	case rc.c.Rabbitmq.Queues.ProcessImage:
-		req := new(v1.ProcessImageRequest)
+		req := new(v1.ProcessImage)
 
 		if err := proto.Unmarshal(data, req); err != nil {
 			return ErrInvalidMessage
 		}
 
 		var imageID string
-		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
 			return err
-		}
-
-		var resize *port.ImageResize
-		if req.Resize != nil {
-			var fit port.ImageResizeFit
-			switch req.Resize.Fit {
-			case v1.ImageResize_FIT_UNSPECIFIED:
-			case v1.ImageResize_CONTAIN:
-				fit = port.ImageResizeFitContain
-			case v1.ImageResize_COVER:
-				fit = port.ImageResizeFitCover
-			case v1.ImageResize_PAD:
-				fit = port.ImageResizeFitPad
-			case v1.ImageResize_STRETCH:
-				fit = port.ImageResizeFitStretch
-			default:
-				return port.ErrUnsupportedResizeFit
-			}
-
-			var gravity port.ImageResizeGravity
-			switch req.Resize.Gravity {
-			case v1.ImageResize_GRAVITY_UNSPECIFIED:
-			case v1.ImageResize_CENTER:
-				gravity = port.ImageResizeGravityCenter
-			case v1.ImageResize_TOP:
-				gravity = port.ImageResizeGravityTop
-			case v1.ImageResize_TOP_RIGHT:
-				gravity = port.ImageResizeGravityTopRight
-			case v1.ImageResize_RIGHT:
-				gravity = port.ImageResizeGravityRight
-			case v1.ImageResize_BOTTOM_RIGHT:
-				gravity = port.ImageResizeGravityBottomRight
-			case v1.ImageResize_BOTTOM:
-				gravity = port.ImageResizeGravityBottom
-			case v1.ImageResize_BOTTOM_LEFT:
-				gravity = port.ImageResizeGravityBottomLeft
-			case v1.ImageResize_LEFT:
-				gravity = port.ImageResizeGravityLeft
-			case v1.ImageResize_TOP_LEFT:
-				gravity = port.ImageResizeGravityTopLeft
-			default:
-				return port.ErrUnsupportedImageResizeGravity
-			}
-
-			resize = &port.ImageResize{
-				Width:           req.Resize.Width,
-				Height:          req.Resize.Height,
-				Fit:             fit,
-				Gravity:         gravity,
-				BackgroundColor: req.Resize.BackgroundColor,
-				AllowUpscale:    req.Resize.AllowUpscale,
-			}
-		}
-
-		var encoding *port.ImageEncoding
-		if req.Encoding != nil {
-			var format port.ImageEncodingFormat
-			switch req.Encoding.Format {
-			case v1.ImageEncoding_FORMAT_UNSPECIFIED:
-			case v1.ImageEncoding_JPEG:
-				format = port.ImageEncodingFormatJPEG
-			case v1.ImageEncoding_PNG:
-				format = port.ImageEncodingFormatPNG
-			case v1.ImageEncoding_WEBP:
-				format = port.ImageEncodingFormatWebP
-			case v1.ImageEncoding_AVIF:
-				format = port.ImageEncodingFormatAVIF
-			default:
-				return port.ErrUnsupportedImageEncodingFormat
-			}
-
-			encoding = &port.ImageEncoding{
-				Format:  format,
-				Quality: req.Encoding.Quality,
-			}
 		}
 
 		if _, err := command.Send(ctx, rc.commandBus, command.ProcessImage{
 			ImageID: imageID,
-			Options: port.ImageProcessOptions{
-				Resize:         resize,
-				Encoding:       encoding,
-				AutoRotate:     req.AutoRotate,
-				RemoveMetadata: req.RemoveMetadata,
-			},
 		}); err != nil {
 			return err
 		}
 
 	case rc.c.Rabbitmq.Queues.DeleteImage:
-		req := new(v1.DeleteImageRequest)
+		req := new(v1.DeleteImage)
 
 		if err := proto.Unmarshal(data, req); err != nil {
 			return ErrInvalidMessage
 		}
 
 		var imageID string
-		if err := resourcename.Sscan(req.GetName(), imageResourcePattern, &imageID); err != nil {
+		if err := resourcename.Sscan(req.Name, imageResourcePattern, &imageID); err != nil {
 			return err
 		}
 

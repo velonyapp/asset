@@ -8,11 +8,11 @@ import (
 )
 
 func NewBus(
-	getImage GetImageHandler,
+	getImageHandler GetImageHandler,
 ) *Bus {
 	bus := &Bus{}
 
-	Register(bus, getImage)
+	Register(bus, getImageHandler)
 
 	return bus
 }

@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AssetService_GetImage_FullMethodName     = "/velony.asset.api.v1.AssetService/GetImage"
 	AssetService_CreateImage_FullMethodName  = "/velony.asset.api.v1.AssetService/CreateImage"
+	AssetService_DeleteImage_FullMethodName  = "/velony.asset.api.v1.AssetService/DeleteImage"
 	AssetService_ConfirmImage_FullMethodName = "/velony.asset.api.v1.AssetService/ConfirmImage"
 	AssetService_ProcessImage_FullMethodName = "/velony.asset.api.v1.AssetService/ProcessImage"
-	AssetService_DeleteImage_FullMethodName  = "/velony.asset.api.v1.AssetService/DeleteImage"
 )
 
 // AssetServiceClient is the client API for AssetService service.
@@ -33,9 +33,9 @@ const (
 type AssetServiceClient interface {
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*Image, error)
+	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ConfirmImage(ctx context.Context, in *ConfirmImageRequest, opts ...grpc.CallOption) (*Image, error)
 	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*Image, error)
-	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type assetServiceClient struct {
@@ -66,6 +66,16 @@ func (c *assetServiceClient) CreateImage(ctx context.Context, in *CreateImageReq
 	return out, nil
 }
 
+func (c *assetServiceClient) DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AssetService_DeleteImage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *assetServiceClient) ConfirmImage(ctx context.Context, in *ConfirmImageRequest, opts ...grpc.CallOption) (*Image, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Image)
@@ -86,25 +96,15 @@ func (c *assetServiceClient) ProcessImage(ctx context.Context, in *ProcessImageR
 	return out, nil
 }
 
-func (c *assetServiceClient) DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, AssetService_DeleteImage_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AssetServiceServer is the server API for AssetService service.
 // All implementations must embed UnimplementedAssetServiceServer
 // for forward compatibility.
 type AssetServiceServer interface {
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
+	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	ConfirmImage(context.Context, *ConfirmImageRequest) (*Image, error)
 	ProcessImage(context.Context, *ProcessImageRequest) (*Image, error)
-	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAssetServiceServer()
 }
 
@@ -121,14 +121,14 @@ func (UnimplementedAssetServiceServer) GetImage(context.Context, *GetImageReques
 func (UnimplementedAssetServiceServer) CreateImage(context.Context, *CreateImageRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateImage not implemented")
 }
+func (UnimplementedAssetServiceServer) DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteImage not implemented")
+}
 func (UnimplementedAssetServiceServer) ConfirmImage(context.Context, *ConfirmImageRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConfirmImage not implemented")
 }
 func (UnimplementedAssetServiceServer) ProcessImage(context.Context, *ProcessImageRequest) (*Image, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessImage not implemented")
-}
-func (UnimplementedAssetServiceServer) DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteImage not implemented")
 }
 func (UnimplementedAssetServiceServer) mustEmbedUnimplementedAssetServiceServer() {}
 func (UnimplementedAssetServiceServer) testEmbeddedByValue()                      {}
@@ -187,6 +187,24 @@ func _AssetService_CreateImage_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetService_DeleteImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServiceServer).DeleteImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetService_DeleteImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServiceServer).DeleteImage(ctx, req.(*DeleteImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AssetService_ConfirmImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ConfirmImageRequest)
 	if err := dec(in); err != nil {
@@ -223,24 +241,6 @@ func _AssetService_ProcessImage_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetService_DeleteImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteImageRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AssetServiceServer).DeleteImage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AssetService_DeleteImage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetServiceServer).DeleteImage(ctx, req.(*DeleteImageRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AssetService_ServiceDesc is the grpc.ServiceDesc for AssetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -257,16 +257,16 @@ var AssetService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssetService_CreateImage_Handler,
 		},
 		{
+			MethodName: "DeleteImage",
+			Handler:    _AssetService_DeleteImage_Handler,
+		},
+		{
 			MethodName: "ConfirmImage",
 			Handler:    _AssetService_ConfirmImage_Handler,
 		},
 		{
 			MethodName: "ProcessImage",
 			Handler:    _AssetService_ProcessImage_Handler,
-		},
-		{
-			MethodName: "DeleteImage",
-			Handler:    _AssetService_DeleteImage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,7 +2,6 @@ package command
 
 import (
 	"context"
-	"errors"
 	"io"
 	"time"
 
@@ -15,11 +14,11 @@ import (
 
 type ProcessImage struct {
 	ImageID string
-	Options port.ImageProcessOptions
 }
 
 type ProcessImageResult struct {
-	Image common.ImageResult
+	Image       common.ImageResult
+	DownloadURL string
 }
 
 func (ProcessImage) resultType() ProcessImageResult {
@@ -56,6 +55,7 @@ func (h *processImageHandler) Handle(
 	imageID, _ := vo.NewImageID(cmd.ImageID)
 
 	var image *entity.Image
+	var downloadURL string
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		now := time.Now()
@@ -91,7 +91,7 @@ func (h *processImageHandler) Handle(
 		processErrChan := make(chan error, 1)
 
 		go func() {
-			err := h.imageProcessor.Process(src, pw, cmd.Options)
+			err := h.imageProcessor.Process(src, pw, image.Width(), image.Height(), image.Format())
 			_ = pw.CloseWithError(err)
 			processErrChan <- err
 		}()
@@ -117,7 +117,7 @@ func (h *processImageHandler) Handle(
 		rollbackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 		defer cancel()
 
-		rollbackErr := h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
+		h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
 			now := time.Now()
 
 			image, err := h.imageRepo.FindByID(ctx, imageID)
@@ -135,7 +135,7 @@ func (h *processImageHandler) Handle(
 			return h.imageRepo.Save(ctx, image)
 		})
 
-		return ProcessImageResult{}, errors.Join(err, rollbackErr)
+		return ProcessImageResult{}, err
 	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
@@ -155,6 +155,14 @@ func (h *processImageHandler) Handle(
 			return err
 		}
 
+		downloadURL, err = h.storage.PresignGet(ctx,
+			image.ObjectKey(),
+			common.PresignTTL,
+		)
+		if err != nil {
+			return err
+		}
+
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		// Failed completion will be handled by background worker
@@ -167,8 +175,11 @@ func (h *processImageHandler) Handle(
 			Tags:       image.Tags().Strings(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
+			Width:      image.Width().UInt32(),
+			Height:     image.Height().UInt32(),
+			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
-			UpdateTime: image.UpdateTime(),
 		},
+		DownloadURL: downloadURL,
 	}, nil
 }

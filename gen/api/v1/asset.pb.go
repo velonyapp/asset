@@ -25,192 +25,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ImageResize_Fit int32
-
-const (
-	ImageResize_FIT_UNSPECIFIED ImageResize_Fit = 0
-	ImageResize_CONTAIN         ImageResize_Fit = 1
-	ImageResize_COVER           ImageResize_Fit = 2
-	ImageResize_PAD             ImageResize_Fit = 3
-	ImageResize_STRETCH         ImageResize_Fit = 4
-)
-
-// Enum value maps for ImageResize_Fit.
-var (
-	ImageResize_Fit_name = map[int32]string{
-		0: "FIT_UNSPECIFIED",
-		1: "CONTAIN",
-		2: "COVER",
-		3: "PAD",
-		4: "STRETCH",
-	}
-	ImageResize_Fit_value = map[string]int32{
-		"FIT_UNSPECIFIED": 0,
-		"CONTAIN":         1,
-		"COVER":           2,
-		"PAD":             3,
-		"STRETCH":         4,
-	}
-)
-
-func (x ImageResize_Fit) Enum() *ImageResize_Fit {
-	p := new(ImageResize_Fit)
-	*p = x
-	return p
-}
-
-func (x ImageResize_Fit) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ImageResize_Fit) Descriptor() protoreflect.EnumDescriptor {
-	return file_velony_asset_api_v1_asset_proto_enumTypes[0].Descriptor()
-}
-
-func (ImageResize_Fit) Type() protoreflect.EnumType {
-	return &file_velony_asset_api_v1_asset_proto_enumTypes[0]
-}
-
-func (x ImageResize_Fit) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ImageResize_Fit.Descriptor instead.
-func (ImageResize_Fit) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 0}
-}
-
-type ImageResize_Gravity int32
-
-const (
-	ImageResize_GRAVITY_UNSPECIFIED ImageResize_Gravity = 0
-	ImageResize_CENTER              ImageResize_Gravity = 1
-	ImageResize_TOP                 ImageResize_Gravity = 2
-	ImageResize_TOP_RIGHT           ImageResize_Gravity = 3
-	ImageResize_RIGHT               ImageResize_Gravity = 4
-	ImageResize_BOTTOM_RIGHT        ImageResize_Gravity = 5
-	ImageResize_BOTTOM              ImageResize_Gravity = 6
-	ImageResize_BOTTOM_LEFT         ImageResize_Gravity = 7
-	ImageResize_LEFT                ImageResize_Gravity = 8
-	ImageResize_TOP_LEFT            ImageResize_Gravity = 9
-)
-
-// Enum value maps for ImageResize_Gravity.
-var (
-	ImageResize_Gravity_name = map[int32]string{
-		0: "GRAVITY_UNSPECIFIED",
-		1: "CENTER",
-		2: "TOP",
-		3: "TOP_RIGHT",
-		4: "RIGHT",
-		5: "BOTTOM_RIGHT",
-		6: "BOTTOM",
-		7: "BOTTOM_LEFT",
-		8: "LEFT",
-		9: "TOP_LEFT",
-	}
-	ImageResize_Gravity_value = map[string]int32{
-		"GRAVITY_UNSPECIFIED": 0,
-		"CENTER":              1,
-		"TOP":                 2,
-		"TOP_RIGHT":           3,
-		"RIGHT":               4,
-		"BOTTOM_RIGHT":        5,
-		"BOTTOM":              6,
-		"BOTTOM_LEFT":         7,
-		"LEFT":                8,
-		"TOP_LEFT":            9,
-	}
-)
-
-func (x ImageResize_Gravity) Enum() *ImageResize_Gravity {
-	p := new(ImageResize_Gravity)
-	*p = x
-	return p
-}
-
-func (x ImageResize_Gravity) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ImageResize_Gravity) Descriptor() protoreflect.EnumDescriptor {
-	return file_velony_asset_api_v1_asset_proto_enumTypes[1].Descriptor()
-}
-
-func (ImageResize_Gravity) Type() protoreflect.EnumType {
-	return &file_velony_asset_api_v1_asset_proto_enumTypes[1]
-}
-
-func (x ImageResize_Gravity) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ImageResize_Gravity.Descriptor instead.
-func (ImageResize_Gravity) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 1}
-}
-
-type ImageEncoding_Format int32
-
-const (
-	ImageEncoding_FORMAT_UNSPECIFIED ImageEncoding_Format = 0
-	ImageEncoding_JPEG               ImageEncoding_Format = 1
-	ImageEncoding_PNG                ImageEncoding_Format = 2
-	ImageEncoding_WEBP               ImageEncoding_Format = 3
-	ImageEncoding_AVIF               ImageEncoding_Format = 4
-)
-
-// Enum value maps for ImageEncoding_Format.
-var (
-	ImageEncoding_Format_name = map[int32]string{
-		0: "FORMAT_UNSPECIFIED",
-		1: "JPEG",
-		2: "PNG",
-		3: "WEBP",
-		4: "AVIF",
-	}
-	ImageEncoding_Format_value = map[string]int32{
-		"FORMAT_UNSPECIFIED": 0,
-		"JPEG":               1,
-		"PNG":                2,
-		"WEBP":               3,
-		"AVIF":               4,
-	}
-)
-
-func (x ImageEncoding_Format) Enum() *ImageEncoding_Format {
-	p := new(ImageEncoding_Format)
-	*p = x
-	return p
-}
-
-func (x ImageEncoding_Format) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ImageEncoding_Format) Descriptor() protoreflect.EnumDescriptor {
-	return file_velony_asset_api_v1_asset_proto_enumTypes[2].Descriptor()
-}
-
-func (ImageEncoding_Format) Type() protoreflect.EnumType {
-	return &file_velony_asset_api_v1_asset_proto_enumTypes[2]
-}
-
-func (x ImageEncoding_Format) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ImageEncoding_Format.Descriptor instead.
-func (ImageEncoding_Format) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1, 0}
-}
-
 type Image_State int32
 
 const (
 	Image_STATE_UNSPECIFIED Image_State = 0
-	Image_PENDING           Image_State = 1
-	Image_UPLOADED          Image_State = 2
+	Image_AWAITING_UPLOAD   Image_State = 1
+	Image_PENDING           Image_State = 2
 	Image_PROCESSING        Image_State = 3
 	Image_ACTIVE            Image_State = 4
 )
@@ -219,15 +39,15 @@ const (
 var (
 	Image_State_name = map[int32]string{
 		0: "STATE_UNSPECIFIED",
-		1: "PENDING",
-		2: "UPLOADED",
+		1: "AWAITING_UPLOAD",
+		2: "PENDING",
 		3: "PROCESSING",
 		4: "ACTIVE",
 	}
 	Image_State_value = map[string]int32{
 		"STATE_UNSPECIFIED": 0,
-		"PENDING":           1,
-		"UPLOADED":          2,
+		"AWAITING_UPLOAD":   1,
+		"PENDING":           2,
 		"PROCESSING":        3,
 		"ACTIVE":            4,
 	}
@@ -244,11 +64,11 @@ func (x Image_State) String() string {
 }
 
 func (Image_State) Descriptor() protoreflect.EnumDescriptor {
-	return file_velony_asset_api_v1_asset_proto_enumTypes[3].Descriptor()
+	return file_velony_asset_api_v1_asset_proto_enumTypes[0].Descriptor()
 }
 
 func (Image_State) Type() protoreflect.EnumType {
-	return &file_velony_asset_api_v1_asset_proto_enumTypes[3]
+	return &file_velony_asset_api_v1_asset_proto_enumTypes[0]
 }
 
 func (x Image_State) Number() protoreflect.EnumNumber {
@@ -257,143 +77,62 @@ func (x Image_State) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Image_State.Descriptor instead.
 func (Image_State) EnumDescriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2, 0}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type ImageResize struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Width           *uint32                `protobuf:"varint,1,opt,name=width,proto3,oneof" json:"width,omitempty"`
-	Height          *uint32                `protobuf:"varint,2,opt,name=height,proto3,oneof" json:"height,omitempty"`
-	Fit             ImageResize_Fit        `protobuf:"varint,3,opt,name=fit,proto3,enum=velony.asset.api.v1.ImageResize_Fit" json:"fit,omitempty"`
-	Gravity         ImageResize_Gravity    `protobuf:"varint,4,opt,name=gravity,proto3,enum=velony.asset.api.v1.ImageResize_Gravity" json:"gravity,omitempty"`
-	BackgroundColor *string                `protobuf:"bytes,5,opt,name=background_color,json=backgroundColor,proto3,oneof" json:"background_color,omitempty"`
-	AllowUpscale    bool                   `protobuf:"varint,6,opt,name=allow_upscale,json=allowUpscale,proto3" json:"allow_upscale,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
+type Image_Format int32
 
-func (x *ImageResize) Reset() {
-	*x = ImageResize{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
+const (
+	Image_FORMAT_UNSPECIFIED Image_Format = 0
+	Image_JPEG               Image_Format = 1
+	Image_PNG                Image_Format = 2
+	Image_WEBP               Image_Format = 3
+	Image_AVIF               Image_Format = 4
+)
 
-func (x *ImageResize) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ImageResize) ProtoMessage() {}
-
-func (x *ImageResize) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+// Enum value maps for Image_Format.
+var (
+	Image_Format_name = map[int32]string{
+		0: "FORMAT_UNSPECIFIED",
+		1: "JPEG",
+		2: "PNG",
+		3: "WEBP",
+		4: "AVIF",
 	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ImageResize.ProtoReflect.Descriptor instead.
-func (*ImageResize) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ImageResize) GetWidth() uint32 {
-	if x != nil && x.Width != nil {
-		return *x.Width
+	Image_Format_value = map[string]int32{
+		"FORMAT_UNSPECIFIED": 0,
+		"JPEG":               1,
+		"PNG":                2,
+		"WEBP":               3,
+		"AVIF":               4,
 	}
-	return 0
+)
+
+func (x Image_Format) Enum() *Image_Format {
+	p := new(Image_Format)
+	*p = x
+	return p
 }
 
-func (x *ImageResize) GetHeight() uint32 {
-	if x != nil && x.Height != nil {
-		return *x.Height
-	}
-	return 0
+func (x Image_Format) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (x *ImageResize) GetFit() ImageResize_Fit {
-	if x != nil {
-		return x.Fit
-	}
-	return ImageResize_FIT_UNSPECIFIED
+func (Image_Format) Descriptor() protoreflect.EnumDescriptor {
+	return file_velony_asset_api_v1_asset_proto_enumTypes[1].Descriptor()
 }
 
-func (x *ImageResize) GetGravity() ImageResize_Gravity {
-	if x != nil {
-		return x.Gravity
-	}
-	return ImageResize_GRAVITY_UNSPECIFIED
+func (Image_Format) Type() protoreflect.EnumType {
+	return &file_velony_asset_api_v1_asset_proto_enumTypes[1]
 }
 
-func (x *ImageResize) GetBackgroundColor() string {
-	if x != nil && x.BackgroundColor != nil {
-		return *x.BackgroundColor
-	}
-	return ""
+func (x Image_Format) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-func (x *ImageResize) GetAllowUpscale() bool {
-	if x != nil {
-		return x.AllowUpscale
-	}
-	return false
-}
-
-type ImageEncoding struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Format        ImageEncoding_Format   `protobuf:"varint,1,opt,name=format,proto3,enum=velony.asset.api.v1.ImageEncoding_Format" json:"format,omitempty"`
-	Quality       *uint32                `protobuf:"varint,2,opt,name=quality,proto3,oneof" json:"quality,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ImageEncoding) Reset() {
-	*x = ImageEncoding{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ImageEncoding) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ImageEncoding) ProtoMessage() {}
-
-func (x *ImageEncoding) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ImageEncoding.ProtoReflect.Descriptor instead.
-func (*ImageEncoding) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ImageEncoding) GetFormat() ImageEncoding_Format {
-	if x != nil {
-		return x.Format
-	}
-	return ImageEncoding_FORMAT_UNSPECIFIED
-}
-
-func (x *ImageEncoding) GetQuality() uint32 {
-	if x != nil && x.Quality != nil {
-		return *x.Quality
-	}
-	return 0
+// Deprecated: Use Image_Format.Descriptor instead.
+func (Image_Format) EnumDescriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 1}
 }
 
 type Image struct {
@@ -402,16 +141,19 @@ type Image struct {
 	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
 	ObjectKey     string                 `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
 	State         Image_State            `protobuf:"varint,4,opt,name=state,proto3,enum=velony.asset.api.v1.Image_State" json:"state,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime    *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	UploadUrl     *string                `protobuf:"bytes,7,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
+	Width         uint32                 `protobuf:"varint,5,opt,name=width,proto3" json:"width,omitempty"`
+	Height        uint32                 `protobuf:"varint,6,opt,name=height,proto3" json:"height,omitempty"`
+	Format        Image_Format           `protobuf:"varint,7,opt,name=format,proto3,enum=velony.asset.api.v1.Image_Format" json:"format,omitempty"`
+	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UploadUrl     *string                `protobuf:"bytes,9,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
+	DownloadUrl   *string                `protobuf:"bytes,10,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Image) Reset() {
 	*x = Image{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -423,7 +165,7 @@ func (x *Image) String() string {
 func (*Image) ProtoMessage() {}
 
 func (x *Image) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -436,7 +178,7 @@ func (x *Image) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Image.ProtoReflect.Descriptor instead.
 func (*Image) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Image) GetName() string {
@@ -467,6 +209,27 @@ func (x *Image) GetState() Image_State {
 	return Image_STATE_UNSPECIFIED
 }
 
+func (x *Image) GetWidth() uint32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *Image) GetHeight() uint32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *Image) GetFormat() Image_Format {
+	if x != nil {
+		return x.Format
+	}
+	return Image_FORMAT_UNSPECIFIED
+}
+
 func (x *Image) GetCreateTime() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreateTime
@@ -474,16 +237,16 @@ func (x *Image) GetCreateTime() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Image) GetUpdateTime() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdateTime
-	}
-	return nil
-}
-
 func (x *Image) GetUploadUrl() string {
 	if x != nil && x.UploadUrl != nil {
 		return *x.UploadUrl
+	}
+	return ""
+}
+
+func (x *Image) GetDownloadUrl() string {
+	if x != nil && x.DownloadUrl != nil {
+		return *x.DownloadUrl
 	}
 	return ""
 }
@@ -497,7 +260,7 @@ type GetImageRequest struct {
 
 func (x *GetImageRequest) Reset() {
 	*x = GetImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -509,7 +272,7 @@ func (x *GetImageRequest) String() string {
 func (*GetImageRequest) ProtoMessage() {}
 
 func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -522,7 +285,7 @@ func (x *GetImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetImageRequest.ProtoReflect.Descriptor instead.
 func (*GetImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{3}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetImageRequest) GetName() string {
@@ -541,7 +304,7 @@ type CreateImageRequest struct {
 
 func (x *CreateImageRequest) Reset() {
 	*x = CreateImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -553,7 +316,7 @@ func (x *CreateImageRequest) String() string {
 func (*CreateImageRequest) ProtoMessage() {}
 
 func (x *CreateImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -566,7 +329,7 @@ func (x *CreateImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateImageRequest.ProtoReflect.Descriptor instead.
 func (*CreateImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{4}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateImageRequest) GetImage() *Image {
@@ -574,126 +337,6 @@ func (x *CreateImageRequest) GetImage() *Image {
 		return x.Image
 	}
 	return nil
-}
-
-type ConfirmImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ConfirmImageRequest) Reset() {
-	*x = ConfirmImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ConfirmImageRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ConfirmImageRequest) ProtoMessage() {}
-
-func (x *ConfirmImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ConfirmImageRequest.ProtoReflect.Descriptor instead.
-func (*ConfirmImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *ConfirmImageRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type ProcessImageRequest struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Name           string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Resize         *ImageResize           `protobuf:"bytes,2,opt,name=resize,proto3" json:"resize,omitempty"`
-	Encoding       *ImageEncoding         `protobuf:"bytes,3,opt,name=encoding,proto3" json:"encoding,omitempty"`
-	AutoRotate     bool                   `protobuf:"varint,4,opt,name=auto_rotate,json=autoRotate,proto3" json:"auto_rotate,omitempty"`
-	RemoveMetadata bool                   `protobuf:"varint,5,opt,name=remove_metadata,json=removeMetadata,proto3" json:"remove_metadata,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *ProcessImageRequest) Reset() {
-	*x = ProcessImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ProcessImageRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ProcessImageRequest) ProtoMessage() {}
-
-func (x *ProcessImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ProcessImageRequest.ProtoReflect.Descriptor instead.
-func (*ProcessImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *ProcessImageRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *ProcessImageRequest) GetResize() *ImageResize {
-	if x != nil {
-		return x.Resize
-	}
-	return nil
-}
-
-func (x *ProcessImageRequest) GetEncoding() *ImageEncoding {
-	if x != nil {
-		return x.Encoding
-	}
-	return nil
-}
-
-func (x *ProcessImageRequest) GetAutoRotate() bool {
-	if x != nil {
-		return x.AutoRotate
-	}
-	return false
-}
-
-func (x *ProcessImageRequest) GetRemoveMetadata() bool {
-	if x != nil {
-		return x.RemoveMetadata
-	}
-	return false
 }
 
 type DeleteImageRequest struct {
@@ -705,7 +348,7 @@ type DeleteImageRequest struct {
 
 func (x *DeleteImageRequest) Reset() {
 	*x = DeleteImageRequest{}
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[7]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -717,7 +360,7 @@ func (x *DeleteImageRequest) String() string {
 func (*DeleteImageRequest) ProtoMessage() {}
 
 func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[7]
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -730,10 +373,98 @@ func (x *DeleteImageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageRequest.ProtoReflect.Descriptor instead.
 func (*DeleteImageRequest) Descriptor() ([]byte, []int) {
-	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{7}
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DeleteImageRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type ConfirmImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmImageRequest) Reset() {
+	*x = ConfirmImageRequest{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmImageRequest) ProtoMessage() {}
+
+func (x *ConfirmImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmImageRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmImageRequest) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ConfirmImageRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type ProcessImageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProcessImageRequest) Reset() {
+	*x = ProcessImageRequest{}
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProcessImageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProcessImageRequest) ProtoMessage() {}
+
+func (x *ProcessImageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_velony_asset_api_v1_asset_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProcessImageRequest.ProtoReflect.Descriptor instead.
+func (*ProcessImageRequest) Descriptor() ([]byte, []int) {
+	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ProcessImageRequest) GetName() string {
 	if x != nil {
 		return x.Name
 	}
@@ -744,95 +475,60 @@ var File_velony_asset_api_v1_asset_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\n" +
-	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x17google/api/client.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xc3\x04\n" +
-	"\vImageResize\x12\x1e\n" +
-	"\x05width\x18\x01 \x01(\rB\x03\xe0A\x01H\x00R\x05width\x88\x01\x01\x12 \n" +
-	"\x06height\x18\x02 \x01(\rB\x03\xe0A\x01H\x01R\x06height\x88\x01\x01\x12;\n" +
-	"\x03fit\x18\x03 \x01(\x0e2$.velony.asset.api.v1.ImageResize.FitB\x03\xe0A\x01R\x03fit\x12G\n" +
-	"\agravity\x18\x04 \x01(\x0e2(.velony.asset.api.v1.ImageResize.GravityB\x03\xe0A\x01R\agravity\x123\n" +
-	"\x10background_color\x18\x05 \x01(\tB\x03\xe0A\x01H\x02R\x0fbackgroundColor\x88\x01\x01\x12(\n" +
-	"\rallow_upscale\x18\x06 \x01(\bB\x03\xe0A\x01R\fallowUpscale\"H\n" +
-	"\x03Fit\x12\x13\n" +
-	"\x0fFIT_UNSPECIFIED\x10\x00\x12\v\n" +
-	"\aCONTAIN\x10\x01\x12\t\n" +
-	"\x05COVER\x10\x02\x12\a\n" +
-	"\x03PAD\x10\x03\x12\v\n" +
-	"\aSTRETCH\x10\x04\"\x98\x01\n" +
-	"\aGravity\x12\x17\n" +
-	"\x13GRAVITY_UNSPECIFIED\x10\x00\x12\n" +
-	"\n" +
-	"\x06CENTER\x10\x01\x12\a\n" +
-	"\x03TOP\x10\x02\x12\r\n" +
-	"\tTOP_RIGHT\x10\x03\x12\t\n" +
-	"\x05RIGHT\x10\x04\x12\x10\n" +
-	"\fBOTTOM_RIGHT\x10\x05\x12\n" +
-	"\n" +
-	"\x06BOTTOM\x10\x06\x12\x0f\n" +
-	"\vBOTTOM_LEFT\x10\a\x12\b\n" +
-	"\x04LEFT\x10\b\x12\f\n" +
-	"\bTOP_LEFT\x10\tB\b\n" +
-	"\x06_widthB\t\n" +
-	"\a_heightB\x13\n" +
-	"\x11_background_color\"\xd0\x01\n" +
-	"\rImageEncoding\x12F\n" +
-	"\x06format\x18\x01 \x01(\x0e2).velony.asset.api.v1.ImageEncoding.FormatB\x03\xe0A\x01R\x06format\x12\"\n" +
-	"\aquality\x18\x02 \x01(\rB\x03\xe0A\x01H\x00R\aquality\x88\x01\x01\"G\n" +
-	"\x06Format\x12\x16\n" +
-	"\x12FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
-	"\x04JPEG\x10\x01\x12\a\n" +
-	"\x03PNG\x10\x02\x12\b\n" +
-	"\x04WEBP\x10\x03\x12\b\n" +
-	"\x04AVIF\x10\x04B\n" +
-	"\n" +
-	"\b_quality\"\xed\x03\n" +
+	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xba\x05\n" +
 	"\x05Image\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x1a\n" +
 	"\x04tags\x18\x02 \x03(\tB\x06\xe0A\x02\xe0A\x05R\x04tags\x12%\n" +
 	"\n" +
 	"object_key\x18\x03 \x01(\tB\x06\xe0A\x02\xe0A\x05R\tobjectKey\x12;\n" +
-	"\x05state\x18\x04 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12@\n" +
-	"\vcreate_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
-	"createTime\x12@\n" +
-	"\vupdate_time\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
-	"updateTime\x12'\n" +
+	"\x05state\x18\x04 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12\x1c\n" +
+	"\x05width\x18\x05 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x05width\x12\x1e\n" +
+	"\x06height\x18\x06 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x06height\x12A\n" +
+	"\x06format\x18\a \x01(\x0e2!.velony.asset.api.v1.Image.FormatB\x06\xe0A\x02\xe0A\x05R\x06format\x12@\n" +
+	"\vcreate_time\x18\b \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
+	"createTime\x12'\n" +
 	"\n" +
-	"upload_url\x18\a \x01(\tB\x03\xe0A\x03H\x00R\tuploadUrl\x88\x01\x01\"U\n" +
+	"upload_url\x18\t \x01(\tB\x03\xe0A\x03H\x00R\tuploadUrl\x88\x01\x01\x12+\n" +
+	"\fdownload_url\x18\n" +
+	" \x01(\tB\x03\xe0A\x03H\x01R\vdownloadUrl\x88\x01\x01\"\\\n" +
 	"\x05State\x12\x15\n" +
-	"\x11STATE_UNSPECIFIED\x10\x00\x12\v\n" +
-	"\aPENDING\x10\x01\x12\f\n" +
-	"\bUPLOADED\x10\x02\x12\x0e\n" +
+	"\x11STATE_UNSPECIFIED\x10\x00\x12\x13\n" +
+	"\x0fAWAITING_UPLOAD\x10\x01\x12\v\n" +
+	"\aPENDING\x10\x02\x12\x0e\n" +
 	"\n" +
 	"PROCESSING\x10\x03\x12\n" +
 	"\n" +
-	"\x06ACTIVE\x10\x04:8\xeaA5\n" +
+	"\x06ACTIVE\x10\x04\"G\n" +
+	"\x06Format\x12\x16\n" +
+	"\x12FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04JPEG\x10\x01\x12\a\n" +
+	"\x03PNG\x10\x02\x12\b\n" +
+	"\x04WEBP\x10\x03\x12\b\n" +
+	"\x04AVIF\x10\x04:8\xeaA5\n" +
 	"\x14api.velony.app/Image\x12\x0eimages/{image}*\x06images2\x05imageB\r\n" +
-	"\v_upload_url\"C\n" +
+	"\v_upload_urlB\x0f\n" +
+	"\r_download_url\"C\n" +
 	"\x0fGetImageRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
 	"\x14api.velony.app/ImageR\x04name\"K\n" +
 	"\x12CreateImageRequest\x125\n" +
-	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"G\n" +
+	"\x05image\x18\x01 \x01(\v2\x1a.velony.asset.api.v1.ImageB\x03\xe0A\x02R\x05image\"F\n" +
+	"\x12DeleteImageRequest\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
+	"\x14api.velony.app/ImageR\x04name\"G\n" +
 	"\x13ConfirmImageRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14api.velony.app/ImageR\x04name\"\x9f\x02\n" +
+	"\x14api.velony.app/ImageR\x04name\"G\n" +
 	"\x13ProcessImageRequest\x120\n" +
-	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
-	"\x14api.velony.app/ImageR\x04name\x12=\n" +
-	"\x06resize\x18\x02 \x01(\v2 .velony.asset.api.v1.ImageResizeB\x03\xe0A\x01R\x06resize\x12C\n" +
-	"\bencoding\x18\x03 \x01(\v2\".velony.asset.api.v1.ImageEncodingB\x03\xe0A\x01R\bencoding\x12$\n" +
-	"\vauto_rotate\x18\x04 \x01(\bB\x03\xe0A\x01R\n" +
-	"autoRotate\x12,\n" +
-	"\x0fremove_metadata\x18\x05 \x01(\bB\x03\xe0A\x01R\x0eremoveMetadata\"F\n" +
-	"\x12DeleteImageRequest\x120\n" +
 	"\x04name\x18\x01 \x01(\tB\x1c\xe0A\x02\xfaA\x16\n" +
 	"\x14api.velony.app/ImageR\x04name2\xfa\x04\n" +
 	"\fAssetService\x12p\n" +
 	"\bGetImage\x12$.velony.asset.api.v1.GetImageRequest\x1a\x1a.velony.asset.api.v1.Image\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/{name=images/*}\x12u\n" +
 	"\vCreateImage\x12'.velony.asset.api.v1.CreateImageRequest\x1a\x1a.velony.asset.api.v1.Image\"!\xdaA\x05image\x82\xd3\xe4\x93\x02\x13:\x05image\"\n" +
-	"/v1/images\x12|\n" +
+	"/v1/images\x12r\n" +
+	"\vDeleteImage\x12'.velony.asset.api.v1.DeleteImageRequest\x1a\x16.google.protobuf.Empty\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15*\x13/v1/{name=images/*}\x12|\n" +
 	"\fConfirmImage\x12(.velony.asset.api.v1.ConfirmImageRequest\x1a\x1a.velony.asset.api.v1.Image\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/{name=images/*}:confirm\x12|\n" +
-	"\fProcessImage\x12(.velony.asset.api.v1.ProcessImageRequest\x1a\x1a.velony.asset.api.v1.Image\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/{name=images/*}:process\x12r\n" +
-	"\vDeleteImage\x12'.velony.asset.api.v1.DeleteImageRequest\x1a\x16.google.protobuf.Empty\"\"\xdaA\x04name\x82\xd3\xe4\x93\x02\x15*\x13/v1/{name=images/*}\x1a\x11\xcaA\x0eapi.velony.appB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
+	"\fProcessImage\x12(.velony.asset.api.v1.ProcessImageRequest\x1a\x1a.velony.asset.api.v1.Image\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/{name=images/*}:process\x1a\x11\xcaA\x0eapi.velony.appB-Z+github.com/velonyapp/asset/gen/api/v1;apiv1b\x06proto3"
 
 var (
 	file_velony_asset_api_v1_asset_proto_rawDescOnce sync.Once
@@ -846,49 +542,40 @@ func file_velony_asset_api_v1_asset_proto_rawDescGZIP() []byte {
 	return file_velony_asset_api_v1_asset_proto_rawDescData
 }
 
-var file_velony_asset_api_v1_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_velony_asset_api_v1_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_velony_asset_api_v1_asset_proto_goTypes = []any{
-	(ImageResize_Fit)(0),          // 0: velony.asset.api.v1.ImageResize.Fit
-	(ImageResize_Gravity)(0),      // 1: velony.asset.api.v1.ImageResize.Gravity
-	(ImageEncoding_Format)(0),     // 2: velony.asset.api.v1.ImageEncoding.Format
-	(Image_State)(0),              // 3: velony.asset.api.v1.Image.State
-	(*ImageResize)(nil),           // 4: velony.asset.api.v1.ImageResize
-	(*ImageEncoding)(nil),         // 5: velony.asset.api.v1.ImageEncoding
-	(*Image)(nil),                 // 6: velony.asset.api.v1.Image
-	(*GetImageRequest)(nil),       // 7: velony.asset.api.v1.GetImageRequest
-	(*CreateImageRequest)(nil),    // 8: velony.asset.api.v1.CreateImageRequest
-	(*ConfirmImageRequest)(nil),   // 9: velony.asset.api.v1.ConfirmImageRequest
-	(*ProcessImageRequest)(nil),   // 10: velony.asset.api.v1.ProcessImageRequest
-	(*DeleteImageRequest)(nil),    // 11: velony.asset.api.v1.DeleteImageRequest
-	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 13: google.protobuf.Empty
+	(Image_State)(0),              // 0: velony.asset.api.v1.Image.State
+	(Image_Format)(0),             // 1: velony.asset.api.v1.Image.Format
+	(*Image)(nil),                 // 2: velony.asset.api.v1.Image
+	(*GetImageRequest)(nil),       // 3: velony.asset.api.v1.GetImageRequest
+	(*CreateImageRequest)(nil),    // 4: velony.asset.api.v1.CreateImageRequest
+	(*DeleteImageRequest)(nil),    // 5: velony.asset.api.v1.DeleteImageRequest
+	(*ConfirmImageRequest)(nil),   // 6: velony.asset.api.v1.ConfirmImageRequest
+	(*ProcessImageRequest)(nil),   // 7: velony.asset.api.v1.ProcessImageRequest
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 9: google.protobuf.Empty
 }
 var file_velony_asset_api_v1_asset_proto_depIdxs = []int32{
-	0,  // 0: velony.asset.api.v1.ImageResize.fit:type_name -> velony.asset.api.v1.ImageResize.Fit
-	1,  // 1: velony.asset.api.v1.ImageResize.gravity:type_name -> velony.asset.api.v1.ImageResize.Gravity
-	2,  // 2: velony.asset.api.v1.ImageEncoding.format:type_name -> velony.asset.api.v1.ImageEncoding.Format
-	3,  // 3: velony.asset.api.v1.Image.state:type_name -> velony.asset.api.v1.Image.State
-	12, // 4: velony.asset.api.v1.Image.create_time:type_name -> google.protobuf.Timestamp
-	12, // 5: velony.asset.api.v1.Image.update_time:type_name -> google.protobuf.Timestamp
-	6,  // 6: velony.asset.api.v1.CreateImageRequest.image:type_name -> velony.asset.api.v1.Image
-	4,  // 7: velony.asset.api.v1.ProcessImageRequest.resize:type_name -> velony.asset.api.v1.ImageResize
-	5,  // 8: velony.asset.api.v1.ProcessImageRequest.encoding:type_name -> velony.asset.api.v1.ImageEncoding
-	7,  // 9: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
-	8,  // 10: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
-	9,  // 11: velony.asset.api.v1.AssetService.ConfirmImage:input_type -> velony.asset.api.v1.ConfirmImageRequest
-	10, // 12: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
-	11, // 13: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
-	6,  // 14: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
-	6,  // 15: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
-	6,  // 16: velony.asset.api.v1.AssetService.ConfirmImage:output_type -> velony.asset.api.v1.Image
-	6,  // 17: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.Image
-	13, // 18: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	0, // 0: velony.asset.api.v1.Image.state:type_name -> velony.asset.api.v1.Image.State
+	1, // 1: velony.asset.api.v1.Image.format:type_name -> velony.asset.api.v1.Image.Format
+	8, // 2: velony.asset.api.v1.Image.create_time:type_name -> google.protobuf.Timestamp
+	2, // 3: velony.asset.api.v1.CreateImageRequest.image:type_name -> velony.asset.api.v1.Image
+	3, // 4: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
+	4, // 5: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
+	5, // 6: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
+	6, // 7: velony.asset.api.v1.AssetService.ConfirmImage:input_type -> velony.asset.api.v1.ConfirmImageRequest
+	7, // 8: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
+	2, // 9: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
+	2, // 10: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
+	9, // 11: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
+	2, // 12: velony.asset.api.v1.AssetService.ConfirmImage:output_type -> velony.asset.api.v1.Image
+	2, // 13: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.Image
+	9, // [9:14] is the sub-list for method output_type
+	4, // [4:9] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_api_v1_asset_proto_init() }
@@ -897,15 +584,13 @@ func file_velony_asset_api_v1_asset_proto_init() {
 		return
 	}
 	file_velony_asset_api_v1_asset_proto_msgTypes[0].OneofWrappers = []any{}
-	file_velony_asset_api_v1_asset_proto_msgTypes[1].OneofWrappers = []any{}
-	file_velony_asset_api_v1_asset_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_api_v1_asset_proto_rawDesc), len(file_velony_asset_api_v1_asset_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   8,
+			NumEnums:      2,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

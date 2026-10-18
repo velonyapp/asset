@@ -8,17 +8,17 @@ import (
 )
 
 func NewBus(
-	createImage CreateImageHandler,
-	confirmImage ConfirmImageHandler,
-	processImage ProcessImageHandler,
-	deleteImage DeleteImageHandler,
+	createImageHandler CreateImageHandler,
+	confirmImageHandler ConfirmImageHandler,
+	processImageHandler ProcessImageHandler,
+	deleteImageHandler DeleteImageHandler,
 ) *Bus {
 	bus := &Bus{}
 
-	Register(bus, createImage)
-	Register(bus, confirmImage)
-	Register(bus, processImage)
-	Register(bus, deleteImage)
+	Register(bus, createImageHandler)
+	Register(bus, confirmImageHandler)
+	Register(bus, processImageHandler)
+	Register(bus, deleteImageHandler)
 
 	return bus
 }

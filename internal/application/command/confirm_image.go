@@ -69,7 +69,7 @@ func (h *confirmImageHandler) Handle(
 			return common.ErrImageNotFound
 		}
 
-		if err := image.CanConfirm(); err != nil {
+		if err := image.CanConfirmUpload(); err != nil {
 			return err
 		}
 
@@ -81,7 +81,7 @@ func (h *confirmImageHandler) Handle(
 			return ErrSourceObjectNotFound
 		}
 
-		if err := image.Confirm(now); err != nil {
+		if err := image.ConfirmUpload(now); err != nil {
 			return err
 		}
 
@@ -96,8 +96,10 @@ func (h *confirmImageHandler) Handle(
 			Tags:       image.Tags().Strings(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
+			Width:      image.Width().UInt32(),
+			Height:     image.Height().UInt32(),
+			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
-			UpdateTime: image.UpdateTime(),
 		},
 	}, nil
 }

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package velony.asset.job.v1;
+
+option go_package = "github.com/velonyapp/asset/gen/job/v1;jobv1";
+
+message CreateImage {
+  enum Format {
+    FORMAT_UNSPECIFIED = 0;
+
+    JPEG = 1;
+    PNG  = 2;
+    WEBP = 3;
+    AVIF = 4;
+  }
+
+  repeated string tags = 1;
+
+  string object_key = 2;
+
+  uint32 width  = 3;
+  uint32 height = 4;
+  Format format = 5;
+}

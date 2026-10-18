@@ -36,9 +36,9 @@ func RegisterAssetServiceHTTPServer(s *http.Server, srv AssetServiceHTTPServer) 
 	r := s.Route("/")
 	r.Handle("GET", "/v1/{name:images/[^/]+}", _AssetService_GetImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/images", _AssetService_CreateImage0_HTTP_Handler(srv))
+	r.Handle("DELETE", "/v1/{name:images/[^/]+}", _AssetService_DeleteImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:images/[^/]+}:confirm", _AssetService_ConfirmImage0_HTTP_Handler(srv))
 	r.Handle("POST", "/v1/{name:images/[^/]+}:process", _AssetService_ProcessImage0_HTTP_Handler(srv))
-	r.Handle("DELETE", "/v1/{name:images/[^/]+}", _AssetService_DeleteImage0_HTTP_Handler(srv))
 }
 
 func _AssetService_GetImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
@@ -85,6 +85,28 @@ func _AssetService_CreateImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ct
 	}
 }
 
+func _AssetService_DeleteImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteImageRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAssetServiceDeleteImage)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteImage(ctx, req.(*DeleteImageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _AssetService_ConfirmImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ConfirmImageRequest
@@ -125,28 +147,6 @@ func _AssetService_ProcessImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(c
 			return err
 		}
 		reply := out.(*Image)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _AssetService_DeleteImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in DeleteImageRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationAssetServiceDeleteImage)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteImage(ctx, req.(*DeleteImageRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }

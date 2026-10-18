@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.0
 	github.com/aws/smithy-go v1.28.2
-	github.com/davidbyttow/govips/v2 v2.18.0
+	github.com/davidbyttow/govips/v2 v2.19.0
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/google/wire v0.6.0
 	github.com/rabbitmq/rabbitmq-amqp-go-client v1.4.0
@@ -63,7 +63,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/exp v0.0.0-20250813145105-42675adae3e6 // indirect
-	golang.org/x/image v0.38.0 // indirect
+	golang.org/x/image v0.41.0 // indirect
 )
 
 require (

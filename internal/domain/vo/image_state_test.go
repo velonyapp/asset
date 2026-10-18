@@ -12,14 +12,14 @@ func TestNewImageState(t *testing.T) {
 		expected ImageState
 	}{
 		{
+			name:     "awaiting upload",
+			value:    "AWAITING_UPLOAD",
+			expected: ImageStateAwaitingUpload,
+		},
+		{
 			name:     "pending",
 			value:    "PENDING",
 			expected: ImageStatePending,
-		},
-		{
-			name:     "confirmed",
-			value:    "CONFIRMED",
-			expected: ImageStateConfirmed,
 		},
 		{
 			name:     "processing",
@@ -65,10 +65,10 @@ func TestNewImageState_WhenInvalid(t *testing.T) {
 }
 
 func TestImageState_String(t *testing.T) {
-	state := ImageStateConfirmed
+	state := ImageStateAwaitingUpload
 
-	if state.String() != "CONFIRMED" {
-		t.Errorf("expected CONFIRMED, got %s", state.String())
+	if state.String() != "AWAITING_UPLOAD" {
+		t.Errorf("expected AWAITING_UPLOAD, got %s", state.String())
 	}
 }
 
@@ -77,7 +77,7 @@ func TestImageState_Equal(t *testing.T) {
 		t.Error("expected states to be equal")
 	}
 
-	if ImageStateActive.Equal(ImageStateConfirmed) {
+	if ImageStateActive.Equal(ImageStateAwaitingUpload) {
 		t.Error("expected states to be different")
 	}
 }

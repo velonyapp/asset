@@ -3,12 +3,12 @@ syntax = "proto3";
 package velony.asset.api.v1;
 
 import "google/api/annotations.proto";
+import "google/api/client.proto";
 import "google/api/field_behavior.proto";
 import "google/api/resource.proto";
-import "google/api/client.proto";
 import "google/protobuf/duration.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
@@ -30,6 +30,13 @@ service AssetService {
     option (google.api.method_signature) = "image";
   }
 
+  rpc DeleteImage(DeleteImageRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=images/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
   rpc ConfirmImage(ConfirmImageRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:confirm"
@@ -43,63 +50,18 @@ service AssetService {
       body: "*"
     };
   }
-
-  rpc DeleteImage(DeleteImageRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/v1/{name=images/*}"
-    };
-    option (google.api.method_signature) = "name";
-  }
 }
 
-message ImageResize {
-  enum Fit {
-    FIT_UNSPECIFIED = 0;
+message Image {
+  enum State {
+    STATE_UNSPECIFIED = 0;
 
-    CONTAIN = 1;
-    COVER   = 2;
-    PAD     = 3;
-    STRETCH = 4;
+    AWAITING_UPLOAD = 1;
+    PENDING         = 2;
+    PROCESSING      = 3;
+    ACTIVE          = 4;
   }
 
-  enum Gravity {
-    GRAVITY_UNSPECIFIED = 0;
-
-    CENTER       = 1;
-    TOP          = 2;
-    TOP_RIGHT    = 3;
-    RIGHT        = 4;
-    BOTTOM_RIGHT = 5;
-    BOTTOM       = 6;
-    BOTTOM_LEFT  = 7;
-    LEFT         = 8;
-    TOP_LEFT     = 9;
-  }
-
-  optional uint32 width = 1 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-  optional uint32 height = 2 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-
-  Fit fit = 3 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-  Gravity gravity = 4 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-
-  optional string background_color = 5 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-
-  bool allow_upscale = 6 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-}
-
-message ImageEncoding {
   enum Format {
     FORMAT_UNSPECIFIED = 0;
 
@@ -107,25 +69,6 @@ message ImageEncoding {
     PNG  = 2;
     WEBP = 3;
     AVIF = 4;
-  }
-
-  Format format = 1 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-
-  optional uint32 quality = 2 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-}
-
-message Image {
-  enum State {
-    STATE_UNSPECIFIED = 0;
-
-    PENDING    = 1;
-    UPLOADED   = 2;
-    PROCESSING = 3;
-    ACTIVE     = 4;
   }
 
   option (google.api.resource) = {
@@ -153,14 +96,27 @@ message Image {
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
-  google.protobuf.Timestamp create_time = 5 [
-    (google.api.field_behavior) = OUTPUT_ONLY
+  uint32 width = 5 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE
   ];
-  google.protobuf.Timestamp update_time = 6 [
+  uint32 height = 6 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+  Format format = 7 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
+
+  google.protobuf.Timestamp create_time = 8 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
-  optional string upload_url = 7 [
+  optional string upload_url = 9 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  optional string download_url = 10 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }
@@ -180,6 +136,15 @@ message CreateImageRequest {
   ];
 }
 
+message DeleteImageRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+    type: "api.velony.app/Image"
+    }
+  ];
+}
+
 message ConfirmImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
@@ -190,28 +155,6 @@ message ConfirmImageRequest {
 }
 
 message ProcessImageRequest {
-  string name = 1 [
-    (google.api.field_behavior) = REQUIRED,
-    (google.api.resource_reference) = {
-    type: "api.velony.app/Image"
-    }
-  ];
-
-  ImageResize resize = 2 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-  ImageEncoding encoding = 3 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-  bool auto_rotate = 4 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-  bool remove_metadata = 5 [
-    (google.api.field_behavior) = OPTIONAL
-  ];
-}
-
-message DeleteImageRequest {
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

@@ -4,12 +4,16 @@ CREATE TABLE images (
     source_object_key VARCHAR(128) NOT NULL,
     object_key        VARCHAR(128) NOT NULL,
     state             VARCHAR(32) NOT NULL,
+    width             INT NOT NULL,
+    height            INT NOT NULL,
+    format            VARCHAR(16) NOT NULL,
     create_time       DATETIME(6) NOT NULL,
     update_time       DATETIME(6) NOT NULL,
 
     INDEX idx_images_update_time       (update_time),
     INDEX idx_images_source_object_key (source_object_key),
-    INDEX idx_images_object_key        (object_key)
+    INDEX idx_images_object_key        (object_key),
+    INDEX idx_images_format            (format)
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_events (

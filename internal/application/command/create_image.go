@@ -21,6 +21,9 @@ var (
 type CreateImage struct {
 	Tags      []string
 	ObjectKey string
+	Width     int
+	Height    int
+	Format    string
 }
 
 type CreateImageResult struct {
@@ -72,6 +75,19 @@ func (h *createImageHandler) Handle(
 	if err != nil {
 		return CreateImageResult{}, err
 	}
+	width, err := vo.NewImageWidth(cmd.Width)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+	height, err := vo.NewImageHeight(cmd.Height)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+	format, err := vo.NewImageFormat(cmd.Format)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+
 	sourceObjectKey, err := h.sourceObjectKeyGenerator.Generate()
 	if err != nil {
 		return CreateImageResult{}, err
@@ -115,6 +131,9 @@ func (h *createImageHandler) Handle(
 			tags,
 			sourceObjectKey,
 			objectKey,
+			width,
+			height,
+			format,
 			now,
 		)
 		if err != nil {
@@ -140,8 +159,10 @@ func (h *createImageHandler) Handle(
 			Tags:       image.Tags().Strings(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
+			Width:      image.Width().UInt32(),
+			Height:     image.Height().UInt32(),
+			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
-			UpdateTime: image.UpdateTime(),
 		},
 		UploadURL: uploadURL,
 	}, nil

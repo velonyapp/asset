@@ -7,7 +7,6 @@ import (
 	apiv1 "github.com/velonyapp/asset/gen/api/v1"
 	applicationcommand "github.com/velonyapp/asset/internal/application/command"
 	applicationcommon "github.com/velonyapp/asset/internal/application/common"
-	applicationport "github.com/velonyapp/asset/internal/application/port"
 	domainentity "github.com/velonyapp/asset/internal/domain/entity"
 	domainservice "github.com/velonyapp/asset/internal/domain/service"
 	domainvo "github.com/velonyapp/asset/internal/domain/vo"
@@ -78,6 +77,24 @@ func NewErrorMapper() ErrorMapper {
 						domainvo.ErrTagInvalidCharacter.Error(),
 					)
 
+				// Image Width
+				case errors.Is(err, domainvo.ErrImageWidthNotPositive):
+					return reply, kerrors.BadRequest("",
+						domainvo.ErrImageWidthNotPositive.Error(),
+					)
+
+				// Image Height
+				case errors.Is(err, domainvo.ErrImageHeightNotPositive):
+					return reply, kerrors.BadRequest("",
+						domainvo.ErrImageHeightNotPositive.Error(),
+					)
+
+				// Image Format
+				case errors.Is(err, domainvo.ErrImageFormatInvalid):
+					return reply, kerrors.BadRequest("",
+						domainvo.ErrImageFormatInvalid.Error(),
+					)
+
 				// Object Key Policy
 				case errors.Is(err, domainservice.ErrObjectKeyAlreadyExists):
 					return reply, kerrors.Conflict("",
@@ -93,17 +110,17 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageAlreadyDeleted.Error(),
 					)
+				case errors.Is(err, domainentity.ErrImageNotAwaitingUpload):
+					return reply, kerrors.BadRequest("",
+						domainentity.ErrImageNotAwaitingUpload.Error(),
+					)
+				case errors.Is(err, domainentity.ErrImageAlreadyPending):
+					return reply, kerrors.BadRequest("",
+						domainentity.ErrImageAlreadyPending.Error(),
+					)
 				case errors.Is(err, domainentity.ErrImageNotPending):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageNotPending.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageAlreadyConfirmed):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyConfirmed.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageNotConfirmed):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageNotConfirmed.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageProcessing):
 					return reply, kerrors.BadRequest("",
@@ -128,36 +145,6 @@ func NewErrorMapper() ErrorMapper {
 				case errors.Is(err, domainentity.ErrImageObjectKeysEqual):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageObjectKeysEqual.Error(),
-					)
-
-				// Image Processor
-				case errors.Is(err, applicationport.ErrNoImageProcessingOptions):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrNoImageProcessingOptions.Error(),
-					)
-				case errors.Is(err, applicationport.ErrInvalidResizeDimensions):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrInvalidResizeDimensions.Error(),
-					)
-				case errors.Is(err, applicationport.ErrUnsupportedResizeFit):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrUnsupportedResizeFit.Error(),
-					)
-				case errors.Is(err, applicationport.ErrUnsupportedImageResizeGravity):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrUnsupportedImageResizeGravity.Error(),
-					)
-				case errors.Is(err, applicationport.ErrUnsupportedImageEncodingFormat):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrUnsupportedImageEncodingFormat.Error(),
-					)
-				case errors.Is(err, applicationport.ErrInvalidImageQuality):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrInvalidImageQuality.Error(),
-					)
-				case errors.Is(err, applicationport.ErrInvalidImageBackgroundColor):
-					return reply, kerrors.BadRequest("",
-						applicationport.ErrInvalidImageBackgroundColor.Error(),
 					)
 
 				// Application Common

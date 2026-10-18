@@ -14,8 +14,9 @@ type GetImage struct {
 }
 
 type GetImageResult struct {
-	Image     common.ImageResult
-	UploadURL *string
+	Image       common.ImageResult
+	UploadURL   *string
+	DownloadURL *string
 }
 
 func (GetImage) resultType() GetImageResult {
@@ -53,9 +54,9 @@ func (h *getImageHandler) Handle(
 		return GetImageResult{}, common.ErrImageNotFound
 	}
 
-	var uploadURL *string
+	var uploadURL, downloadURL *string
 
-	if image.IsPending() {
+	if image.IsAwaitingUpload() {
 		url, err := h.storage.PresignPut(ctx,
 			image.SourceObjectKey(),
 			common.PresignTTL,
@@ -66,6 +67,17 @@ func (h *getImageHandler) Handle(
 
 		uploadURL = &url
 	}
+	if image.IsActive() {
+		url, err := h.storage.PresignGet(ctx,
+			image.ObjectKey(),
+			common.PresignTTL,
+		)
+		if err != nil {
+			return GetImageResult{}, err
+		}
+
+		downloadURL = &url
+	}
 
 	return GetImageResult{
 		Image: common.ImageResult{
@@ -73,9 +85,12 @@ func (h *getImageHandler) Handle(
 			Tags:       image.Tags().Strings(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
+			Width:      image.Width().UInt32(),
+			Height:     image.Height().UInt32(),
+			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
-			UpdateTime: image.UpdateTime(),
 		},
-		UploadURL: uploadURL,
+		UploadURL:   uploadURL,
+		DownloadURL: downloadURL,
 	}, nil
 }

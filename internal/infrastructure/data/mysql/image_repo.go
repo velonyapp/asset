@@ -42,6 +42,9 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 			source_object_key,
 			object_key,
 			state,
+			width,
+			height,
+			format,
 			create_time,
 			update_time
 		FROM images
@@ -75,6 +78,9 @@ func (r *imageRepo) FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectK
 			source_object_key,
 			object_key,
 			state,
+			width,
+			height,
+			format,
 			create_time,
 			update_time
 		FROM images
@@ -109,10 +115,13 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	        source_object_key,
 	        object_key,
 	        state,
+			width,
+			height,
+			format,
 	        create_time,
 	        update_time
 	    )
-	    VALUES (?, ?, ?, ?, ?, ?, ?) AS new
+	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
 	    ON DUPLICATE KEY UPDATE
 	        state = new.state,
 	        update_time = new.update_time
@@ -124,6 +133,9 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 		image.SourceObjectKey().String(),
 		image.ObjectKey().String(),
 		image.State().String(),
+		image.Width().Int(),
+		image.Height().Int(),
+		image.Format().String(),
 		image.CreateTime(),
 		image.UpdateTime(),
 	); err != nil {
@@ -146,6 +158,9 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		sourceObjectKeyRaw string
 		objectKeyRaw       string
 		stateRaw           string
+		widthRaw           int
+		heightRaw          int
+		formatRaw          string
 		createTimeRaw      time.Time
 		updateTimeRaw      time.Time
 	)
@@ -156,6 +171,9 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		&sourceObjectKeyRaw,
 		&objectKeyRaw,
 		&stateRaw,
+		&widthRaw,
+		&heightRaw,
+		&formatRaw,
 		&createTimeRaw,
 		&updateTimeRaw,
 	); err != nil {
@@ -170,6 +188,9 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	sourceObjectKey, _ := vo.NewObjectKey(sourceObjectKeyRaw)
 	objectKey, _ := vo.NewObjectKey(objectKeyRaw)
 	state, _ := vo.NewImageState(stateRaw)
+	width, _ := vo.NewImageWidth(widthRaw)
+	height, _ := vo.NewImageHeight(heightRaw)
+	format, _ := vo.NewImageFormat(formatRaw)
 	createTime := createTimeRaw
 	updateTime := updateTimeRaw
 
@@ -179,6 +200,9 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		sourceObjectKey,
 		objectKey,
 		state,
+		width,
+		height,
+		format,
 		createTime,
 		updateTime,
 	), nil

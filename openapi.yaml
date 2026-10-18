@@ -123,6 +123,9 @@ components:
             required:
                 - tags
                 - objectKey
+                - width
+                - height
+                - format
             type: object
             properties:
                 name:
@@ -137,45 +140,25 @@ components:
                     readOnly: true
                     type: integer
                     format: enum
-                createTime:
-                    readOnly: true
-                    type: string
-                    format: date-time
-                updateTime:
-                    readOnly: true
-                    type: string
-                    format: date-time
-                uploadUrl:
-                    readOnly: true
-                    type: string
-        velony.asset.api.v1.ImageEncoding:
-            type: object
-            properties:
-                format:
-                    type: integer
-                    format: enum
-                quality:
-                    type: integer
-                    format: uint32
-        velony.asset.api.v1.ImageResize:
-            type: object
-            properties:
                 width:
                     type: integer
                     format: uint32
                 height:
                     type: integer
                     format: uint32
-                fit:
+                format:
                     type: integer
                     format: enum
-                gravity:
-                    type: integer
-                    format: enum
-                backgroundColor:
+                createTime:
+                    readOnly: true
                     type: string
-                allowUpscale:
-                    type: boolean
+                    format: date-time
+                uploadUrl:
+                    readOnly: true
+                    type: string
+                downloadUrl:
+                    readOnly: true
+                    type: string
         velony.asset.api.v1.ProcessImageRequest:
             required:
                 - name
@@ -183,13 +166,5 @@ components:
             properties:
                 name:
                     type: string
-                resize:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageResize'
-                encoding:
-                    $ref: '#/components/schemas/velony.asset.api.v1.ImageEncoding'
-                autoRotate:
-                    type: boolean
-                removeMetadata:
-                    type: boolean
 tags:
     - name: AssetService

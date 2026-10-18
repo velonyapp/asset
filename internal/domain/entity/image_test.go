@@ -15,6 +15,9 @@ func TestImage_New_WhenObjectKeysEqual(t *testing.T) {
 		vo.Tags{},
 		vo.ObjectKey{},
 		vo.ObjectKey{},
+		vo.ImageWidth{},
+		vo.ImageHeight{},
+		vo.ImageFormatPNG,
 		time.Now().UTC(),
 	)
 
@@ -43,14 +46,13 @@ func TestImage_Transitions(t *testing.T) {
 		cases     []testCase
 	}{
 		{
-			name:      "Confirm",
-			can:       (*Image).CanConfirm,
-			apply:     (*Image).Confirm,
-			nextState: vo.ImageStateConfirmed,
-			wantEvent: reflect.TypeOf(event.ImageConfirmed{}),
+			name:      "ConfirmUpload",
+			can:       (*Image).CanConfirmUpload,
+			apply:     (*Image).ConfirmUpload,
+			nextState: vo.ImageStatePending,
 			cases: []testCase{
-				{"Pending", vo.ImageStatePending, nil},
-				{"Confirmed", vo.ImageStateConfirmed, ErrImageAlreadyConfirmed},
+				{"AwaitingUpload", vo.ImageStateAwaitingUpload, nil},
+				{"Pending", vo.ImageStatePending, ErrImageAlreadyPending},
 				{"Processing", vo.ImageStateProcessing, ErrImageProcessing},
 				{"Active", vo.ImageStateActive, ErrImageActive},
 				{"Deleted", vo.ImageStateDeleted, ErrImageDeleted},
@@ -62,8 +64,8 @@ func TestImage_Transitions(t *testing.T) {
 			apply:     (*Image).StartProcessing,
 			nextState: vo.ImageStateProcessing,
 			cases: []testCase{
-				{"Pending", vo.ImageStatePending, ErrImageNotConfirmed},
-				{"Confirmed", vo.ImageStateConfirmed, nil},
+				{"AwaitingUpload", vo.ImageStateAwaitingUpload, ErrImageNotPending},
+				{"Pending", vo.ImageStatePending, nil},
 				{"Processing", vo.ImageStateProcessing, ErrImageAlreadyProcessing},
 				{"Active", vo.ImageStateActive, ErrImageActive},
 				{"Deleted", vo.ImageStateDeleted, ErrImageDeleted},
@@ -73,10 +75,10 @@ func TestImage_Transitions(t *testing.T) {
 			name:      "CancelProcessing",
 			can:       (*Image).CanCancelProcessing,
 			apply:     (*Image).CancelProcessing,
-			nextState: vo.ImageStateConfirmed,
+			nextState: vo.ImageStatePending,
 			cases: []testCase{
+				{"AwaitingUpload", vo.ImageStateAwaitingUpload, ErrImageNotProcessing},
 				{"Pending", vo.ImageStatePending, ErrImageNotProcessing},
-				{"Confirmed", vo.ImageStateConfirmed, ErrImageNotProcessing},
 				{"Processing", vo.ImageStateProcessing, nil},
 				{"Active", vo.ImageStateActive, ErrImageNotProcessing},
 				{"Deleted", vo.ImageStateDeleted, ErrImageDeleted},
@@ -89,8 +91,8 @@ func TestImage_Transitions(t *testing.T) {
 			nextState: vo.ImageStateActive,
 			wantEvent: reflect.TypeOf(event.ImageActive{}),
 			cases: []testCase{
+				{"AwaitingUpload", vo.ImageStateAwaitingUpload, ErrImageNotProcessing},
 				{"Pending", vo.ImageStatePending, ErrImageNotProcessing},
-				{"Confirmed", vo.ImageStateConfirmed, ErrImageNotProcessing},
 				{"Processing", vo.ImageStateProcessing, nil},
 				{"Active", vo.ImageStateActive, ErrImageAlreadyActive},
 				{"Deleted", vo.ImageStateDeleted, ErrImageDeleted},
@@ -103,8 +105,8 @@ func TestImage_Transitions(t *testing.T) {
 			nextState: vo.ImageStateDeleted,
 			wantEvent: reflect.TypeOf(event.ImageDeleted{}),
 			cases: []testCase{
+				{"AwaitingUpload", vo.ImageStateAwaitingUpload, nil},
 				{"Pending", vo.ImageStatePending, nil},
-				{"Confirmed", vo.ImageStateConfirmed, nil},
 				{"Processing", vo.ImageStateProcessing, nil},
 				{"Active", vo.ImageStateActive, nil},
 				{"Deleted", vo.ImageStateDeleted, ErrImageAlreadyDeleted},
@@ -122,6 +124,9 @@ func TestImage_Transitions(t *testing.T) {
 						vo.ObjectKey{},
 						vo.ObjectKey{},
 						tc.state,
+						vo.ImageWidth{},
+						vo.ImageHeight{},
+						vo.ImageFormatPNG,
 						time.Time{},
 						time.Time{},
 					)
@@ -206,6 +211,9 @@ func TestImage_PullEvents(t *testing.T) {
 		vo.ObjectKey{},
 		vo.ObjectKey{},
 		vo.ImageStatePending,
+		vo.ImageWidth{},
+		vo.ImageHeight{},
+		vo.ImageFormatPNG,
 		time.Time{},
 		time.Time{},
 	)
@@ -234,14 +242,17 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 		vo.Tags{},
 		vo.ObjectKey{},
 		vo.ObjectKey{},
-		vo.ImageStatePending,
+		vo.ImageStateAwaitingUpload,
+		vo.ImageWidth{},
+		vo.ImageHeight{},
+		vo.ImageFormatPNG,
 		time.Time{},
 		time.Time{},
 	)
 
 	now := time.Now().UTC()
 
-	err := image.Confirm(now)
+	err := image.ConfirmUpload(now)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -263,28 +274,21 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 
 	events := image.PullEvents()
 
-	if len(events) != 3 {
-		t.Fatalf("expected 3 events, got %d", len(events))
+	if len(events) != 2 {
+		t.Fatalf("expected 2 events, got %d", len(events))
 	}
 
-	if _, ok := events[0].(event.ImageConfirmed); !ok {
+	if _, ok := events[0].(event.ImageActive); !ok {
 		t.Errorf(
-			"expected ImageConfirmed, got %T",
+			"expected ImageActive, got %T",
 			events[0],
 		)
 	}
 
-	if _, ok := events[1].(event.ImageActive); !ok {
-		t.Errorf(
-			"expected ImageActive, got %T",
-			events[1],
-		)
-	}
-
-	if _, ok := events[2].(event.ImageDeleted); !ok {
+	if _, ok := events[1].(event.ImageDeleted); !ok {
 		t.Errorf(
 			"expected ImageDeleted, got %T",
-			events[2],
+			events[1],
 		)
 	}
 

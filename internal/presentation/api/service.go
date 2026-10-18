@@ -6,7 +6,6 @@ import (
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
 	"github.com/velonyapp/asset/internal/application/command"
-	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/application/query"
 
 	"go.einride.tech/aip/resourcename"
@@ -51,13 +50,16 @@ func (s *Service) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Im
 	}
 
 	return &v1.Image{
-		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
-		Tags:       result.Image.Tags,
-		ObjectKey:  result.Image.ObjectKey,
-		State:      mapState(result.Image.State),
-		CreateTime: timestamppb.New(result.Image.CreateTime),
-		UpdateTime: timestamppb.New(result.Image.UpdateTime),
-		UploadUrl:  result.UploadURL,
+		Name:        resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:        result.Image.Tags,
+		ObjectKey:   result.Image.ObjectKey,
+		State:       mapImageState(result.Image.State),
+		Width:       result.Image.Width,
+		Height:      result.Image.Height,
+		Format:      mapImageFormat(result.Image.Format),
+		CreateTime:  timestamppb.New(result.Image.CreateTime),
+		UploadUrl:   result.UploadURL,
+		DownloadUrl: result.DownloadURL,
 	}, nil
 }
 
@@ -65,6 +67,9 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 	result, err := command.Send(ctx, s.commandBus, command.CreateImage{
 		Tags:      req.Image.Tags,
 		ObjectKey: req.Image.ObjectKey,
+		Width:     int(req.Image.Width),
+		Height:    int(req.Image.Height),
+		Format:    req.Image.Format.String(),
 	})
 	if err != nil {
 		return nil, err
@@ -74,9 +79,11 @@ func (s *Service) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (
 		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 		Tags:       result.Image.Tags,
 		ObjectKey:  result.Image.ObjectKey,
-		State:      mapState(result.Image.State),
+		State:      mapImageState(result.Image.State),
+		Width:      result.Image.Width,
+		Height:     result.Image.Height,
+		Format:     mapImageFormat(result.Image.Format),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
-		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 		UploadUrl:  &result.UploadURL,
 	}, nil
 }
@@ -98,9 +105,11 @@ func (s *Service) ConfirmImage(ctx context.Context, req *v1.ConfirmImageRequest)
 		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
 		Tags:       result.Image.Tags,
 		ObjectKey:  result.Image.ObjectKey,
-		State:      mapState(result.Image.State),
+		State:      mapImageState(result.Image.State),
+		Width:      result.Image.Width,
+		Height:     result.Image.Height,
+		Format:     mapImageFormat(result.Image.Format),
 		CreateTime: timestamppb.New(result.Image.CreateTime),
-		UpdateTime: timestamppb.New(result.Image.UpdateTime),
 	}, nil
 }
 
@@ -110,101 +119,23 @@ func (s *Service) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest)
 		return nil, ErrInvalidImageResourceName
 	}
 
-	var resize *port.ImageResize
-	if req.Resize != nil {
-		var fit port.ImageResizeFit
-		switch req.Resize.Fit {
-		case v1.ImageResize_FIT_UNSPECIFIED:
-		case v1.ImageResize_CONTAIN:
-			fit = port.ImageResizeFitContain
-		case v1.ImageResize_COVER:
-			fit = port.ImageResizeFitCover
-		case v1.ImageResize_PAD:
-			fit = port.ImageResizeFitPad
-		case v1.ImageResize_STRETCH:
-			fit = port.ImageResizeFitStretch
-		default:
-			return nil, port.ErrUnsupportedResizeFit
-		}
-
-		var gravity port.ImageResizeGravity
-		switch req.Resize.Gravity {
-		case v1.ImageResize_GRAVITY_UNSPECIFIED:
-		case v1.ImageResize_CENTER:
-			gravity = port.ImageResizeGravityCenter
-		case v1.ImageResize_TOP:
-			gravity = port.ImageResizeGravityTop
-		case v1.ImageResize_TOP_RIGHT:
-			gravity = port.ImageResizeGravityTopRight
-		case v1.ImageResize_RIGHT:
-			gravity = port.ImageResizeGravityRight
-		case v1.ImageResize_BOTTOM_RIGHT:
-			gravity = port.ImageResizeGravityBottomRight
-		case v1.ImageResize_BOTTOM:
-			gravity = port.ImageResizeGravityBottom
-		case v1.ImageResize_BOTTOM_LEFT:
-			gravity = port.ImageResizeGravityBottomLeft
-		case v1.ImageResize_LEFT:
-			gravity = port.ImageResizeGravityLeft
-		case v1.ImageResize_TOP_LEFT:
-			gravity = port.ImageResizeGravityTopLeft
-		default:
-			return nil, port.ErrUnsupportedImageResizeGravity
-		}
-
-		resize = &port.ImageResize{
-			Width:           req.Resize.Width,
-			Height:          req.Resize.Height,
-			Fit:             fit,
-			Gravity:         gravity,
-			BackgroundColor: req.Resize.BackgroundColor,
-			AllowUpscale:    req.Resize.AllowUpscale,
-		}
-	}
-
-	var encoding *port.ImageEncoding
-	if req.Encoding != nil {
-		var format port.ImageEncodingFormat
-		switch req.Encoding.Format {
-		case v1.ImageEncoding_FORMAT_UNSPECIFIED:
-		case v1.ImageEncoding_JPEG:
-			format = port.ImageEncodingFormatJPEG
-		case v1.ImageEncoding_PNG:
-			format = port.ImageEncodingFormatPNG
-		case v1.ImageEncoding_WEBP:
-			format = port.ImageEncodingFormatWebP
-		case v1.ImageEncoding_AVIF:
-			format = port.ImageEncodingFormatAVIF
-		default:
-			return nil, port.ErrUnsupportedImageEncodingFormat
-		}
-
-		encoding = &port.ImageEncoding{
-			Format:  format,
-			Quality: req.Encoding.Quality,
-		}
-	}
-
 	result, err := command.Send(ctx, s.commandBus, command.ProcessImage{
 		ImageID: imageID,
-		Options: port.ImageProcessOptions{
-			Resize:         resize,
-			Encoding:       encoding,
-			AutoRotate:     req.AutoRotate,
-			RemoveMetadata: req.RemoveMetadata,
-		},
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &v1.Image{
-		Name:       resourcename.Sprint(imageResourcePattern, result.Image.ID),
-		Tags:       result.Image.Tags,
-		ObjectKey:  result.Image.ObjectKey,
-		State:      mapState(result.Image.State),
-		CreateTime: timestamppb.New(result.Image.CreateTime),
-		UpdateTime: timestamppb.New(result.Image.UpdateTime),
+		Name:        resourcename.Sprint(imageResourcePattern, result.Image.ID),
+		Tags:        result.Image.Tags,
+		ObjectKey:   result.Image.ObjectKey,
+		State:       mapImageState(result.Image.State),
+		Width:       result.Image.Width,
+		Height:      result.Image.Height,
+		Format:      mapImageFormat(result.Image.Format),
+		CreateTime:  timestamppb.New(result.Image.CreateTime),
+		DownloadUrl: &result.DownloadURL,
 	}, nil
 }
 
@@ -223,17 +154,32 @@ func (s *Service) DeleteImage(ctx context.Context, req *v1.DeleteImageRequest) (
 	return &emptypb.Empty{}, nil
 }
 
-func mapState(state string) v1.Image_State {
+func mapImageState(state string) v1.Image_State {
 	switch state {
+	case "AWAITING_UPLOAD":
+		return v1.Image_AWAITING_UPLOAD
 	case "PENDING":
 		return v1.Image_PENDING
-	case "CONFIRMED":
-		return v1.Image_UPLOADED
 	case "PROCESSING":
 		return v1.Image_PROCESSING
 	case "ACTIVE":
 		return v1.Image_ACTIVE
 	default:
 		return v1.Image_STATE_UNSPECIFIED
+	}
+}
+
+func mapImageFormat(state string) v1.Image_Format {
+	switch state {
+	case "JPEG":
+		return v1.Image_JPEG
+	case "PNG":
+		return v1.Image_PNG
+	case "WEBP":
+		return v1.Image_WEBP
+	case "AVIF":
+		return v1.Image_AVIF
+	default:
+		return v1.Image_FORMAT_UNSPECIFIED
 	}
 }
