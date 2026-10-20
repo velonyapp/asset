@@ -25,6 +25,7 @@ func NewImageConfirmedHandler(
 func (h *ImageConfirmedHandler) Execute(ctx context.Context, domainEvent event.ImageConfirmed) error {
 	jobb := job.NewProcessImage(
 		domainEvent.AggregateID(),
+		domainEvent.ConfirmTime(),
 	)
 
 	return h.jobPublisher.Publish(ctx, jobb)

@@ -43,15 +43,17 @@ func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 		INSERT INTO outbox_jobs (
 			id,
 			type,
-			payload
+			payload,
+			enqueue_time
 		)
-		VALUES (?, ?, ?)
+		VALUES (?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
 		job.ID(),
 		job.Type(),
 		string(payload),
+		job.EnqueueTime(),
 	)
 
 	return err

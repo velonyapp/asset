@@ -1,5 +1,7 @@
 package job
 
+import "time"
+
 var _ Job = (*ProcessImage)(nil)
 
 type ProcessImage struct {
@@ -10,9 +12,10 @@ type ProcessImage struct {
 
 func NewProcessImage(
 	imageID string,
+	enqueueTime time.Time,
 ) ProcessImage {
 	return ProcessImage{
-		BaseJob: NewBaseJob(),
+		BaseJob: NewBaseJob(enqueueTime),
 
 		imageID: imageID,
 	}

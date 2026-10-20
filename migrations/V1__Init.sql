@@ -27,8 +27,8 @@ CREATE TABLE outbox_events (
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_jobs (
-    id             CHAR(36) PRIMARY KEY,
-    type           TEXT NOT NULL,
-    payload        JSON NOT NULL,
-    occur_time     DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+    id           CHAR(36) PRIMARY KEY,
+    type         TEXT NOT NULL,
+    payload      JSON NOT NULL,
+    enqueue_time DATETIME(6) NOT NULL
 ) ENGINE = InnoDB;
