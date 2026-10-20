@@ -24,6 +24,7 @@ const (
 
 type ImageDeletedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,12 +59,20 @@ func (*ImageDeletedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_event_v1_image_deleted_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *ImageDeletedPayload) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
 var File_velony_asset_event_v1_image_deleted_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_image_deleted_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/image_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x15\n" +
-	"\x13ImageDeletedPayloadB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	")velony/asset/event/v1/image_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"0\n" +
+	"\x13ImageDeletedPayload\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageIdB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_image_deleted_proto_rawDescOnce sync.Once

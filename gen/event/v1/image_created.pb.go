@@ -24,7 +24,8 @@ const (
 
 type ImageCreatedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ObjectKey     string                 `protobuf:"bytes,1,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	ObjectKey     string                 `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -59,6 +60,13 @@ func (*ImageCreatedPayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_event_v1_image_created_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *ImageCreatedPayload) GetImageId() string {
+	if x != nil {
+		return x.ImageId
+	}
+	return ""
+}
+
 func (x *ImageCreatedPayload) GetObjectKey() string {
 	if x != nil {
 		return x.ObjectKey
@@ -70,10 +78,11 @@ var File_velony_asset_event_v1_image_created_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_image_created_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/image_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"4\n" +
-	"\x13ImageCreatedPayload\x12\x1d\n" +
+	")velony/asset/event/v1/image_created.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"O\n" +
+	"\x13ImageCreatedPayload\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\x12\x1d\n" +
 	"\n" +
-	"object_key\x18\x01 \x01(\tR\tobjectKeyB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"object_key\x18\x02 \x01(\tR\tobjectKeyB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_image_created_proto_rawDescOnce sync.Once

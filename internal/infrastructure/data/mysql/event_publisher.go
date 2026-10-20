@@ -29,17 +29,17 @@ func NewEventPublisher(
 	}
 }
 
-func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integrationevent.IntegrationEvent) error {
-	event, err := pub.encoder.Encode(integrationEvent)
+func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.IntegrationEvent) error {
+	eventPayload, err := pub.encoder.Encode(event)
 	if err != nil {
 		return err
 	}
 
-	tags, err := json.Marshal(event.Tags)
+	tags, err := json.Marshal(event.Tags())
 	if err != nil {
 		return err
 	}
-	payload, err := protojson.Marshal(event.Payload)
+	payload, err := protojson.Marshal(eventPayload)
 	if err != nil {
 		return err
 	}
@@ -58,13 +58,13 @@ func (pub *eventPublisher) Publish(ctx context.Context, integrationEvent integra
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
-		event.Id,
-		event.Type,
-		event.AggregateId,
-		event.AggregateType,
+		event.ID(),
+		event.Type(),
+		event.AggregateID(),
+		event.AggregateType(),
 		string(tags),
 		string(payload),
-		event.OccurTime.AsTime(),
+		event.OccurTime(),
 	)
 
 	return err

@@ -6,5 +6,7 @@ import (
 )
 
 func imageActivePayload(event integrationevent.ImageActive) *v1.ImageActivePayload {
-	return &v1.ImageActivePayload{}
+	return &v1.ImageActivePayload{
+		ImageId: event.AggregateID(),
+	}
 }

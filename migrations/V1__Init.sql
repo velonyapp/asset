@@ -23,7 +23,7 @@ CREATE TABLE outbox_events (
     aggregate_type TEXT NOT NULL,
     tags           TEXT NOT NULL,
     payload        JSON NOT NULL,
-    occur_time     DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+    occur_time     DATETIME(6) NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_jobs (
