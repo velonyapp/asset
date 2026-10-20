@@ -2,13 +2,23 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	v1 "github.com/velonyapp/asset/gen/api/v1"
 	"github.com/velonyapp/asset/internal/application/command"
 	"github.com/velonyapp/asset/internal/application/query"
 
+	"go.einride.tech/aip/resourcename"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+var (
+	ErrInvalidImageResourceName = errors.New("invalid image resource name")
+)
+
+const (
+	imageResourcePattern = "images/{image}"
 )
 
 type API struct {
@@ -176,4 +186,17 @@ func formatImageFormatAPIV1(format string) v1.Image_Format {
 	default:
 		return v1.Image_FORMAT_UNSPECIFIED
 	}
+}
+
+func parseImageName(name string) (string, error) {
+	var imageID string
+	if err := resourcename.Sscan(name, imageResourcePattern, &imageID); err != nil {
+		return "", ErrInvalidImageResourceName
+	}
+
+	return imageID, nil
+}
+
+func formatImageName(imageID string) string {
+	return resourcename.Sprint(imageResourcePattern, imageID)
 }

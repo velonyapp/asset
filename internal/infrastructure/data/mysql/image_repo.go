@@ -51,6 +51,41 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 		WHERE id = ?
 			AND state <> 'DELETED'
 		LIMIT 1
+	`
+
+	row := executor(ctx, r.db).QueryRowContext(ctx, query,
+		imageID.String(),
+	)
+
+	image, err := scanImage(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return image, nil
+}
+
+func (r *imageRepo) FindByIDForUpdate(ctx context.Context, imageID vo.ImageID) (*entity.Image, error) {
+	const query = `
+		SELECT
+			id,
+			tags,
+			source_object_key,
+			object_key,
+			state,
+			width,
+			height,
+			format,
+			create_time,
+			update_time
+		FROM images
+		WHERE id = ?
+			AND state <> 'DELETED'
+		LIMIT 1
 		FOR UPDATE
 	`
 
@@ -70,7 +105,7 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 	return image, nil
 }
 
-func (r *imageRepo) FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error) {
+func (r *imageRepo) FindByAnyObjectKeyForUpdate(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error) {
 	const query = `
 		SELECT
 			id,

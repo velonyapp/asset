@@ -50,6 +50,7 @@ func TestImage_Transitions(t *testing.T) {
 			can:       (*Image).CanConfirmUpload,
 			apply:     (*Image).ConfirmUpload,
 			nextState: vo.ImageStatePending,
+			wantEvent: reflect.TypeOf(event.ImageConfirmed{}),
 			cases: []testCase{
 				{"AwaitingUpload", vo.ImageStateAwaitingUpload, nil},
 				{"Pending", vo.ImageStatePending, ErrImageAlreadyPending},
@@ -274,22 +275,20 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 
 	events := image.PullEvents()
 
-	if len(events) != 2 {
-		t.Fatalf("expected 2 events, got %d", len(events))
+	if len(events) != 3 {
+		t.Fatalf("expected 3 events, got %d", len(events))
 	}
 
-	if _, ok := events[0].(event.ImageActive); !ok {
-		t.Errorf(
-			"expected ImageActive, got %T",
-			events[0],
-		)
+	if _, ok := events[0].(event.ImageConfirmed); !ok {
+		t.Errorf("expected ImageConfirmed, got %T", events[0])
 	}
 
-	if _, ok := events[1].(event.ImageDeleted); !ok {
-		t.Errorf(
-			"expected ImageDeleted, got %T",
-			events[1],
-		)
+	if _, ok := events[1].(event.ImageActive); !ok {
+		t.Errorf("expected ImageActive, got %T", events[1])
+	}
+
+	if _, ok := events[2].(event.ImageDeleted); !ok {
+		t.Errorf("expected ImageDeleted, got %T", events[2])
 	}
 
 	if events := image.PullEvents(); len(events) != 0 {

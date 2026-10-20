@@ -25,7 +25,7 @@ func NewObjectKeyPolicy(
 }
 
 func (p *ObjectKeyPolicy) CanUse(ctx context.Context, objectKey vo.ObjectKey) error {
-	image, err := p.imageRepo.FindByAnyObjectKey(ctx, objectKey)
+	image, err := p.imageRepo.FindByAnyObjectKeyForUpdate(ctx, objectKey)
 	if err != nil {
 		return err
 	}

@@ -12,12 +12,19 @@ import (
 	"github.com/Azure/go-amqp"
 	"github.com/go-kratos/kratos/v3/transport"
 	"github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
-	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
 	ErrUnsupportedMessage = errors.New("unsupported message")
 	ErrInvalidMessage     = errors.New("invalid message")
+)
+
+const (
+	createImageQueue  = "asset.image.create"
+	confirmImageQueue = "asset.image.confirm"
+	processImageQueue = "asset.image.process"
+	deleteImageQueue  = "asset.image.delete"
 )
 
 var _ transport.Server = (*RabbitMQConsumer)(nil)
@@ -45,16 +52,16 @@ func NewRabbitMQConsumer(
 func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 	var errs []error
 
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.CreateImage); err != nil {
+	if err := rc.registerConsumer(ctx, createImageQueue); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ConfirmImage); err != nil {
+	if err := rc.registerConsumer(ctx, confirmImageQueue); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.ProcessImage); err != nil {
+	if err := rc.registerConsumer(ctx, processImageQueue); err != nil {
 		errs = append(errs, err)
 	}
-	if err := rc.registerConsumer(ctx, rc.c.Rabbitmq.Queues.DeleteImage); err != nil {
+	if err := rc.registerConsumer(ctx, deleteImageQueue); err != nil {
 		errs = append(errs, err)
 	}
 
@@ -63,41 +70,41 @@ func (rc *RabbitMQConsumer) registerAllConsumers(ctx context.Context) error {
 
 func (rc *RabbitMQConsumer) handleMessage(ctx context.Context, queue string, data []byte) error {
 	switch queue {
-	case rc.c.Rabbitmq.Queues.CreateImage:
-		req := new(v1.CreateImage)
+	case createImageQueue:
+		payload := new(v1.CreateImagePayload)
 
-		if err := proto.Unmarshal(data, req); err != nil {
+		if err := protojson.Unmarshal(data, payload); err != nil {
 			return ErrInvalidMessage
 		}
 
-		return rc.jobService.CreateImage(ctx, req)
+		return rc.jobService.CreateImage(ctx, payload)
 
-	case rc.c.Rabbitmq.Queues.ConfirmImage:
-		req := new(v1.ConfirmImage)
+	case confirmImageQueue:
+		payload := new(v1.ConfirmImagePayload)
 
-		if err := proto.Unmarshal(data, req); err != nil {
+		if err := protojson.Unmarshal(data, payload); err != nil {
 			return ErrInvalidMessage
 		}
 
-		return rc.jobService.ConfirmImage(ctx, req)
+		return rc.jobService.ConfirmImage(ctx, payload)
 
-	case rc.c.Rabbitmq.Queues.ProcessImage:
-		req := new(v1.ProcessImage)
+	case processImageQueue:
+		payload := new(v1.ProcessImagePayload)
 
-		if err := proto.Unmarshal(data, req); err != nil {
+		if err := protojson.Unmarshal(data, payload); err != nil {
 			return ErrInvalidMessage
 		}
 
-		return rc.jobService.ProcessImage(ctx, req)
+		return rc.jobService.ProcessImage(ctx, payload)
 
-	case rc.c.Rabbitmq.Queues.DeleteImage:
-		req := new(v1.DeleteImage)
+	case deleteImageQueue:
+		payload := new(v1.DeleteImagePayload)
 
-		if err := proto.Unmarshal(data, req); err != nil {
+		if err := protojson.Unmarshal(data, payload); err != nil {
 			return ErrInvalidMessage
 		}
 
-		return rc.jobService.DeleteImage(ctx, req)
+		return rc.jobService.DeleteImage(ctx, payload)
 
 	default:
 		return ErrUnsupportedMessage

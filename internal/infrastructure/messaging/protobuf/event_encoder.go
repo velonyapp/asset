@@ -11,14 +11,14 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type Encoder struct{}
+type EventEncoder struct{}
 
-func NewEncoder() *Encoder {
-	return &Encoder{}
+func NewEventEncoder() *EventEncoder {
+	return &EventEncoder{}
 }
 
-func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, error) {
-	payload, err := e.payload(event)
+func (e *EventEncoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, error) {
+	payload, err := e.eventPayload(event)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (e *Encoder) Encode(event integrationevent.IntegrationEvent) (*v1.Event, er
 	}, nil
 }
 
-func (e *Encoder) payload(event integrationevent.IntegrationEvent) (proto.Message, error) {
+func (e *EventEncoder) eventPayload(event integrationevent.IntegrationEvent) (proto.Message, error) {
 	switch event := event.(type) {
 	case integrationevent.ImageCreated:
 		return imageCreatedPayload(event), nil

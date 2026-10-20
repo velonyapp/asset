@@ -21,26 +21,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateImage_Format int32
+type CreateImagePayload_Format int32
 
 const (
-	CreateImage_FORMAT_UNSPECIFIED CreateImage_Format = 0
-	CreateImage_JPEG               CreateImage_Format = 1
-	CreateImage_PNG                CreateImage_Format = 2
-	CreateImage_WEBP               CreateImage_Format = 3
-	CreateImage_AVIF               CreateImage_Format = 4
+	CreateImagePayload_FORMAT_UNSPECIFIED CreateImagePayload_Format = 0
+	CreateImagePayload_JPEG               CreateImagePayload_Format = 1
+	CreateImagePayload_PNG                CreateImagePayload_Format = 2
+	CreateImagePayload_WEBP               CreateImagePayload_Format = 3
+	CreateImagePayload_AVIF               CreateImagePayload_Format = 4
 )
 
-// Enum value maps for CreateImage_Format.
+// Enum value maps for CreateImagePayload_Format.
 var (
-	CreateImage_Format_name = map[int32]string{
+	CreateImagePayload_Format_name = map[int32]string{
 		0: "FORMAT_UNSPECIFIED",
 		1: "JPEG",
 		2: "PNG",
 		3: "WEBP",
 		4: "AVIF",
 	}
-	CreateImage_Format_value = map[string]int32{
+	CreateImagePayload_Format_value = map[string]int32{
 		"FORMAT_UNSPECIFIED": 0,
 		"JPEG":               1,
 		"PNG":                2,
@@ -49,58 +49,58 @@ var (
 	}
 )
 
-func (x CreateImage_Format) Enum() *CreateImage_Format {
-	p := new(CreateImage_Format)
+func (x CreateImagePayload_Format) Enum() *CreateImagePayload_Format {
+	p := new(CreateImagePayload_Format)
 	*p = x
 	return p
 }
 
-func (x CreateImage_Format) String() string {
+func (x CreateImagePayload_Format) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (CreateImage_Format) Descriptor() protoreflect.EnumDescriptor {
+func (CreateImagePayload_Format) Descriptor() protoreflect.EnumDescriptor {
 	return file_velony_asset_job_v1_create_image_proto_enumTypes[0].Descriptor()
 }
 
-func (CreateImage_Format) Type() protoreflect.EnumType {
+func (CreateImagePayload_Format) Type() protoreflect.EnumType {
 	return &file_velony_asset_job_v1_create_image_proto_enumTypes[0]
 }
 
-func (x CreateImage_Format) Number() protoreflect.EnumNumber {
+func (x CreateImagePayload_Format) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CreateImage_Format.Descriptor instead.
-func (CreateImage_Format) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use CreateImagePayload_Format.Descriptor instead.
+func (CreateImagePayload_Format) EnumDescriptor() ([]byte, []int) {
 	return file_velony_asset_job_v1_create_image_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type CreateImage struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Tags          []string               `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
-	ObjectKey     string                 `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
-	Width         uint32                 `protobuf:"varint,3,opt,name=width,proto3" json:"width,omitempty"`
-	Height        uint32                 `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
-	Format        CreateImage_Format     `protobuf:"varint,5,opt,name=format,proto3,enum=velony.asset.job.v1.CreateImage_Format" json:"format,omitempty"`
+type CreateImagePayload struct {
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	Tags          []string                  `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	ObjectKey     string                    `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
+	Width         uint32                    `protobuf:"varint,3,opt,name=width,proto3" json:"width,omitempty"`
+	Height        uint32                    `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
+	Format        CreateImagePayload_Format `protobuf:"varint,5,opt,name=format,proto3,enum=velony.asset.job.v1.CreateImagePayload_Format" json:"format,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateImage) Reset() {
-	*x = CreateImage{}
+func (x *CreateImagePayload) Reset() {
+	*x = CreateImagePayload{}
 	mi := &file_velony_asset_job_v1_create_image_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateImage) String() string {
+func (x *CreateImagePayload) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateImage) ProtoMessage() {}
+func (*CreateImagePayload) ProtoMessage() {}
 
-func (x *CreateImage) ProtoReflect() protoreflect.Message {
+func (x *CreateImagePayload) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_asset_job_v1_create_image_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -112,58 +112,58 @@ func (x *CreateImage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateImage.ProtoReflect.Descriptor instead.
-func (*CreateImage) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateImagePayload.ProtoReflect.Descriptor instead.
+func (*CreateImagePayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_job_v1_create_image_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreateImage) GetTags() []string {
+func (x *CreateImagePayload) GetTags() []string {
 	if x != nil {
 		return x.Tags
 	}
 	return nil
 }
 
-func (x *CreateImage) GetObjectKey() string {
+func (x *CreateImagePayload) GetObjectKey() string {
 	if x != nil {
 		return x.ObjectKey
 	}
 	return ""
 }
 
-func (x *CreateImage) GetWidth() uint32 {
+func (x *CreateImagePayload) GetWidth() uint32 {
 	if x != nil {
 		return x.Width
 	}
 	return 0
 }
 
-func (x *CreateImage) GetHeight() uint32 {
+func (x *CreateImagePayload) GetHeight() uint32 {
 	if x != nil {
 		return x.Height
 	}
 	return 0
 }
 
-func (x *CreateImage) GetFormat() CreateImage_Format {
+func (x *CreateImagePayload) GetFormat() CreateImagePayload_Format {
 	if x != nil {
 		return x.Format
 	}
-	return CreateImage_FORMAT_UNSPECIFIED
+	return CreateImagePayload_FORMAT_UNSPECIFIED
 }
 
 var File_velony_asset_job_v1_create_image_proto protoreflect.FileDescriptor
 
 const file_velony_asset_job_v1_create_image_proto_rawDesc = "" +
 	"\n" +
-	"&velony/asset/job/v1/create_image.proto\x12\x13velony.asset.job.v1\"\xf8\x01\n" +
-	"\vCreateImage\x12\x12\n" +
+	"&velony/asset/job/v1/create_image.proto\x12\x13velony.asset.job.v1\"\x86\x02\n" +
+	"\x12CreateImagePayload\x12\x12\n" +
 	"\x04tags\x18\x01 \x03(\tR\x04tags\x12\x1d\n" +
 	"\n" +
 	"object_key\x18\x02 \x01(\tR\tobjectKey\x12\x14\n" +
 	"\x05width\x18\x03 \x01(\rR\x05width\x12\x16\n" +
-	"\x06height\x18\x04 \x01(\rR\x06height\x12?\n" +
-	"\x06format\x18\x05 \x01(\x0e2'.velony.asset.job.v1.CreateImage.FormatR\x06format\"G\n" +
+	"\x06height\x18\x04 \x01(\rR\x06height\x12F\n" +
+	"\x06format\x18\x05 \x01(\x0e2..velony.asset.job.v1.CreateImagePayload.FormatR\x06format\"G\n" +
 	"\x06Format\x12\x16\n" +
 	"\x12FORMAT_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04JPEG\x10\x01\x12\a\n" +
@@ -186,11 +186,11 @@ func file_velony_asset_job_v1_create_image_proto_rawDescGZIP() []byte {
 var file_velony_asset_job_v1_create_image_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_velony_asset_job_v1_create_image_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_job_v1_create_image_proto_goTypes = []any{
-	(CreateImage_Format)(0), // 0: velony.asset.job.v1.CreateImage.Format
-	(*CreateImage)(nil),     // 1: velony.asset.job.v1.CreateImage
+	(CreateImagePayload_Format)(0), // 0: velony.asset.job.v1.CreateImagePayload.Format
+	(*CreateImagePayload)(nil),     // 1: velony.asset.job.v1.CreateImagePayload
 }
 var file_velony_asset_job_v1_create_image_proto_depIdxs = []int32{
-	0, // 0: velony.asset.job.v1.CreateImage.format:type_name -> velony.asset.job.v1.CreateImage.Format
+	0, // 0: velony.asset.job.v1.CreateImagePayload.format:type_name -> velony.asset.job.v1.CreateImagePayload.Format
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

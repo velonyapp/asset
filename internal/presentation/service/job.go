@@ -19,13 +19,13 @@ func NewJob(
 	}
 }
 
-func (s *Job) CreateImage(ctx context.Context, req *v1.CreateImage) error {
+func (s *Job) CreateImage(ctx context.Context, payload *v1.CreateImagePayload) error {
 	if _, err := command.Send(ctx, s.commandBus, command.CreateImage{
-		Tags:      req.Tags,
-		ObjectKey: req.ObjectKey,
-		Width:     int(req.Width),
-		Height:    int(req.Height),
-		Format:    parseCreateImageFormatJobV1(req.Format),
+		Tags:      payload.Tags,
+		ObjectKey: payload.ObjectKey,
+		Width:     int(payload.Width),
+		Height:    int(payload.Height),
+		Format:    parseCreateImageFormatJobV1(payload.Format),
 	}); err != nil {
 		return err
 	}
@@ -33,14 +33,9 @@ func (s *Job) CreateImage(ctx context.Context, req *v1.CreateImage) error {
 	return nil
 }
 
-func (s *Job) ConfirmImage(ctx context.Context, req *v1.ConfirmImage) error {
-	imageID, err := parseImageName(req.Name)
-	if err != nil {
-		return err
-	}
-
+func (s *Job) ConfirmImage(ctx context.Context, payload *v1.ConfirmImagePayload) error {
 	if _, err := command.Send(ctx, s.commandBus, command.ConfirmImage{
-		ImageID: imageID,
+		ImageID: payload.ImageId,
 	}); err != nil {
 		return err
 	}
@@ -48,14 +43,9 @@ func (s *Job) ConfirmImage(ctx context.Context, req *v1.ConfirmImage) error {
 	return nil
 }
 
-func (s *Job) ProcessImage(ctx context.Context, req *v1.ProcessImage) error {
-	imageID, err := parseImageName(req.Name)
-	if err != nil {
-		return err
-	}
-
+func (s *Job) ProcessImage(ctx context.Context, payload *v1.ProcessImagePayload) error {
 	if _, err := command.Send(ctx, s.commandBus, command.ProcessImage{
-		ImageID: imageID,
+		ImageID: payload.ImageId,
 	}); err != nil {
 		return err
 	}
@@ -63,14 +53,9 @@ func (s *Job) ProcessImage(ctx context.Context, req *v1.ProcessImage) error {
 	return nil
 }
 
-func (s *Job) DeleteImage(ctx context.Context, req *v1.DeleteImage) error {
-	imageID, err := parseImageName(req.Name)
-	if err != nil {
-		return err
-	}
-
+func (s *Job) DeleteImage(ctx context.Context, payload *v1.DeleteImagePayload) error {
 	if _, err := command.Send(ctx, s.commandBus, command.DeleteImage{
-		ImageID: imageID,
+		ImageID: payload.ImageId,
 	}); err != nil {
 		return err
 	}
@@ -78,6 +63,6 @@ func (s *Job) DeleteImage(ctx context.Context, req *v1.DeleteImage) error {
 	return nil
 }
 
-func parseCreateImageFormatJobV1(format v1.CreateImage_Format) string {
+func parseCreateImageFormatJobV1(format v1.CreateImagePayload_Format) string {
 	return format.String()
 }

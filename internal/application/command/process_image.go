@@ -62,7 +62,7 @@ func (h *processImageHandler) Handle(
 
 		var err error
 
-		image, err = h.imageRepo.FindByID(ctx, imageID)
+		image, err = h.imageRepo.FindByIDForUpdate(ctx, imageID)
 		if err != nil {
 			return err
 		}
@@ -114,26 +114,7 @@ func (h *processImageHandler) Handle(
 		return nil
 	}(); err != nil {
 		// Try rolling back, failed rollback will be handled by background worker
-		rollbackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
-		defer cancel()
-
-		h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
-			now := time.Now()
-
-			image, err := h.imageRepo.FindByID(ctx, imageID)
-			if err != nil {
-				return err
-			}
-			if image == nil {
-				return common.ErrImageNotFound
-			}
-
-			if err := image.CancelProcessing(now); err != nil {
-				return err
-			}
-
-			return h.imageRepo.Save(ctx, image)
-		})
+		h.tryRollback(ctx, imageID)
 
 		return ProcessImageResult{}, err
 	}
@@ -143,7 +124,7 @@ func (h *processImageHandler) Handle(
 
 		var err error
 
-		image, err = h.imageRepo.FindByID(ctx, imageID)
+		image, err = h.imageRepo.FindByIDForUpdate(ctx, imageID)
 		if err != nil {
 			return err
 		}
@@ -165,7 +146,9 @@ func (h *processImageHandler) Handle(
 
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		// Failed completion will be handled by background worker
+		// Try rolling back, failed rollback will be handled by background worker
+		h.tryRollback(ctx, imageID)
+
 		return ProcessImageResult{}, err
 	}
 
@@ -182,4 +165,27 @@ func (h *processImageHandler) Handle(
 		},
 		DownloadURL: downloadURL,
 	}, nil
+}
+
+func (h *processImageHandler) tryRollback(ctx context.Context, imageID vo.ImageID) error {
+	rollbackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+	defer cancel()
+
+	return h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
+		now := time.Now()
+
+		image, err := h.imageRepo.FindByIDForUpdate(ctx, imageID)
+		if err != nil {
+			return err
+		}
+		if image == nil {
+			return common.ErrImageNotFound
+		}
+
+		if err := image.CancelProcessing(now); err != nil {
+			return err
+		}
+
+		return h.imageRepo.Save(ctx, image)
+	})
 }

@@ -35,12 +35,15 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	if err != nil {
 		return nil, nil, err
 	}
-	encoder := protobuf.NewEncoder()
-	eventPublisher := mysql.NewEventPublisher(db, encoder)
+	eventEncoder := protobuf.NewEventEncoder()
+	eventPublisher := mysql.NewEventPublisher(db, eventEncoder)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
+	jobEncoder := protobuf.NewJobEncoder()
+	jobPublisher := mysql.NewJobPublisher(db, jobEncoder)
+	imageConfirmedHandler := domainevent.NewImageConfirmedHandler(jobPublisher)
 	imageActiveHandler := domainevent.NewImageActiveHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
-	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageActiveHandler, imageDeletedHandler)
+	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageConfirmedHandler, imageActiveHandler, imageDeletedHandler)
 	image := mysql.NewImageRepo(db, dispatcher)
 	objectKeyPolicy := service.NewObjectKeyPolicy(image)
 	unitOfWork := mysql.NewUnitOfWork(db)

@@ -21,27 +21,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ConfirmImage struct {
+type ConfirmImagePayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ConfirmImage) Reset() {
-	*x = ConfirmImage{}
+func (x *ConfirmImagePayload) Reset() {
+	*x = ConfirmImagePayload{}
 	mi := &file_velony_asset_job_v1_confirm_image_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ConfirmImage) String() string {
+func (x *ConfirmImagePayload) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ConfirmImage) ProtoMessage() {}
+func (*ConfirmImagePayload) ProtoMessage() {}
 
-func (x *ConfirmImage) ProtoReflect() protoreflect.Message {
+func (x *ConfirmImagePayload) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_asset_job_v1_confirm_image_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,14 +53,14 @@ func (x *ConfirmImage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ConfirmImage.ProtoReflect.Descriptor instead.
-func (*ConfirmImage) Descriptor() ([]byte, []int) {
+// Deprecated: Use ConfirmImagePayload.ProtoReflect.Descriptor instead.
+func (*ConfirmImagePayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_job_v1_confirm_image_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ConfirmImage) GetName() string {
+func (x *ConfirmImagePayload) GetImageId() string {
 	if x != nil {
-		return x.Name
+		return x.ImageId
 	}
 	return ""
 }
@@ -69,9 +69,9 @@ var File_velony_asset_job_v1_confirm_image_proto protoreflect.FileDescriptor
 
 const file_velony_asset_job_v1_confirm_image_proto_rawDesc = "" +
 	"\n" +
-	"'velony/asset/job/v1/confirm_image.proto\x12\x13velony.asset.job.v1\"\"\n" +
-	"\fConfirmImage\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04nameB-Z+github.com/velonyapp/asset/gen/job/v1;jobv1b\x06proto3"
+	"'velony/asset/job/v1/confirm_image.proto\x12\x13velony.asset.job.v1\"0\n" +
+	"\x13ConfirmImagePayload\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageIdB-Z+github.com/velonyapp/asset/gen/job/v1;jobv1b\x06proto3"
 
 var (
 	file_velony_asset_job_v1_confirm_image_proto_rawDescOnce sync.Once
@@ -87,7 +87,7 @@ func file_velony_asset_job_v1_confirm_image_proto_rawDescGZIP() []byte {
 
 var file_velony_asset_job_v1_confirm_image_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_job_v1_confirm_image_proto_goTypes = []any{
-	(*ConfirmImage)(nil), // 0: velony.asset.job.v1.ConfirmImage
+	(*ConfirmImagePayload)(nil), // 0: velony.asset.job.v1.ConfirmImagePayload
 }
 var file_velony_asset_job_v1_confirm_image_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

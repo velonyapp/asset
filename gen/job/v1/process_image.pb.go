@@ -21,27 +21,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ProcessImage struct {
+type ProcessImagePayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProcessImage) Reset() {
-	*x = ProcessImage{}
+func (x *ProcessImagePayload) Reset() {
+	*x = ProcessImagePayload{}
 	mi := &file_velony_asset_job_v1_process_image_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProcessImage) String() string {
+func (x *ProcessImagePayload) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProcessImage) ProtoMessage() {}
+func (*ProcessImagePayload) ProtoMessage() {}
 
-func (x *ProcessImage) ProtoReflect() protoreflect.Message {
+func (x *ProcessImagePayload) ProtoReflect() protoreflect.Message {
 	mi := &file_velony_asset_job_v1_process_image_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -53,14 +53,14 @@ func (x *ProcessImage) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProcessImage.ProtoReflect.Descriptor instead.
-func (*ProcessImage) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProcessImagePayload.ProtoReflect.Descriptor instead.
+func (*ProcessImagePayload) Descriptor() ([]byte, []int) {
 	return file_velony_asset_job_v1_process_image_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ProcessImage) GetName() string {
+func (x *ProcessImagePayload) GetImageId() string {
 	if x != nil {
-		return x.Name
+		return x.ImageId
 	}
 	return ""
 }
@@ -69,9 +69,9 @@ var File_velony_asset_job_v1_process_image_proto protoreflect.FileDescriptor
 
 const file_velony_asset_job_v1_process_image_proto_rawDesc = "" +
 	"\n" +
-	"'velony/asset/job/v1/process_image.proto\x12\x13velony.asset.job.v1\"\"\n" +
-	"\fProcessImage\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04nameB-Z+github.com/velonyapp/asset/gen/job/v1;jobv1b\x06proto3"
+	"'velony/asset/job/v1/process_image.proto\x12\x13velony.asset.job.v1\"0\n" +
+	"\x13ProcessImagePayload\x12\x19\n" +
+	"\bimage_id\x18\x01 \x01(\tR\aimageIdB-Z+github.com/velonyapp/asset/gen/job/v1;jobv1b\x06proto3"
 
 var (
 	file_velony_asset_job_v1_process_image_proto_rawDescOnce sync.Once
@@ -87,7 +87,7 @@ func file_velony_asset_job_v1_process_image_proto_rawDescGZIP() []byte {
 
 var file_velony_asset_job_v1_process_image_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_velony_asset_job_v1_process_image_proto_goTypes = []any{
-	(*ProcessImage)(nil), // 0: velony.asset.job.v1.ProcessImage
+	(*ProcessImagePayload)(nil), // 0: velony.asset.job.v1.ProcessImagePayload
 }
 var file_velony_asset_job_v1_process_image_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

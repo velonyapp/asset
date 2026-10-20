@@ -38,21 +38,6 @@ message Transport {
   }
 
   message RabbitMQ {
-    message Queues {
-      string create_image = 1 [
-        (buf.validate.field).string.min_len = 1
-      ];
-      string confirm_image = 2 [
-        (buf.validate.field).string.min_len = 1
-      ];
-      string process_image = 3 [
-        (buf.validate.field).string.min_len = 1
-      ];
-      string delete_image = 4 [
-        (buf.validate.field).string.min_len = 1
-      ];
-    }
-
     string address = 1 [
       (buf.validate.field).string.min_len = 1
     ];
@@ -61,10 +46,6 @@ message Transport {
     ];
     string password = 3 [
       (buf.validate.field).string.min_len = 1
-    ];
-
-    Queues queues = 4 [
-      (buf.validate.field).required = true
     ];
   }
 

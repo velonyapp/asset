@@ -16,12 +16,12 @@ var _ port.EventPublisher = (*eventPublisher)(nil)
 
 type eventPublisher struct {
 	db      *sql.DB
-	encoder *protobuf.Encoder
+	encoder *protobuf.EventEncoder
 }
 
 func NewEventPublisher(
 	db *sql.DB,
-	encoder *protobuf.Encoder,
+	encoder *protobuf.EventEncoder,
 ) port.EventPublisher {
 	return &eventPublisher{
 		db:      db,

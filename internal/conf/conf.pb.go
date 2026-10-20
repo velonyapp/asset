@@ -401,11 +401,10 @@ func (x *Transport_GRPC) GetTimeout() *durationpb.Duration {
 }
 
 type Transport_RabbitMQ struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
-	Address       string                     `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	Username      string                     `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Password      string                     `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	Queues        *Transport_RabbitMQ_Queues `protobuf:"bytes,4,opt,name=queues,proto3" json:"queues,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       string                 `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -461,81 +460,6 @@ func (x *Transport_RabbitMQ) GetPassword() string {
 	return ""
 }
 
-func (x *Transport_RabbitMQ) GetQueues() *Transport_RabbitMQ_Queues {
-	if x != nil {
-		return x.Queues
-	}
-	return nil
-}
-
-type Transport_RabbitMQ_Queues struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CreateImage   string                 `protobuf:"bytes,1,opt,name=create_image,json=createImage,proto3" json:"create_image,omitempty"`
-	ConfirmImage  string                 `protobuf:"bytes,2,opt,name=confirm_image,json=confirmImage,proto3" json:"confirm_image,omitempty"`
-	ProcessImage  string                 `protobuf:"bytes,3,opt,name=process_image,json=processImage,proto3" json:"process_image,omitempty"`
-	DeleteImage   string                 `protobuf:"bytes,4,opt,name=delete_image,json=deleteImage,proto3" json:"delete_image,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Transport_RabbitMQ_Queues) Reset() {
-	*x = Transport_RabbitMQ_Queues{}
-	mi := &file_conf_conf_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Transport_RabbitMQ_Queues) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Transport_RabbitMQ_Queues) ProtoMessage() {}
-
-func (x *Transport_RabbitMQ_Queues) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Transport_RabbitMQ_Queues.ProtoReflect.Descriptor instead.
-func (*Transport_RabbitMQ_Queues) Descriptor() ([]byte, []int) {
-	return file_conf_conf_proto_rawDescGZIP(), []int{1, 2, 0}
-}
-
-func (x *Transport_RabbitMQ_Queues) GetCreateImage() string {
-	if x != nil {
-		return x.CreateImage
-	}
-	return ""
-}
-
-func (x *Transport_RabbitMQ_Queues) GetConfirmImage() string {
-	if x != nil {
-		return x.ConfirmImage
-	}
-	return ""
-}
-
-func (x *Transport_RabbitMQ_Queues) GetProcessImage() string {
-	if x != nil {
-		return x.ProcessImage
-	}
-	return ""
-}
-
-func (x *Transport_RabbitMQ_Queues) GetDeleteImage() string {
-	if x != nil {
-		return x.DeleteImage
-	}
-	return ""
-}
-
 type Data_MySQL struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	Dsn                   string                 `protobuf:"bytes,1,opt,name=dsn,proto3" json:"dsn,omitempty"`
@@ -548,7 +472,7 @@ type Data_MySQL struct {
 
 func (x *Data_MySQL) Reset() {
 	*x = Data_MySQL{}
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -560,7 +484,7 @@ func (x *Data_MySQL) String() string {
 func (*Data_MySQL) ProtoMessage() {}
 
 func (x *Data_MySQL) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[8]
+	mi := &file_conf_conf_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -616,7 +540,7 @@ type Data_S3 struct {
 
 func (x *Data_S3) Reset() {
 	*x = Data_S3{}
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -628,7 +552,7 @@ func (x *Data_S3) String() string {
 func (*Data_S3) ProtoMessage() {}
 
 func (x *Data_S3) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[9]
+	mi := &file_conf_conf_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -684,7 +608,7 @@ type Telemetry_Tracing struct {
 
 func (x *Telemetry_Tracing) Reset() {
 	*x = Telemetry_Tracing{}
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -696,7 +620,7 @@ func (x *Telemetry_Tracing) String() string {
 func (*Telemetry_Tracing) ProtoMessage() {}
 
 func (x *Telemetry_Tracing) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[10]
+	mi := &file_conf_conf_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -752,7 +676,7 @@ type Telemetry_Metrics struct {
 
 func (x *Telemetry_Metrics) Reset() {
 	*x = Telemetry_Metrics{}
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -764,7 +688,7 @@ func (x *Telemetry_Metrics) String() string {
 func (*Telemetry_Metrics) ProtoMessage() {}
 
 func (x *Telemetry_Metrics) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[11]
+	mi := &file_conf_conf_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -817,7 +741,7 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\tBootstrap\x12;\n" +
 	"\ttransport\x18\x01 \x01(\v2\x15.kratos.api.TransportB\x06\xbaH\x03\xc8\x01\x01R\ttransport\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x10.kratos.api.DataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x123\n" +
-	"\ttelemetry\x18\x03 \x01(\v2\x15.kratos.api.TelemetryR\ttelemetry\"\x95\x06\n" +
+	"\ttelemetry\x18\x03 \x01(\v2\x15.kratos.api.TelemetryR\ttelemetry\"\x8e\x04\n" +
 	"\tTransport\x126\n" +
 	"\x04http\x18\x01 \x01(\v2\x1a.kratos.api.Transport.HTTPB\x06\xbaH\x03\xc8\x01\x01R\x04http\x126\n" +
 	"\x04grpc\x18\x02 \x01(\v2\x1a.kratos.api.Transport.GRPCB\x06\xbaH\x03\xc8\x01\x01R\x04grpc\x12B\n" +
@@ -827,17 +751,11 @@ const file_conf_conf_proto_rawDesc = "" +
 	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1ai\n" +
 	"\x04GRPC\x12\"\n" +
 	"\aaddress\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x80\x02\x01R\aaddress\x12=\n" +
-	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1a\xfd\x02\n" +
+	"\atimeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\b\xbaH\x05\xaa\x01\x02*\x00R\atimeout\x1aw\n" +
 	"\bRabbitMQ\x12!\n" +
 	"\aaddress\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\aaddress\x12#\n" +
 	"\busername\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\busername\x12#\n" +
-	"\bpassword\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bpassword\x12E\n" +
-	"\x06queues\x18\x04 \x01(\v2%.kratos.api.Transport.RabbitMQ.QueuesB\x06\xbaH\x03\xc8\x01\x01R\x06queues\x1a\xbc\x01\n" +
-	"\x06Queues\x12*\n" +
-	"\fcreate_image\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vcreateImage\x12,\n" +
-	"\rconfirm_image\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fconfirmImage\x12,\n" +
-	"\rprocess_image\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\fprocessImage\x12*\n" +
-	"\fdelete_image\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\vdeleteImage\"\x8c\x06\n" +
+	"\bpassword\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\bpassword\"\x8c\x06\n" +
 	"\x04Data\x124\n" +
 	"\x05mysql\x18\x01 \x01(\v2\x16.kratos.api.Data.MySQLB\x06\xbaH\x03\xc8\x01\x01R\x05mysql\x12+\n" +
 	"\x02s3\x18\x02 \x01(\v2\x13.kratos.api.Data.S3B\x06\xbaH\x03\xc8\x01\x01R\x02s3\x1a\xf1\x03\n" +
@@ -890,22 +808,21 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 }
 
 var file_conf_conf_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_conf_conf_proto_goTypes = []any{
-	(Telemetry_Protocol)(0),           // 0: kratos.api.Telemetry.Protocol
-	(*Bootstrap)(nil),                 // 1: kratos.api.Bootstrap
-	(*Transport)(nil),                 // 2: kratos.api.Transport
-	(*Data)(nil),                      // 3: kratos.api.Data
-	(*Telemetry)(nil),                 // 4: kratos.api.Telemetry
-	(*Transport_HTTP)(nil),            // 5: kratos.api.Transport.HTTP
-	(*Transport_GRPC)(nil),            // 6: kratos.api.Transport.GRPC
-	(*Transport_RabbitMQ)(nil),        // 7: kratos.api.Transport.RabbitMQ
-	(*Transport_RabbitMQ_Queues)(nil), // 8: kratos.api.Transport.RabbitMQ.Queues
-	(*Data_MySQL)(nil),                // 9: kratos.api.Data.MySQL
-	(*Data_S3)(nil),                   // 10: kratos.api.Data.S3
-	(*Telemetry_Tracing)(nil),         // 11: kratos.api.Telemetry.Tracing
-	(*Telemetry_Metrics)(nil),         // 12: kratos.api.Telemetry.Metrics
-	(*durationpb.Duration)(nil),       // 13: google.protobuf.Duration
+	(Telemetry_Protocol)(0),     // 0: kratos.api.Telemetry.Protocol
+	(*Bootstrap)(nil),           // 1: kratos.api.Bootstrap
+	(*Transport)(nil),           // 2: kratos.api.Transport
+	(*Data)(nil),                // 3: kratos.api.Data
+	(*Telemetry)(nil),           // 4: kratos.api.Telemetry
+	(*Transport_HTTP)(nil),      // 5: kratos.api.Transport.HTTP
+	(*Transport_GRPC)(nil),      // 6: kratos.api.Transport.GRPC
+	(*Transport_RabbitMQ)(nil),  // 7: kratos.api.Transport.RabbitMQ
+	(*Data_MySQL)(nil),          // 8: kratos.api.Data.MySQL
+	(*Data_S3)(nil),             // 9: kratos.api.Data.S3
+	(*Telemetry_Tracing)(nil),   // 10: kratos.api.Telemetry.Tracing
+	(*Telemetry_Metrics)(nil),   // 11: kratos.api.Telemetry.Metrics
+	(*durationpb.Duration)(nil), // 12: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 0: kratos.api.Bootstrap.transport:type_name -> kratos.api.Transport
@@ -914,22 +831,21 @@ var file_conf_conf_proto_depIdxs = []int32{
 	5,  // 3: kratos.api.Transport.http:type_name -> kratos.api.Transport.HTTP
 	6,  // 4: kratos.api.Transport.grpc:type_name -> kratos.api.Transport.GRPC
 	7,  // 5: kratos.api.Transport.rabbitmq:type_name -> kratos.api.Transport.RabbitMQ
-	9,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
-	10, // 7: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
-	11, // 8: kratos.api.Telemetry.tracing:type_name -> kratos.api.Telemetry.Tracing
-	12, // 9: kratos.api.Telemetry.metrics:type_name -> kratos.api.Telemetry.Metrics
-	13, // 10: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
-	13, // 11: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
-	8,  // 12: kratos.api.Transport.RabbitMQ.queues:type_name -> kratos.api.Transport.RabbitMQ.Queues
-	13, // 13: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
-	0,  // 14: kratos.api.Telemetry.Tracing.protocol:type_name -> kratos.api.Telemetry.Protocol
-	0,  // 15: kratos.api.Telemetry.Metrics.protocol:type_name -> kratos.api.Telemetry.Protocol
-	13, // 16: kratos.api.Telemetry.Metrics.export_interval:type_name -> google.protobuf.Duration
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	8,  // 6: kratos.api.Data.mysql:type_name -> kratos.api.Data.MySQL
+	9,  // 7: kratos.api.Data.s3:type_name -> kratos.api.Data.S3
+	10, // 8: kratos.api.Telemetry.tracing:type_name -> kratos.api.Telemetry.Tracing
+	11, // 9: kratos.api.Telemetry.metrics:type_name -> kratos.api.Telemetry.Metrics
+	12, // 10: kratos.api.Transport.HTTP.timeout:type_name -> google.protobuf.Duration
+	12, // 11: kratos.api.Transport.GRPC.timeout:type_name -> google.protobuf.Duration
+	12, // 12: kratos.api.Data.MySQL.max_connection_lifetime:type_name -> google.protobuf.Duration
+	0,  // 13: kratos.api.Telemetry.Tracing.protocol:type_name -> kratos.api.Telemetry.Protocol
+	0,  // 14: kratos.api.Telemetry.Metrics.protocol:type_name -> kratos.api.Telemetry.Protocol
+	12, // 15: kratos.api.Telemetry.Metrics.export_interval:type_name -> google.protobuf.Duration
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -937,16 +853,16 @@ func file_conf_conf_proto_init() {
 	if File_conf_conf_proto != nil {
 		return
 	}
-	file_conf_conf_proto_msgTypes[8].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[7].OneofWrappers = []any{}
+	file_conf_conf_proto_msgTypes[9].OneofWrappers = []any{}
 	file_conf_conf_proto_msgTypes[10].OneofWrappers = []any{}
-	file_conf_conf_proto_msgTypes[11].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_conf_conf_proto_rawDesc), len(file_conf_conf_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

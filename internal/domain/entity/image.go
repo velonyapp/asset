@@ -237,6 +237,8 @@ func (a *Image) ConfirmUpload(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
+	a.recordEvent(event.NewImageConfirmed(a.id, a.tags, now))
+
 	return nil
 }
 

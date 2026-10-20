@@ -47,7 +47,7 @@ func (h *deleteImageHandler) Handle(
 	imageID, _ := vo.NewImageID(cmd.ImageID)
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		image, err := h.imageRepo.FindByID(ctx, imageID)
+		image, err := h.imageRepo.FindByIDForUpdate(ctx, imageID)
 		if err != nil {
 			return err
 		}
