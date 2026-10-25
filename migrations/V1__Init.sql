@@ -23,12 +23,16 @@ CREATE TABLE outbox_events (
     aggregate_type TEXT NOT NULL,
     tags           TEXT NOT NULL,
     payload        JSON NOT NULL,
-    occur_time     DATETIME(6) NOT NULL
+    occur_time     DATETIME(6) NOT NULL,
+
+    INDEX idx_outbox_events_occur_time (occur_time)
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_jobs (
     id           CHAR(36) PRIMARY KEY,
     type         TEXT NOT NULL,
     payload      JSON NOT NULL,
-    enqueue_time DATETIME(6) NOT NULL
+    enqueue_time DATETIME(6) NOT NULL,
+
+    INDEX idx_outbox_jobs_enqueue_time (enqueue_time)
 ) ENGINE = InnoDB;
