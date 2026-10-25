@@ -70,6 +70,10 @@ func (h *confirmImageHandler) Handle(
 		}
 
 		if err := image.CanConfirmUpload(); err != nil {
+			if errors.Is(err, entity.ErrImageAlreadyPending) {
+				return nil
+			}
+
 			return err
 		}
 

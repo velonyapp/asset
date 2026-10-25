@@ -2,10 +2,12 @@ package command
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
+	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
@@ -56,6 +58,10 @@ func (h *deleteImageHandler) Handle(
 		}
 
 		if err := image.Delete(now); err != nil {
+			if errors.Is(err, entity.ErrImageAlreadyDeleted) {
+				return nil
+			}
+
 			return err
 		}
 

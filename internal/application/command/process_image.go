@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"errors"
 	"io"
 	"time"
 
@@ -71,6 +72,10 @@ func (h *processImageHandler) Handle(
 		}
 
 		if err := image.StartProcessing(now); err != nil {
+			if errors.Is(err, entity.ErrImageAlreadyProcessing) || errors.Is(err, entity.ErrImageActive) {
+				return nil
+			}
+
 			return err
 		}
 
@@ -133,6 +138,10 @@ func (h *processImageHandler) Handle(
 		}
 
 		if err := image.CompleteProcessing(now); err != nil {
+			if errors.Is(err, entity.ErrImageAlreadyActive) {
+				return nil
+			}
+
 			return err
 		}
 
