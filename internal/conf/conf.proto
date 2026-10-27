@@ -47,6 +47,8 @@ message Transport {
     string password = 3 [
       (buf.validate.field).string.min_len = 1
     ];
+
+    google.protobuf.Duration timeout = 4;
   }
 
   HTTP http = 1 [
