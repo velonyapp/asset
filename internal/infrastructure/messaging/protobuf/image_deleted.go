@@ -7,6 +7,8 @@ import (
 
 func imageDeletedPayload(event integrationevent.ImageDeleted) *v1.ImageDeletedPayload {
 	return &v1.ImageDeletedPayload{
-		ImageId: event.AggregateID(),
+		ImageId:  event.AggregateID(),
+		Tags:     event.Tags(),
+		Metadata: event.Metadata(),
 	}
 }

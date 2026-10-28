@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 
 	"github.com/velonyapp/asset/internal/application/integrationevent"
 	"github.com/velonyapp/asset/internal/application/port"
@@ -35,10 +34,6 @@ func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.I
 		return err
 	}
 
-	tags, err := json.Marshal(event.Tags())
-	if err != nil {
-		return err
-	}
 	payload, err := protojson.Marshal(eventPayload)
 	if err != nil {
 		return err
@@ -50,11 +45,10 @@ func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.I
 			type,
 			aggregate_id,
 			aggregate_type,
-			tags,
 			payload,
 			occur_time
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?)
 	`
 
 	_, err = executor(ctx, pub.db).ExecContext(ctx, query,
@@ -62,7 +56,6 @@ func (pub *eventPublisher) Publish(ctx context.Context, event integrationevent.I
 		event.Type(),
 		event.AggregateID(),
 		event.AggregateType(),
-		string(tags),
 		string(payload),
 		event.OccurTime(),
 	)

@@ -5,6 +5,7 @@ import "time"
 type ImageResult struct {
 	ID         string
 	Tags       []string
+	Metadata   map[string]string
 	ObjectKey  string
 	State      string
 	Width      uint32

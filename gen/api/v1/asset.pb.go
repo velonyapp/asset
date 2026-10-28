@@ -139,14 +139,15 @@ type Image struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
-	ObjectKey     string                 `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
-	State         Image_State            `protobuf:"varint,4,opt,name=state,proto3,enum=velony.asset.api.v1.Image_State" json:"state,omitempty"`
-	Width         uint32                 `protobuf:"varint,5,opt,name=width,proto3" json:"width,omitempty"`
-	Height        uint32                 `protobuf:"varint,6,opt,name=height,proto3" json:"height,omitempty"`
-	Format        Image_Format           `protobuf:"varint,7,opt,name=format,proto3,enum=velony.asset.api.v1.Image_Format" json:"format,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UploadUrl     *string                `protobuf:"bytes,9,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
-	DownloadUrl   *string                `protobuf:"bytes,10,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
+	Metadata      map[string]string      `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ObjectKey     string                 `protobuf:"bytes,4,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
+	State         Image_State            `protobuf:"varint,5,opt,name=state,proto3,enum=velony.asset.api.v1.Image_State" json:"state,omitempty"`
+	Width         uint32                 `protobuf:"varint,6,opt,name=width,proto3" json:"width,omitempty"`
+	Height        uint32                 `protobuf:"varint,7,opt,name=height,proto3" json:"height,omitempty"`
+	Format        Image_Format           `protobuf:"varint,8,opt,name=format,proto3,enum=velony.asset.api.v1.Image_Format" json:"format,omitempty"`
+	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UploadUrl     *string                `protobuf:"bytes,10,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
+	DownloadUrl   *string                `protobuf:"bytes,11,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -191,6 +192,13 @@ func (x *Image) GetName() string {
 func (x *Image) GetTags() []string {
 	if x != nil {
 		return x.Tags
+	}
+	return nil
+}
+
+func (x *Image) GetMetadata() map[string]string {
+	if x != nil {
+		return x.Metadata
 	}
 	return nil
 }
@@ -475,22 +483,26 @@ var File_velony_asset_api_v1_asset_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\n" +
-	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xba\x05\n" +
+	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc5\x06\n" +
 	"\x05Image\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x1a\n" +
-	"\x04tags\x18\x02 \x03(\tB\x06\xe0A\x02\xe0A\x05R\x04tags\x12%\n" +
+	"\x04tags\x18\x02 \x03(\tB\x06\xe0A\x02\xe0A\x05R\x04tags\x12L\n" +
+	"\bmetadata\x18\x03 \x03(\v2(.velony.asset.api.v1.Image.MetadataEntryB\x06\xe0A\x01\xe0A\x05R\bmetadata\x12%\n" +
 	"\n" +
-	"object_key\x18\x03 \x01(\tB\x06\xe0A\x02\xe0A\x05R\tobjectKey\x12;\n" +
-	"\x05state\x18\x04 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12\x1c\n" +
-	"\x05width\x18\x05 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x05width\x12\x1e\n" +
-	"\x06height\x18\x06 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x06height\x12A\n" +
-	"\x06format\x18\a \x01(\x0e2!.velony.asset.api.v1.Image.FormatB\x06\xe0A\x02\xe0A\x05R\x06format\x12@\n" +
-	"\vcreate_time\x18\b \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
+	"object_key\x18\x04 \x01(\tB\x06\xe0A\x02\xe0A\x05R\tobjectKey\x12;\n" +
+	"\x05state\x18\x05 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12\x1c\n" +
+	"\x05width\x18\x06 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x05width\x12\x1e\n" +
+	"\x06height\x18\a \x01(\rB\x06\xe0A\x02\xe0A\x05R\x06height\x12A\n" +
+	"\x06format\x18\b \x01(\x0e2!.velony.asset.api.v1.Image.FormatB\x06\xe0A\x02\xe0A\x05R\x06format\x12@\n" +
+	"\vcreate_time\x18\t \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
 	"createTime\x12'\n" +
 	"\n" +
-	"upload_url\x18\t \x01(\tB\x03\xe0A\x03H\x00R\tuploadUrl\x88\x01\x01\x12+\n" +
-	"\fdownload_url\x18\n" +
-	" \x01(\tB\x03\xe0A\x03H\x01R\vdownloadUrl\x88\x01\x01\"\\\n" +
+	"upload_url\x18\n" +
+	" \x01(\tB\x03\xe0A\x03H\x00R\tuploadUrl\x88\x01\x01\x12+\n" +
+	"\fdownload_url\x18\v \x01(\tB\x03\xe0A\x03H\x01R\vdownloadUrl\x88\x01\x01\x1a;\n" +
+	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\\\n" +
 	"\x05State\x12\x15\n" +
 	"\x11STATE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fAWAITING_UPLOAD\x10\x01\x12\v\n" +
@@ -543,7 +555,7 @@ func file_velony_asset_api_v1_asset_proto_rawDescGZIP() []byte {
 }
 
 var file_velony_asset_api_v1_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_velony_asset_api_v1_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_velony_asset_api_v1_asset_proto_goTypes = []any{
 	(Image_State)(0),              // 0: velony.asset.api.v1.Image.State
 	(Image_Format)(0),             // 1: velony.asset.api.v1.Image.Format
@@ -553,29 +565,31 @@ var file_velony_asset_api_v1_asset_proto_goTypes = []any{
 	(*DeleteImageRequest)(nil),    // 5: velony.asset.api.v1.DeleteImageRequest
 	(*ConfirmImageRequest)(nil),   // 6: velony.asset.api.v1.ConfirmImageRequest
 	(*ProcessImageRequest)(nil),   // 7: velony.asset.api.v1.ProcessImageRequest
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 9: google.protobuf.Empty
+	nil,                           // 8: velony.asset.api.v1.Image.MetadataEntry
+	(*timestamppb.Timestamp)(nil), // 9: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 10: google.protobuf.Empty
 }
 var file_velony_asset_api_v1_asset_proto_depIdxs = []int32{
-	0, // 0: velony.asset.api.v1.Image.state:type_name -> velony.asset.api.v1.Image.State
-	1, // 1: velony.asset.api.v1.Image.format:type_name -> velony.asset.api.v1.Image.Format
-	8, // 2: velony.asset.api.v1.Image.create_time:type_name -> google.protobuf.Timestamp
-	2, // 3: velony.asset.api.v1.CreateImageRequest.image:type_name -> velony.asset.api.v1.Image
-	3, // 4: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
-	4, // 5: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
-	5, // 6: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
-	6, // 7: velony.asset.api.v1.AssetService.ConfirmImage:input_type -> velony.asset.api.v1.ConfirmImageRequest
-	7, // 8: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
-	2, // 9: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
-	2, // 10: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
-	9, // 11: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
-	2, // 12: velony.asset.api.v1.AssetService.ConfirmImage:output_type -> velony.asset.api.v1.Image
-	2, // 13: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.Image
-	9, // [9:14] is the sub-list for method output_type
-	4, // [4:9] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	8,  // 0: velony.asset.api.v1.Image.metadata:type_name -> velony.asset.api.v1.Image.MetadataEntry
+	0,  // 1: velony.asset.api.v1.Image.state:type_name -> velony.asset.api.v1.Image.State
+	1,  // 2: velony.asset.api.v1.Image.format:type_name -> velony.asset.api.v1.Image.Format
+	9,  // 3: velony.asset.api.v1.Image.create_time:type_name -> google.protobuf.Timestamp
+	2,  // 4: velony.asset.api.v1.CreateImageRequest.image:type_name -> velony.asset.api.v1.Image
+	3,  // 5: velony.asset.api.v1.AssetService.GetImage:input_type -> velony.asset.api.v1.GetImageRequest
+	4,  // 6: velony.asset.api.v1.AssetService.CreateImage:input_type -> velony.asset.api.v1.CreateImageRequest
+	5,  // 7: velony.asset.api.v1.AssetService.DeleteImage:input_type -> velony.asset.api.v1.DeleteImageRequest
+	6,  // 8: velony.asset.api.v1.AssetService.ConfirmImage:input_type -> velony.asset.api.v1.ConfirmImageRequest
+	7,  // 9: velony.asset.api.v1.AssetService.ProcessImage:input_type -> velony.asset.api.v1.ProcessImageRequest
+	2,  // 10: velony.asset.api.v1.AssetService.GetImage:output_type -> velony.asset.api.v1.Image
+	2,  // 11: velony.asset.api.v1.AssetService.CreateImage:output_type -> velony.asset.api.v1.Image
+	10, // 12: velony.asset.api.v1.AssetService.DeleteImage:output_type -> google.protobuf.Empty
+	2,  // 13: velony.asset.api.v1.AssetService.ConfirmImage:output_type -> velony.asset.api.v1.Image
+	2,  // 14: velony.asset.api.v1.AssetService.ProcessImage:output_type -> velony.asset.api.v1.Image
+	10, // [10:15] is the sub-list for method output_type
+	5,  // [5:10] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_api_v1_asset_proto_init() }
@@ -590,7 +604,7 @@ func file_velony_asset_api_v1_asset_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_api_v1_asset_proto_rawDesc), len(file_velony_asset_api_v1_asset_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -77,6 +77,12 @@ func NewErrorMapper() ErrorMapper {
 						domainvo.ErrTagInvalidCharacter.Error(),
 					)
 
+				// Metadata
+				case errors.Is(err, domainvo.ErrMetadataKeyEmpty):
+					return reply, kerrors.BadRequest("",
+						domainvo.ErrMetadataKeyEmpty.Error(),
+					)
+
 				// Image Width
 				case errors.Is(err, domainvo.ErrImageWidthNotPositive):
 					return reply, kerrors.BadRequest("",

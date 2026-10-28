@@ -86,37 +86,41 @@ message Image {
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
+  map<string, string> metadata = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
 
-  string object_key = 3 [
+  string object_key = 4 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
-  State state = 4 [
+  State state = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
-  uint32 width = 5 [
+  uint32 width = 6 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
-  uint32 height = 6 [
+  uint32 height = 7 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
-  Format format = 7 [
+  Format format = 8 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
-  google.protobuf.Timestamp create_time = 8 [
+  google.protobuf.Timestamp create_time = 9 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
-  optional string upload_url = 9 [
+  optional string upload_url = 10 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
-  optional string download_url = 10 [
+  optional string download_url = 11 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }

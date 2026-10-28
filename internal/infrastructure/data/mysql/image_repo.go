@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -39,6 +40,7 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 		SELECT
 			id,
 			tags,
+			metadata,
 			source_object_key,
 			object_key,
 			state,
@@ -74,6 +76,7 @@ func (r *imageRepo) FindByIDForUpdate(ctx context.Context, imageID vo.ImageID) (
 		SELECT
 			id,
 			tags,
+			metadata,
 			source_object_key,
 			object_key,
 			state,
@@ -110,6 +113,7 @@ func (r *imageRepo) FindByAnyObjectKeyForUpdate(ctx context.Context, objectKey v
 		SELECT
 			id,
 			tags,
+			metadata,
 			source_object_key,
 			object_key,
 			state,
@@ -147,6 +151,7 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	    INSERT INTO images (
 	        id,
 	        tags,
+	        metadata,
 	        source_object_key,
 	        object_key,
 	        state,
@@ -156,15 +161,21 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	        create_time,
 	        update_time
 	    )
-	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
+	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
 	    ON DUPLICATE KEY UPDATE
 	        state = new.state,
 	        update_time = new.update_time
 	`
 
+	metadata, err := json.Marshal(image.Metadata().Map())
+	if err != nil {
+		return err
+	}
+
 	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 		image.ID().String(),
 		strings.Join(image.Tags().Strings(), ";"),
+		string(metadata),
 		image.SourceObjectKey().String(),
 		image.ObjectKey().String(),
 		image.State().String(),
@@ -190,6 +201,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	var (
 		idRaw              string
 		tagsRaw            string
+		metadataRaw        []byte
 		sourceObjectKeyRaw string
 		objectKeyRaw       string
 		stateRaw           string
@@ -203,6 +215,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	if err := scanner.Scan(
 		&idRaw,
 		&tagsRaw,
+		&metadataRaw,
 		&sourceObjectKeyRaw,
 		&objectKeyRaw,
 		&stateRaw,
@@ -220,6 +233,14 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	if tagsRaw != "" {
 		tags, _ = vo.NewTags(strings.Split(tagsRaw, ";"))
 	}
+	var metadataValues map[string]string
+	if err := json.Unmarshal(metadataRaw, &metadataValues); err != nil {
+		return nil, err
+	}
+	metadata, err := vo.NewMetadata(metadataValues)
+	if err != nil {
+		return nil, err
+	}
 	sourceObjectKey, _ := vo.NewObjectKey(sourceObjectKeyRaw)
 	objectKey, _ := vo.NewObjectKey(objectKeyRaw)
 	state, _ := vo.NewImageState(stateRaw)
@@ -232,6 +253,7 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 	return entity.ReconstituteImage(
 		id,
 		tags,
+		metadata,
 		sourceObjectKey,
 		objectKey,
 		state,

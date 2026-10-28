@@ -25,8 +25,9 @@ func NewImageActiveHandler(
 func (h *ImageActiveHandler) Execute(ctx context.Context, domainEvent event.ImageActive) error {
 	integrationEvent := integrationevent.NewImageActive(
 		domainEvent.AggregateID(),
-		domainEvent.Tags().Strings(),
 		domainEvent.ActiveTime(),
+		domainEvent.Tags().Strings(),
+		domainEvent.Metadata().Map(),
 	)
 
 	return h.eventPublisher.Publish(ctx, integrationEvent)

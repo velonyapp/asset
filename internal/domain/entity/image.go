@@ -25,6 +25,7 @@ var (
 type Image struct {
 	id              vo.ImageID
 	tags            vo.Tags
+	metadata        vo.Metadata
 	sourceObjectKey vo.ObjectKey
 	objectKey       vo.ObjectKey
 	state           vo.ImageState
@@ -39,6 +40,7 @@ type Image struct {
 
 func NewImage(
 	tags vo.Tags,
+	metadata vo.Metadata,
 	sourceObjectKey vo.ObjectKey,
 	objectKey vo.ObjectKey,
 	width vo.ImageWidth,
@@ -56,6 +58,7 @@ func NewImage(
 	a := &Image{
 		id:              id,
 		tags:            tags,
+		metadata:        metadata,
 		sourceObjectKey: sourceObjectKey,
 		objectKey:       objectKey,
 		state:           state,
@@ -66,7 +69,7 @@ func NewImage(
 		updateTime:      now,
 	}
 
-	a.recordEvent(event.NewImageCreated(id, tags, objectKey, now))
+	a.recordEvent(event.NewImageCreated(id, tags, metadata, objectKey, now))
 
 	return a, nil
 }
@@ -74,6 +77,7 @@ func NewImage(
 func ReconstituteImage(
 	id vo.ImageID,
 	tags vo.Tags,
+	metadata vo.Metadata,
 	sourceObjectKey vo.ObjectKey,
 	objectKey vo.ObjectKey,
 	state vo.ImageState,
@@ -86,6 +90,7 @@ func ReconstituteImage(
 	return &Image{
 		id:              id,
 		tags:            tags,
+		metadata:        metadata,
 		sourceObjectKey: sourceObjectKey,
 		objectKey:       objectKey,
 		state:           state,
@@ -103,6 +108,10 @@ func (a *Image) ID() vo.ImageID {
 
 func (a *Image) Tags() vo.Tags {
 	return a.tags
+}
+
+func (a *Image) Metadata() vo.Metadata {
+	return a.metadata
 }
 
 func (a *Image) SourceObjectKey() vo.ObjectKey {
@@ -237,7 +246,7 @@ func (a *Image) ConfirmUpload(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
-	a.recordEvent(event.NewImageConfirmed(a.id, a.tags, now))
+	a.recordEvent(event.NewImageConfirmed(a.id, a.tags, a.metadata, now))
 
 	return nil
 }
@@ -278,7 +287,7 @@ func (a *Image) CompleteProcessing(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
-	a.recordEvent(event.NewImageActive(a.id, a.tags, now))
+	a.recordEvent(event.NewImageActive(a.id, a.tags, a.metadata, now))
 
 	return nil
 }
@@ -293,7 +302,7 @@ func (a *Image) Delete(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
-	a.recordEvent(event.NewImageDeleted(a.id, a.tags, now))
+	a.recordEvent(event.NewImageDeleted(a.id, a.tags, a.metadata, now))
 
 	return nil
 }

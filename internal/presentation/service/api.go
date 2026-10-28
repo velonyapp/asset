@@ -52,6 +52,7 @@ func (s *API) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image,
 	return &v1.Image{
 		Name:        formatImageName(result.Image.ID),
 		Tags:        result.Image.Tags,
+		Metadata:    result.Image.Metadata,
 		ObjectKey:   result.Image.ObjectKey,
 		State:       formatImageStateAPIV1(result.Image.State),
 		Width:       result.Image.Width,
@@ -66,6 +67,7 @@ func (s *API) GetImage(ctx context.Context, req *v1.GetImageRequest) (*v1.Image,
 func (s *API) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (*v1.Image, error) {
 	result, err := command.Send(ctx, s.commandBus, command.CreateImage{
 		Tags:      req.Image.Tags,
+		Metadata:  req.Image.Metadata,
 		ObjectKey: req.Image.ObjectKey,
 		Width:     int(req.Image.Width),
 		Height:    int(req.Image.Height),
@@ -78,6 +80,7 @@ func (s *API) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (*v1.
 	return &v1.Image{
 		Name:       formatImageName(result.Image.ID),
 		Tags:       result.Image.Tags,
+		Metadata:   result.Image.Metadata,
 		ObjectKey:  result.Image.ObjectKey,
 		State:      formatImageStateAPIV1(result.Image.State),
 		Width:      result.Image.Width,
@@ -104,6 +107,7 @@ func (s *API) ConfirmImage(ctx context.Context, req *v1.ConfirmImageRequest) (*v
 	return &v1.Image{
 		Name:       formatImageName(result.Image.ID),
 		Tags:       result.Image.Tags,
+		Metadata:   result.Image.Metadata,
 		ObjectKey:  result.Image.ObjectKey,
 		State:      formatImageStateAPIV1(result.Image.State),
 		Width:      result.Image.Width,
@@ -129,6 +133,7 @@ func (s *API) ProcessImage(ctx context.Context, req *v1.ProcessImageRequest) (*v
 	return &v1.Image{
 		Name:        formatImageName(result.Image.ID),
 		Tags:        result.Image.Tags,
+		Metadata:    result.Image.Metadata,
 		ObjectKey:   result.Image.ObjectKey,
 		State:       formatImageStateAPIV1(result.Image.State),
 		Width:       result.Image.Width,

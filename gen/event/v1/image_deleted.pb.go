@@ -25,6 +25,8 @@ const (
 type ImageDeletedPayload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
+	Metadata      map[string]string      `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -66,13 +68,32 @@ func (x *ImageDeletedPayload) GetImageId() string {
 	return ""
 }
 
+func (x *ImageDeletedPayload) GetTags() []string {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+func (x *ImageDeletedPayload) GetMetadata() map[string]string {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
 var File_velony_asset_event_v1_image_deleted_proto protoreflect.FileDescriptor
 
 const file_velony_asset_event_v1_image_deleted_proto_rawDesc = "" +
 	"\n" +
-	")velony/asset/event/v1/image_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"0\n" +
+	")velony/asset/event/v1/image_deleted.proto\x12\x15velony.asset.event.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x01\n" +
 	"\x13ImageDeletedPayload\x12\x19\n" +
-	"\bimage_id\x18\x01 \x01(\tR\aimageIdB1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
+	"\bimage_id\x18\x01 \x01(\tR\aimageId\x12\x12\n" +
+	"\x04tags\x18\x02 \x03(\tR\x04tags\x12T\n" +
+	"\bmetadata\x18\x03 \x03(\v28.velony.asset.event.v1.ImageDeletedPayload.MetadataEntryR\bmetadata\x1a;\n" +
+	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B1Z/github.com/velonyapp/asset/gen/event/v1;eventv1b\x06proto3"
 
 var (
 	file_velony_asset_event_v1_image_deleted_proto_rawDescOnce sync.Once
@@ -86,16 +107,18 @@ func file_velony_asset_event_v1_image_deleted_proto_rawDescGZIP() []byte {
 	return file_velony_asset_event_v1_image_deleted_proto_rawDescData
 }
 
-var file_velony_asset_event_v1_image_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_velony_asset_event_v1_image_deleted_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_velony_asset_event_v1_image_deleted_proto_goTypes = []any{
 	(*ImageDeletedPayload)(nil), // 0: velony.asset.event.v1.ImageDeletedPayload
+	nil,                         // 1: velony.asset.event.v1.ImageDeletedPayload.MetadataEntry
 }
 var file_velony_asset_event_v1_image_deleted_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: velony.asset.event.v1.ImageDeletedPayload.metadata:type_name -> velony.asset.event.v1.ImageDeletedPayload.MetadataEntry
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_velony_asset_event_v1_image_deleted_proto_init() }
@@ -109,7 +132,7 @@ func file_velony_asset_event_v1_image_deleted_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_velony_asset_event_v1_image_deleted_proto_rawDesc), len(file_velony_asset_event_v1_image_deleted_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

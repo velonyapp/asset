@@ -13,6 +13,7 @@ import (
 func TestImage_New_WhenObjectKeysEqual(t *testing.T) {
 	image, err := NewImage(
 		vo.Tags{},
+		vo.Metadata{},
 		vo.ObjectKey{},
 		vo.ObjectKey{},
 		vo.ImageWidth{},
@@ -122,6 +123,7 @@ func TestImage_Transitions(t *testing.T) {
 					image := ReconstituteImage(
 						vo.ImageID{},
 						vo.Tags{},
+						vo.Metadata{},
 						vo.ObjectKey{},
 						vo.ObjectKey{},
 						tc.state,
@@ -209,6 +211,7 @@ func TestImage_PullEvents(t *testing.T) {
 	image := ReconstituteImage(
 		vo.ImageID{},
 		vo.Tags{},
+		vo.Metadata{},
 		vo.ObjectKey{},
 		vo.ObjectKey{},
 		vo.ImageStatePending,
@@ -241,6 +244,7 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 	image := ReconstituteImage(
 		vo.ImageID{},
 		vo.Tags{},
+		vo.Metadata{},
 		vo.ObjectKey{},
 		vo.ObjectKey{},
 		vo.ImageStateAwaitingUpload,

@@ -1,6 +1,7 @@
 CREATE TABLE images (
     id                CHAR(36) PRIMARY KEY,
     tags              TEXT NOT NULL,
+    metadata          JSON NOT NULL,
     source_object_key VARCHAR(128) NOT NULL,
     object_key        VARCHAR(128) NOT NULL,
     state             VARCHAR(32) NOT NULL,
@@ -21,7 +22,6 @@ CREATE TABLE outbox_events (
     type           TEXT NOT NULL,
     aggregate_id   TEXT NOT NULL,
     aggregate_type TEXT NOT NULL,
-    tags           TEXT NOT NULL,
     payload        JSON NOT NULL,
     occur_time     DATETIME(6) NOT NULL,
 

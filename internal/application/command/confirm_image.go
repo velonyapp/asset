@@ -98,6 +98,7 @@ func (h *confirmImageHandler) Handle(
 		Image: common.ImageResult{
 			ID:         image.ID().String(),
 			Tags:       image.Tags().Strings(),
+			Metadata:   image.Metadata().Map(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
 			Width:      image.Width().UInt32(),

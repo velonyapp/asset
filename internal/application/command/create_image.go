@@ -20,6 +20,7 @@ var (
 
 type CreateImage struct {
 	Tags      []string
+	Metadata  map[string]string
 	ObjectKey string
 	Width     int
 	Height    int
@@ -68,6 +69,10 @@ func (h *createImageHandler) Handle(
 	now := time.Now().UTC()
 
 	tags, err := vo.NewTags(cmd.Tags)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+	metadata, err := vo.NewMetadata(cmd.Metadata)
 	if err != nil {
 		return CreateImageResult{}, err
 	}
@@ -129,6 +134,7 @@ func (h *createImageHandler) Handle(
 
 		image, err = entity.NewImage(
 			tags,
+			metadata,
 			sourceObjectKey,
 			objectKey,
 			width,
@@ -157,6 +163,7 @@ func (h *createImageHandler) Handle(
 		Image: common.ImageResult{
 			ID:         image.ID().String(),
 			Tags:       image.Tags().Strings(),
+			Metadata:   image.Metadata().Map(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
 			Width:      image.Width().UInt32(),

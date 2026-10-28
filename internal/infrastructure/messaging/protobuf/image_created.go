@@ -8,6 +8,8 @@ import (
 func imageCreatedPayload(event integrationevent.ImageCreated) *v1.ImageCreatedPayload {
 	return &v1.ImageCreatedPayload{
 		ImageId:   event.AggregateID(),
+		Tags:      event.Tags(),
+		Metadata:  event.Metadata(),
 		ObjectKey: event.ObjectKey(),
 	}
 }

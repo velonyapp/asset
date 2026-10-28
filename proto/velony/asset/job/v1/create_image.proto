@@ -14,11 +14,12 @@ message CreateImagePayload {
     AVIF = 4;
   }
 
-  repeated string tags = 1;
+  repeated string     tags     = 1;
+  map<string, string> metadata = 2;
 
-  string object_key = 2;
+  string object_key = 3;
 
-  uint32 width  = 3;
-  uint32 height = 4;
-  Format format = 5;
+  uint32 width  = 4;
+  uint32 height = 5;
+  Format format = 6;
 }

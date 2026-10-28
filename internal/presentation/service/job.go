@@ -22,6 +22,7 @@ func NewJob(
 func (s *Job) CreateImage(ctx context.Context, payload *v1.CreateImagePayload) error {
 	if _, err := command.Send(ctx, s.commandBus, command.CreateImage{
 		Tags:      payload.Tags,
+		Metadata:  payload.Metadata,
 		ObjectKey: payload.ObjectKey,
 		Width:     int(payload.Width),
 		Height:    int(payload.Height),

@@ -134,6 +134,10 @@ components:
                     type: array
                     items:
                         type: string
+                metadata:
+                    type: object
+                    additionalProperties:
+                        type: string
                 objectKey:
                     type: string
                 state:

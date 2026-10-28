@@ -12,6 +12,7 @@ type ImageCreated struct {
 	BaseDomainEvent
 
 	tags       vo.Tags
+	metadata   vo.Metadata
 	objectKey  vo.ObjectKey
 	createTime time.Time
 }
@@ -19,6 +20,7 @@ type ImageCreated struct {
 func NewImageCreated(
 	imageID vo.ImageID,
 	tags vo.Tags,
+	metadata vo.Metadata,
 	objectKey vo.ObjectKey,
 	createTime time.Time,
 ) ImageCreated {
@@ -26,6 +28,7 @@ func NewImageCreated(
 		BaseDomainEvent: NewBaseDomainEvent(imageID.String()),
 
 		tags:       tags,
+		metadata:   metadata,
 		objectKey:  objectKey,
 		createTime: createTime,
 	}
@@ -33,6 +36,10 @@ func NewImageCreated(
 
 func (e ImageCreated) Tags() vo.Tags {
 	return e.tags
+}
+
+func (e ImageCreated) Metadata() vo.Metadata {
+	return e.metadata
 }
 
 func (e ImageCreated) ObjectKey() vo.ObjectKey {
