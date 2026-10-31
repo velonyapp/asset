@@ -1,4 +1,4 @@
-name: Publish Image and Update GitOps
+name: CI/CD
 
 on:
   push:
@@ -47,7 +47,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout GitOps Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           repository: velonyapp/gitops
@@ -89,7 +89,7 @@ jobs:
           export IMAGE_REFERENCE="$IMAGE_NAME@$IMAGE_DIGEST"
           yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE_REFERENCE)' "$deployment_file"
 
-      - name: Commit and Push GitOps Update
+      - name: Commit and Push Update
         env:
           REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: |
