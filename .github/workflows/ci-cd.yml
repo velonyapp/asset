@@ -86,8 +86,10 @@ jobs:
               ;;
           esac
 
+          export CURRENT_IMAGE="$current_image"
           export IMAGE_REFERENCE="$IMAGE_NAME@$IMAGE_DIGEST"
-          yq -i '.spec.template.spec.containers[0].image = strenv(IMAGE_REFERENCE)' "$deployment_file"
+                  
+          perl -i -pe 's{^([ \t]*image:[ \t]*)\Q$ENV{CURRENT_IMAGE}\E(?=[ \t]*(?:#.*)?$)}{$1$ENV{IMAGE_REFERENCE}}' "$deployment_file"
 
       - name: Commit and Push Update
         env:
