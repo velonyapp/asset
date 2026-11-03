@@ -17,6 +17,7 @@ require (
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/google/wire v0.6.0
 	github.com/rabbitmq/rabbitmq-amqp-go-client v1.4.0
+	github.com/rs/cors v1.11.1
 	go.einride.tech/aip v0.86.3
 	go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-sdk-go-v2/otelaws v0.72.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0
