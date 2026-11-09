@@ -8,8 +8,8 @@ type ImageResult struct {
 	Metadata   map[string]string
 	ObjectKey  string
 	State      string
-	Width      uint32
-	Height     uint32
+	Width      int32
+	Height     int32
 	Format     string
 	CreateTime time.Time
 }

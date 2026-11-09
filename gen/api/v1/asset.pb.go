@@ -136,18 +136,30 @@ func (Image_Format) EnumDescriptor() ([]byte, []int) {
 }
 
 type Image struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Tags          []string               `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
-	Metadata      map[string]string      `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	ObjectKey     string                 `protobuf:"bytes,4,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
-	State         Image_State            `protobuf:"varint,5,opt,name=state,proto3,enum=velony.asset.api.v1.Image_State" json:"state,omitempty"`
-	Width         uint32                 `protobuf:"varint,6,opt,name=width,proto3" json:"width,omitempty"`
-	Height        uint32                 `protobuf:"varint,7,opt,name=height,proto3" json:"height,omitempty"`
-	Format        Image_Format           `protobuf:"varint,8,opt,name=format,proto3,enum=velony.asset.api.v1.Image_Format" json:"format,omitempty"`
-	CreateTime    *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UploadUrl     *string                `protobuf:"bytes,10,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
-	DownloadUrl   *string                `protobuf:"bytes,11,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The resource name of the image.
+	// Format: images/{image}
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The tags associated with the image.
+	Tags []string `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
+	// The metadata associated with the image.
+	Metadata map[string]string `protobuf:"bytes,3,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// The object key used to store the image.
+	ObjectKey string `protobuf:"bytes,4,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
+	// The current state of the image.
+	State Image_State `protobuf:"varint,5,opt,name=state,proto3,enum=velony.asset.api.v1.Image_State" json:"state,omitempty"`
+	// The width of the image in pixels.
+	WidthPx int32 `protobuf:"varint,6,opt,name=width_px,json=widthPx,proto3" json:"width_px,omitempty"`
+	// The height of the image in pixels.
+	HeightPx int32 `protobuf:"varint,7,opt,name=height_px,json=heightPx,proto3" json:"height_px,omitempty"`
+	// The format of the image.
+	Format Image_Format `protobuf:"varint,8,opt,name=format,proto3,enum=velony.asset.api.v1.Image_Format" json:"format,omitempty"`
+	// The time when the image was created.
+	CreateTime *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	// The URL to upload the image, if available.
+	UploadUrl *string `protobuf:"bytes,10,opt,name=upload_url,json=uploadUrl,proto3,oneof" json:"upload_url,omitempty"`
+	// The URL to download the image, if available.
+	DownloadUrl   *string `protobuf:"bytes,11,opt,name=download_url,json=downloadUrl,proto3,oneof" json:"download_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -217,16 +229,16 @@ func (x *Image) GetState() Image_State {
 	return Image_STATE_UNSPECIFIED
 }
 
-func (x *Image) GetWidth() uint32 {
+func (x *Image) GetWidthPx() int32 {
 	if x != nil {
-		return x.Width
+		return x.WidthPx
 	}
 	return 0
 }
 
-func (x *Image) GetHeight() uint32 {
+func (x *Image) GetHeightPx() int32 {
 	if x != nil {
-		return x.Height
+		return x.HeightPx
 	}
 	return 0
 }
@@ -260,8 +272,10 @@ func (x *Image) GetDownloadUrl() string {
 }
 
 type GetImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the image to retrieve.
+	// Format: images/{image}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -304,8 +318,9 @@ func (x *GetImageRequest) GetName() string {
 }
 
 type CreateImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Image         *Image                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The image to create.
+	Image         *Image `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -348,8 +363,10 @@ func (x *CreateImageRequest) GetImage() *Image {
 }
 
 type DeleteImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the image to delete.
+	// Format: images/{image}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -392,8 +409,10 @@ func (x *DeleteImageRequest) GetName() string {
 }
 
 type ConfirmImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the image to confirm.
+	// Format: images/{image}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -436,8 +455,10 @@ func (x *ConfirmImageRequest) GetName() string {
 }
 
 type ProcessImageRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the image to process.
+	// Format: images/{image}
+	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -483,16 +504,16 @@ var File_velony_asset_api_v1_asset_proto protoreflect.FileDescriptor
 
 const file_velony_asset_api_v1_asset_proto_rawDesc = "" +
 	"\n" +
-	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc5\x06\n" +
+	"\x1fvelony/asset/api/v1/asset.proto\x12\x13velony.asset.api.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17google/api/client.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x19google/api/resource.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcf\x06\n" +
 	"\x05Image\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tB\x03\xe0A\bR\x04name\x12\x1a\n" +
 	"\x04tags\x18\x02 \x03(\tB\x06\xe0A\x02\xe0A\x05R\x04tags\x12L\n" +
 	"\bmetadata\x18\x03 \x03(\v2(.velony.asset.api.v1.Image.MetadataEntryB\x06\xe0A\x01\xe0A\x05R\bmetadata\x12%\n" +
 	"\n" +
 	"object_key\x18\x04 \x01(\tB\x06\xe0A\x02\xe0A\x05R\tobjectKey\x12;\n" +
-	"\x05state\x18\x05 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12\x1c\n" +
-	"\x05width\x18\x06 \x01(\rB\x06\xe0A\x02\xe0A\x05R\x05width\x12\x1e\n" +
-	"\x06height\x18\a \x01(\rB\x06\xe0A\x02\xe0A\x05R\x06height\x12A\n" +
+	"\x05state\x18\x05 \x01(\x0e2 .velony.asset.api.v1.Image.StateB\x03\xe0A\x03R\x05state\x12!\n" +
+	"\bwidth_px\x18\x06 \x01(\x05B\x06\xe0A\x02\xe0A\x05R\awidthPx\x12#\n" +
+	"\theight_px\x18\a \x01(\x05B\x06\xe0A\x02\xe0A\x05R\bheightPx\x12A\n" +
 	"\x06format\x18\b \x01(\x0e2!.velony.asset.api.v1.Image.FormatB\x06\xe0A\x02\xe0A\x05R\x06format\x12@\n" +
 	"\vcreate_time\x18\t \x01(\v2\x1a.google.protobuf.TimestampB\x03\xe0A\x03R\n" +
 	"createTime\x12'\n" +

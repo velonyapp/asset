@@ -4,6 +4,7 @@
 openapi: 3.0.3
 info:
     title: AssetService API
+    description: The Asset Service provides APIs for managing images.
     version: 0.0.1
 servers:
     - url: https://api.velony.app
@@ -119,50 +120,66 @@ components:
             properties:
                 name:
                     type: string
+                    description: |-
+                        The name of the image to confirm.
+                         Format: images/{image}
         velony.asset.api.v1.Image:
             required:
                 - tags
                 - objectKey
-                - width
-                - height
+                - widthPx
+                - heightPx
                 - format
             type: object
             properties:
                 name:
                     type: string
+                    description: |-
+                        The resource name of the image.
+                         Format: images/{image}
                 tags:
                     type: array
                     items:
                         type: string
+                    description: The tags associated with the image.
                 metadata:
                     type: object
                     additionalProperties:
                         type: string
+                    description: The metadata associated with the image.
                 objectKey:
                     type: string
+                    description: The object key used to store the image.
                 state:
                     readOnly: true
                     type: integer
+                    description: The current state of the image.
                     format: enum
-                width:
+                widthPx:
                     type: integer
-                    format: uint32
-                height:
+                    description: The width of the image in pixels.
+                    format: int32
+                heightPx:
                     type: integer
-                    format: uint32
+                    description: The height of the image in pixels.
+                    format: int32
                 format:
                     type: integer
+                    description: The format of the image.
                     format: enum
                 createTime:
                     readOnly: true
                     type: string
+                    description: The time when the image was created.
                     format: date-time
                 uploadUrl:
                     readOnly: true
                     type: string
+                    description: The URL to upload the image, if available.
                 downloadUrl:
                     readOnly: true
                     type: string
+                    description: The URL to download the image, if available.
         velony.asset.api.v1.ProcessImageRequest:
             required:
                 - name
@@ -170,5 +187,8 @@ components:
             properties:
                 name:
                     type: string
+                    description: |-
+                        The name of the image to process.
+                         Format: images/{image}
 tags:
     - name: AssetService

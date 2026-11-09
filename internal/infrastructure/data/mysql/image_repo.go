@@ -179,8 +179,8 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 		image.SourceObjectKey().String(),
 		image.ObjectKey().String(),
 		image.State().String(),
-		image.Width().Int(),
-		image.Height().Int(),
+		image.Width().Int32(),
+		image.Height().Int32(),
 		image.Format().String(),
 		image.CreateTime(),
 		image.UpdateTime(),
@@ -205,8 +205,8 @@ func scanImage(scanner imageScanner) (*entity.Image, error) {
 		sourceObjectKeyRaw string
 		objectKeyRaw       string
 		stateRaw           string
-		widthRaw           int
-		heightRaw          int
+		widthRaw           int32
+		heightRaw          int32
 		formatRaw          string
 		createTimeRaw      time.Time
 		updateTimeRaw      time.Time

@@ -12,6 +12,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
+// The Asset Service provides APIs for managing images.
 service AssetService {
   option (google.api.default_host) = "api.velony.app";
 
@@ -78,54 +79,72 @@ message Image {
     plural  : "images"
   };
 
+  // The resource name of the image.
+  // Format: images/{image}
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
 
+  // The tags associated with the image.
   repeated string tags = 2 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
+
+  // The metadata associated with the image.
   map<string, string> metadata = 3 [
     (google.api.field_behavior) = OPTIONAL,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
+  // The object key used to store the image.
   string object_key = 4 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
+  // The current state of the image.
   State state = 5 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
-  uint32 width = 6 [
+  // The width of the image in pixels.
+  int32 width_px = 6 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
-  uint32 height = 7 [
+
+  // The height of the image in pixels.
+  int32 height_px = 7 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
+
+  // The format of the image.
   Format format = 8 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.field_behavior) = IMMUTABLE
   ];
 
+  // The time when the image was created.
   google.protobuf.Timestamp create_time = 9 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 
+  // The URL to upload the image, if available.
   optional string upload_url = 10 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
+
+  // The URL to download the image, if available.
   optional string download_url = 11 [
     (google.api.field_behavior) = OUTPUT_ONLY
   ];
 }
 
 message GetImageRequest {
+  // The name of the image to retrieve.
+  // Format: images/{image}
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -135,12 +154,15 @@ message GetImageRequest {
 }
 
 message CreateImageRequest {
+  // The image to create.
   Image image = 1 [
     (google.api.field_behavior) = REQUIRED
   ];
 }
 
 message DeleteImageRequest {
+  // The name of the image to delete.
+  // Format: images/{image}
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -150,6 +172,8 @@ message DeleteImageRequest {
 }
 
 message ConfirmImageRequest {
+  // The name of the image to confirm.
+  // Format: images/{image}
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -159,6 +183,8 @@ message ConfirmImageRequest {
 }
 
 message ProcessImageRequest {
+  // The name of the image to process.
+  // Format: images/{image}
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

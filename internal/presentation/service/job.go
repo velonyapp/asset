@@ -24,8 +24,8 @@ func (s *Job) CreateImage(ctx context.Context, payload *v1.CreateImagePayload) e
 		Tags:      payload.Tags,
 		Metadata:  payload.Metadata,
 		ObjectKey: payload.ObjectKey,
-		Width:     int(payload.Width),
-		Height:    int(payload.Height),
+		Width:     payload.WidthPx,
+		Height:    payload.HeightPx,
 		Format:    parseCreateImageFormatJobV1(payload.Format),
 	}); err != nil {
 		return err

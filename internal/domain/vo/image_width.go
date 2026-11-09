@@ -7,10 +7,10 @@ var (
 )
 
 type ImageWidth struct {
-	value int
+	value int32
 }
 
-func NewImageWidth(value int) (ImageWidth, error) {
+func NewImageWidth(value int32) (ImageWidth, error) {
 	if value <= 0 {
 		return ImageWidth{}, ErrImageWidthNotPositive
 	}
@@ -21,11 +21,11 @@ func NewImageWidth(value int) (ImageWidth, error) {
 }
 
 func (w ImageWidth) Int() int {
-	return w.value
+	return int(w.value)
 }
 
-func (w ImageWidth) UInt32() uint32 {
-	return uint32(w.value)
+func (w ImageWidth) Int32() int32 {
+	return w.value
 }
 
 func (w ImageWidth) Equal(other ImageWidth) bool {

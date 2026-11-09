@@ -22,8 +22,8 @@ type CreateImage struct {
 	Tags      []string
 	Metadata  map[string]string
 	ObjectKey string
-	Width     int
-	Height    int
+	Width     int32
+	Height    int32
 	Format    string
 }
 
@@ -166,8 +166,8 @@ func (h *createImageHandler) Handle(
 			Metadata:   image.Metadata().Map(),
 			ObjectKey:  image.ObjectKey().String(),
 			State:      image.State().String(),
-			Width:      image.Width().UInt32(),
-			Height:     image.Height().UInt32(),
+			Width:      image.Width().Int32(),
+			Height:     image.Height().Int32(),
 			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
 		},

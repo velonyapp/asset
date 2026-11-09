@@ -7,10 +7,10 @@ var (
 )
 
 type ImageHeight struct {
-	value int
+	value int32
 }
 
-func NewImageHeight(value int) (ImageHeight, error) {
+func NewImageHeight(value int32) (ImageHeight, error) {
 	if value <= 0 {
 		return ImageHeight{}, ErrImageHeightNotPositive
 	}
@@ -21,11 +21,11 @@ func NewImageHeight(value int) (ImageHeight, error) {
 }
 
 func (h ImageHeight) Int() int {
-	return h.value
+	return int(h.value)
 }
 
-func (h ImageHeight) UInt32() uint32 {
-	return uint32(h.value)
+func (h ImageHeight) Int32() int32 {
+	return h.value
 }
 
 func (h ImageHeight) Equal(other ImageHeight) bool {

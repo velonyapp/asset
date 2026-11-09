@@ -19,7 +19,7 @@ message CreateImagePayload {
 
   string object_key = 3;
 
-  uint32 width  = 4;
-  uint32 height = 5;
-  Format format = 6;
+  int32  width_px  = 4;
+  int32  height_px = 5;
+  Format format    = 6;
 }

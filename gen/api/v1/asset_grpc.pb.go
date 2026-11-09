@@ -30,6 +30,8 @@ const (
 // AssetServiceClient is the client API for AssetService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// The Asset Service provides APIs for managing images.
 type AssetServiceClient interface {
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*Image, error)
@@ -99,6 +101,8 @@ func (c *assetServiceClient) ProcessImage(ctx context.Context, in *ProcessImageR
 // AssetServiceServer is the server API for AssetService service.
 // All implementations must embed UnimplementedAssetServiceServer
 // for forward compatibility.
+//
+// The Asset Service provides APIs for managing images.
 type AssetServiceServer interface {
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)

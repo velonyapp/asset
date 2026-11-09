@@ -81,8 +81,8 @@ type CreateImagePayload struct {
 	Tags          []string                  `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
 	Metadata      map[string]string         `protobuf:"bytes,2,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	ObjectKey     string                    `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3" json:"object_key,omitempty"`
-	Width         uint32                    `protobuf:"varint,4,opt,name=width,proto3" json:"width,omitempty"`
-	Height        uint32                    `protobuf:"varint,5,opt,name=height,proto3" json:"height,omitempty"`
+	WidthPx       int32                     `protobuf:"varint,4,opt,name=width_px,json=widthPx,proto3" json:"width_px,omitempty"`
+	HeightPx      int32                     `protobuf:"varint,5,opt,name=height_px,json=heightPx,proto3" json:"height_px,omitempty"`
 	Format        CreateImagePayload_Format `protobuf:"varint,6,opt,name=format,proto3,enum=velony.asset.job.v1.CreateImagePayload_Format" json:"format,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -139,16 +139,16 @@ func (x *CreateImagePayload) GetObjectKey() string {
 	return ""
 }
 
-func (x *CreateImagePayload) GetWidth() uint32 {
+func (x *CreateImagePayload) GetWidthPx() int32 {
 	if x != nil {
-		return x.Width
+		return x.WidthPx
 	}
 	return 0
 }
 
-func (x *CreateImagePayload) GetHeight() uint32 {
+func (x *CreateImagePayload) GetHeightPx() int32 {
 	if x != nil {
-		return x.Height
+		return x.HeightPx
 	}
 	return 0
 }
@@ -164,14 +164,14 @@ var File_velony_asset_job_v1_create_image_proto protoreflect.FileDescriptor
 
 const file_velony_asset_job_v1_create_image_proto_rawDesc = "" +
 	"\n" +
-	"&velony/asset/job/v1/create_image.proto\x12\x13velony.asset.job.v1\"\x96\x03\n" +
+	"&velony/asset/job/v1/create_image.proto\x12\x13velony.asset.job.v1\"\xa0\x03\n" +
 	"\x12CreateImagePayload\x12\x12\n" +
 	"\x04tags\x18\x01 \x03(\tR\x04tags\x12Q\n" +
 	"\bmetadata\x18\x02 \x03(\v25.velony.asset.job.v1.CreateImagePayload.MetadataEntryR\bmetadata\x12\x1d\n" +
 	"\n" +
-	"object_key\x18\x03 \x01(\tR\tobjectKey\x12\x14\n" +
-	"\x05width\x18\x04 \x01(\rR\x05width\x12\x16\n" +
-	"\x06height\x18\x05 \x01(\rR\x06height\x12F\n" +
+	"object_key\x18\x03 \x01(\tR\tobjectKey\x12\x19\n" +
+	"\bwidth_px\x18\x04 \x01(\x05R\awidthPx\x12\x1b\n" +
+	"\theight_px\x18\x05 \x01(\x05R\bheightPx\x12F\n" +
 	"\x06format\x18\x06 \x01(\x0e2..velony.asset.job.v1.CreateImagePayload.FormatR\x06format\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
