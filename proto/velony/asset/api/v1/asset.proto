@@ -80,7 +80,8 @@ message Image {
   };
 
   // The resource name of the image.
-  // Format: images/{image}
+  //
+  // Format: `images/{image}`
   string name = 1 [
     (google.api.field_behavior) = IDENTIFIER
   ];
@@ -144,7 +145,8 @@ message Image {
 
 message GetImageRequest {
   // The name of the image to retrieve.
-  // Format: images/{image}
+  //
+  // Format: `images/{image}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -162,7 +164,8 @@ message CreateImageRequest {
 
 message DeleteImageRequest {
   // The name of the image to delete.
-  // Format: images/{image}
+  //
+  // Format: `images/{image}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -173,7 +176,8 @@ message DeleteImageRequest {
 
 message ConfirmImageRequest {
   // The name of the image to confirm.
-  // Format: images/{image}
+  //
+  // Format: `images/{image}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -184,7 +188,8 @@ message ConfirmImageRequest {
 
 message ProcessImageRequest {
   // The name of the image to process.
-  // Format: images/{image}
+  //
+  // Format: `images/{image}`
   string name = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {

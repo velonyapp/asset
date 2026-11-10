@@ -138,7 +138,8 @@ func (Image_Format) EnumDescriptor() ([]byte, []int) {
 type Image struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The resource name of the image.
-	// Format: images/{image}
+	//
+	// Format: `images/{image}`
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// The tags associated with the image.
 	Tags []string `protobuf:"bytes,2,rep,name=tags,proto3" json:"tags,omitempty"`
@@ -274,7 +275,8 @@ func (x *Image) GetDownloadUrl() string {
 type GetImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the image to retrieve.
-	// Format: images/{image}
+	//
+	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -365,7 +367,8 @@ func (x *CreateImageRequest) GetImage() *Image {
 type DeleteImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the image to delete.
-	// Format: images/{image}
+	//
+	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -411,7 +414,8 @@ func (x *DeleteImageRequest) GetName() string {
 type ConfirmImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the image to confirm.
-	// Format: images/{image}
+	//
+	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -457,7 +461,8 @@ func (x *ConfirmImageRequest) GetName() string {
 type ProcessImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the image to process.
-	// Format: images/{image}
+	//
+	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
