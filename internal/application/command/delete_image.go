@@ -28,15 +28,18 @@ type DeleteImageHandler Handler[DeleteImage, DeleteImageResult]
 type deleteImageHandler struct {
 	imageRepo  repo.Image
 	unitOfWork port.UnitOfWork
+	storage    port.Storage
 }
 
 func NewDeleteImageHandler(
 	imageRepo repo.Image,
 	unitOfWork port.UnitOfWork,
+	storage port.Storage,
 ) DeleteImageHandler {
 	return &deleteImageHandler{
 		imageRepo:  imageRepo,
 		unitOfWork: unitOfWork,
+		storage:    storage,
 	}
 }
 
@@ -57,11 +60,22 @@ func (h *deleteImageHandler) Handle(
 			return common.ErrImageNotFound
 		}
 
-		if err := image.Delete(now); err != nil {
+		if err := image.CanDelete(); err != nil {
 			if errors.Is(err, entity.ErrImageAlreadyDeleted) {
 				return nil
 			}
 
+			return err
+		}
+
+		if err := h.storage.DeleteMany(ctx, []vo.ObjectKey{
+			image.SourceObjectKey(),
+			image.ObjectKey(),
+		}); err != nil {
+			return err
+		}
+
+		if err := image.Delete(now); err != nil {
 			return err
 		}
 

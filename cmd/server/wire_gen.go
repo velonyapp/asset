@@ -57,7 +57,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	confirmImageHandler := command.NewConfirmImageHandler(image, unitOfWork, storage)
 	imageProcessor := processing.NewImageProcessor()
 	processImageHandler := command.NewProcessImageHandler(image, unitOfWork, storage, imageProcessor)
-	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork)
+	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork, storage)
 	bus := command.NewBus(createImageHandler, confirmImageHandler, processImageHandler, deleteImageHandler)
 	getImageHandler := query.NewGetImageHandler(image, storage)
 	queryBus := query.NewBus(getImageHandler)
