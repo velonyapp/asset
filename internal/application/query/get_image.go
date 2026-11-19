@@ -5,7 +5,6 @@ import (
 
 	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
-	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
@@ -26,17 +25,17 @@ func (GetImage) resultType() GetImageResult {
 type GetImageHandler Handler[GetImage, GetImageResult]
 
 type getImageHandler struct {
-	imageRepo repo.Image
-	storage   port.Storage
+	imageQuery Image
+	storage    port.Storage
 }
 
 func NewGetImageHandler(
-	imageRepo repo.Image,
+	imageQuery Image,
 	storage port.Storage,
 ) GetImageHandler {
 	return &getImageHandler{
-		imageRepo: imageRepo,
-		storage:   storage,
+		imageQuery: imageQuery,
+		storage:    storage,
 	}
 }
 
@@ -46,7 +45,7 @@ func (h *getImageHandler) Handle(
 ) (GetImageResult, error) {
 	imageID, _ := vo.NewImageID(qry.ImageID)
 
-	image, err := h.imageRepo.FindByID(ctx, imageID)
+	image, err := h.imageQuery.Find(ctx, imageID)
 	if err != nil {
 		return GetImageResult{}, err
 	}
@@ -56,9 +55,11 @@ func (h *getImageHandler) Handle(
 
 	var uploadURL, downloadURL *string
 
-	if image.IsAwaitingUpload() {
+	if image.State == vo.ImageStateAwaitingUpload.String() {
+		sourceObjectKey, _ := vo.NewObjectKey(image.SourceObjectKey)
+
 		url, err := h.storage.PresignPut(ctx,
-			image.SourceObjectKey(),
+			sourceObjectKey,
 			common.PresignTTL,
 		)
 		if err != nil {
@@ -67,9 +68,11 @@ func (h *getImageHandler) Handle(
 
 		uploadURL = &url
 	}
-	if image.IsActive() {
+	if image.State == vo.ImageStateActive.String() {
+		objectKey, _ := vo.NewObjectKey(image.ObjectKey)
+
 		url, err := h.storage.PresignGet(ctx,
-			image.ObjectKey(),
+			objectKey,
 			common.PresignTTL,
 		)
 		if err != nil {
@@ -80,17 +83,7 @@ func (h *getImageHandler) Handle(
 	}
 
 	return GetImageResult{
-		Image: common.ImageResult{
-			ID:         image.ID().String(),
-			Tags:       image.Tags().Strings(),
-			Metadata:   image.Metadata().Map(),
-			ObjectKey:  image.ObjectKey().String(),
-			State:      image.State().String(),
-			Width:      image.Width().Int32(),
-			Height:     image.Height().Int32(),
-			Format:     image.Format().String(),
-			CreateTime: image.CreateTime(),
-		},
+		Image:       *image,
 		UploadURL:   uploadURL,
 		DownloadURL: downloadURL,
 	}, nil

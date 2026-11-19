@@ -9,8 +9,7 @@ import (
 
 type Image interface {
 	FindByID(ctx context.Context, imageID vo.ImageID) (*entity.Image, error)
-	FindByIDForUpdate(ctx context.Context, imageID vo.ImageID) (*entity.Image, error)
-	FindByAnyObjectKeyForUpdate(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error)
+	FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error)
 
 	Save(ctx context.Context, image *entity.Image) error
 }

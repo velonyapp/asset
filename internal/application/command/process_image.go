@@ -63,7 +63,7 @@ func (h *processImageHandler) Handle(
 
 		var err error
 
-		image, err = h.imageRepo.FindByIDForUpdate(ctx, imageID)
+		image, err = h.imageRepo.FindByID(ctx, imageID)
 		if err != nil {
 			return err
 		}
@@ -129,7 +129,7 @@ func (h *processImageHandler) Handle(
 
 		var err error
 
-		image, err = h.imageRepo.FindByIDForUpdate(ctx, imageID)
+		image, err = h.imageRepo.FindByID(ctx, imageID)
 		if err != nil {
 			return err
 		}
@@ -184,7 +184,7 @@ func (h *processImageHandler) tryRollback(ctx context.Context, imageID vo.ImageI
 	return h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
 		now := time.Now()
 
-		image, err := h.imageRepo.FindByIDForUpdate(ctx, imageID)
+		image, err := h.imageRepo.FindByID(ctx, imageID)
 		if err != nil {
 			return err
 		}
