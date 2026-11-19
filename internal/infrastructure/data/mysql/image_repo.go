@@ -147,45 +147,58 @@ func (r *imageRepo) FindByAnyObjectKeyForUpdate(ctx context.Context, objectKey v
 }
 
 func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
-	const query = `
-	    INSERT INTO images (
-	        id,
-	        tags,
-	        metadata,
-	        source_object_key,
-	        object_key,
-	        state,
-			width,
-			height,
-			format,
-	        create_time,
-	        update_time
-	    )
-	    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
-	    ON DUPLICATE KEY UPDATE
-	        state = new.state,
-	        update_time = new.update_time
-	`
+	if image.IsDeleted() {
+		const query = `
+			DELETE FROM images
+			WHERE id = ?
+		`
 
-	metadata, err := json.Marshal(image.Metadata().Map())
-	if err != nil {
-		return err
-	}
+		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
+			image.ID().String(),
+		); err != nil {
+			return err
+		}
+	} else {
+		const query = `
+		    INSERT INTO images (
+		        id,
+		        tags,
+		        metadata,
+		        source_object_key,
+		        object_key,
+		        state,
+				width,
+				height,
+				format,
+		        create_time,
+		        update_time
+		    )
+		    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
+		    ON DUPLICATE KEY UPDATE
+		        state = new.state,
+		        update_time = new.update_time
+		`
 
-	if _, err := executor(ctx, r.db).ExecContext(ctx, query,
-		image.ID().String(),
-		strings.Join(image.Tags().Strings(), ";"),
-		string(metadata),
-		image.SourceObjectKey().String(),
-		image.ObjectKey().String(),
-		image.State().String(),
-		image.Width().Int32(),
-		image.Height().Int32(),
-		image.Format().String(),
-		image.CreateTime(),
-		image.UpdateTime(),
-	); err != nil {
-		return err
+		metadata, err := json.Marshal(image.Metadata().Map())
+		if err != nil {
+			return err
+		}
+
+		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
+			image.ID().String(),
+			strings.Join(image.Tags().Strings(), ";"),
+			string(metadata),
+			image.SourceObjectKey().String(),
+			image.ObjectKey().String(),
+			image.State().String(),
+			image.Width().Int32(),
+			image.Height().Int32(),
+			image.Format().String(),
+			image.CreateTime(),
+			image.UpdateTime(),
+		); err != nil {
+			return err
+		}
 	}
 
 	for _, domainEvent := range image.PullEvents() {
