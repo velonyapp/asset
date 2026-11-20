@@ -46,7 +46,6 @@ func (q *imageQuery) Find(ctx context.Context, imageID vo.ImageID) (*common.Imag
 			create_time
 		FROM images
 		WHERE id = ?
-			AND state <> 'DELETED'
 		LIMIT 1
 	`
 
