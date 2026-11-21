@@ -31,12 +31,17 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// The Asset Service provides APIs for managing images.
+// Provides image management and processing operations.
 type AssetServiceClient interface {
+	// Retrieves an image by resource name.
 	GetImage(ctx context.Context, in *GetImageRequest, opts ...grpc.CallOption) (*Image, error)
+	// Creates a new image.
 	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*Image, error)
+	// Deletes an image.
 	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Confirms an image after a successful upload.
 	ConfirmImage(ctx context.Context, in *ConfirmImageRequest, opts ...grpc.CallOption) (*Image, error)
+	// Processes an image.
 	ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...grpc.CallOption) (*Image, error)
 }
 
@@ -102,12 +107,17 @@ func (c *assetServiceClient) ProcessImage(ctx context.Context, in *ProcessImageR
 // All implementations must embed UnimplementedAssetServiceServer
 // for forward compatibility.
 //
-// The Asset Service provides APIs for managing images.
+// Provides image management and processing operations.
 type AssetServiceServer interface {
+	// Retrieves an image by resource name.
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
+	// Creates a new image.
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
+	// Deletes an image.
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
+	// Confirms an image after a successful upload.
 	ConfirmImage(context.Context, *ConfirmImageRequest) (*Image, error)
+	// Processes an image.
 	ProcessImage(context.Context, *ProcessImageRequest) (*Image, error)
 	mustEmbedUnimplementedAssetServiceServer()
 }

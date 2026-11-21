@@ -25,14 +25,20 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// The processing state of an image.
 type Image_State int32
 
 const (
+	// The image state is unspecified.
 	Image_STATE_UNSPECIFIED Image_State = 0
-	Image_AWAITING_UPLOAD   Image_State = 1
-	Image_PENDING           Image_State = 2
-	Image_PROCESSING        Image_State = 3
-	Image_ACTIVE            Image_State = 4
+	// The image is awaiting an upload.
+	Image_AWAITING_UPLOAD Image_State = 1
+	// The image is awaiting processing.
+	Image_PENDING Image_State = 2
+	// The image is being processed.
+	Image_PROCESSING Image_State = 3
+	// The image is active.
+	Image_ACTIVE Image_State = 4
 )
 
 // Enum value maps for Image_State.
@@ -80,14 +86,20 @@ func (Image_State) EnumDescriptor() ([]byte, []int) {
 	return file_velony_asset_api_v1_asset_proto_rawDescGZIP(), []int{0, 0}
 }
 
+// The encoding format of an image.
 type Image_Format int32
 
 const (
+	// The image format is unspecified.
 	Image_FORMAT_UNSPECIFIED Image_Format = 0
-	Image_JPEG               Image_Format = 1
-	Image_PNG                Image_Format = 2
-	Image_WEBP               Image_Format = 3
-	Image_AVIF               Image_Format = 4
+	// JPEG image format.
+	Image_JPEG Image_Format = 1
+	// PNG image format.
+	Image_PNG Image_Format = 2
+	// WebP image format.
+	Image_WEBP Image_Format = 3
+	// AVIF image format.
+	Image_AVIF Image_Format = 4
 )
 
 // Enum value maps for Image_Format.
@@ -274,7 +286,7 @@ func (x *Image) GetDownloadUrl() string {
 
 type GetImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the image to retrieve.
+	// The image to retrieve.
 	//
 	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -366,7 +378,7 @@ func (x *CreateImageRequest) GetImage() *Image {
 
 type DeleteImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the image to delete.
+	// The image to delete.
 	//
 	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -413,7 +425,7 @@ func (x *DeleteImageRequest) GetName() string {
 
 type ConfirmImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the image to confirm.
+	// The image to confirm.
 	//
 	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -460,7 +472,7 @@ func (x *ConfirmImageRequest) GetName() string {
 
 type ProcessImageRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the image to process.
+	// The image to process.
 	//
 	// Format: `images/{image}`
 	Name          string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`

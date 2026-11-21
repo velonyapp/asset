@@ -25,10 +25,15 @@ const OperationAssetServiceGetImage = "/velony.asset.api.v1.AssetService/GetImag
 const OperationAssetServiceProcessImage = "/velony.asset.api.v1.AssetService/ProcessImage"
 
 type AssetServiceHTTPServer interface {
+	// ConfirmImage Confirms an image after a successful upload.
 	ConfirmImage(context.Context, *ConfirmImageRequest) (*Image, error)
+	// CreateImage Creates a new image.
 	CreateImage(context.Context, *CreateImageRequest) (*Image, error)
+	// DeleteImage Deletes an image.
 	DeleteImage(context.Context, *DeleteImageRequest) (*emptypb.Empty, error)
+	// GetImage Retrieves an image by resource name.
 	GetImage(context.Context, *GetImageRequest) (*Image, error)
+	// ProcessImage Processes an image.
 	ProcessImage(context.Context, *ProcessImageRequest) (*Image, error)
 }
 
@@ -152,10 +157,15 @@ func _AssetService_ProcessImage0_HTTP_Handler(srv AssetServiceHTTPServer) func(c
 }
 
 type AssetServiceHTTPClient interface {
+	// ConfirmImage Confirms an image after a successful upload.
 	ConfirmImage(ctx context.Context, req *ConfirmImageRequest, opts ...http.CallOption) (rsp *Image, err error)
+	// CreateImage Creates a new image.
 	CreateImage(ctx context.Context, req *CreateImageRequest, opts ...http.CallOption) (rsp *Image, err error)
+	// DeleteImage Deletes an image.
 	DeleteImage(ctx context.Context, req *DeleteImageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// GetImage Retrieves an image by resource name.
 	GetImage(ctx context.Context, req *GetImageRequest, opts ...http.CallOption) (rsp *Image, err error)
+	// ProcessImage Processes an image.
 	ProcessImage(ctx context.Context, req *ProcessImageRequest, opts ...http.CallOption) (rsp *Image, err error)
 }
 
@@ -167,6 +177,7 @@ func NewAssetServiceHTTPClient(client *http.Client) AssetServiceHTTPClient {
 	return &AssetServiceHTTPClientImpl{client}
 }
 
+// ConfirmImage Confirms an image after a successful upload.
 func (c *AssetServiceHTTPClientImpl) ConfirmImage(ctx context.Context, in *ConfirmImageRequest, opts ...http.CallOption) (*Image, error) {
 	var out Image
 	pattern := "/v1/{name=images/*}:confirm"
@@ -184,6 +195,7 @@ func (c *AssetServiceHTTPClientImpl) ConfirmImage(ctx context.Context, in *Confi
 	return &out, nil
 }
 
+// CreateImage Creates a new image.
 func (c *AssetServiceHTTPClientImpl) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...http.CallOption) (*Image, error) {
 	var out Image
 	pattern := "/v1/images"
@@ -201,6 +213,7 @@ func (c *AssetServiceHTTPClientImpl) CreateImage(ctx context.Context, in *Create
 	return &out, nil
 }
 
+// DeleteImage Deletes an image.
 func (c *AssetServiceHTTPClientImpl) DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/v1/{name=images/*}"
@@ -217,6 +230,7 @@ func (c *AssetServiceHTTPClientImpl) DeleteImage(ctx context.Context, in *Delete
 	return &out, nil
 }
 
+// GetImage Retrieves an image by resource name.
 func (c *AssetServiceHTTPClientImpl) GetImage(ctx context.Context, in *GetImageRequest, opts ...http.CallOption) (*Image, error) {
 	var out Image
 	pattern := "/v1/{name=images/*}"
@@ -233,6 +247,7 @@ func (c *AssetServiceHTTPClientImpl) GetImage(ctx context.Context, in *GetImageR
 	return &out, nil
 }
 
+// ProcessImage Processes an image.
 func (c *AssetServiceHTTPClientImpl) ProcessImage(ctx context.Context, in *ProcessImageRequest, opts ...http.CallOption) (*Image, error) {
 	var out Image
 	pattern := "/v1/{name=images/*}:process"

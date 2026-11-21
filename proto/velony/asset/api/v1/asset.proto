@@ -1,3 +1,4 @@
+
 syntax = "proto3";
 
 package velony.asset.api.v1;
@@ -12,10 +13,11 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/velonyapp/asset/gen/api/v1;apiv1";
 
-// The Asset Service provides APIs for managing images.
+// Provides image management and processing operations.
 service AssetService {
   option (google.api.default_host) = "api.velony.app";
 
+  // Retrieves an image by resource name.
   rpc GetImage(GetImageRequest) returns (Image) {
     option (google.api.http) = {
       get: "/v1/{name=images/*}"
@@ -23,6 +25,7 @@ service AssetService {
     option (google.api.method_signature) = "name";
   }
 
+  // Creates a new image.
   rpc CreateImage(CreateImageRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/images"
@@ -31,6 +34,7 @@ service AssetService {
     option (google.api.method_signature) = "image";
   }
 
+  // Deletes an image.
   rpc DeleteImage(DeleteImageRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=images/*}"
@@ -38,6 +42,7 @@ service AssetService {
     option (google.api.method_signature) = "name";
   }
 
+  // Confirms an image after a successful upload.
   rpc ConfirmImage(ConfirmImageRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:confirm"
@@ -45,6 +50,7 @@ service AssetService {
     };
   }
 
+  // Processes an image.
   rpc ProcessImage(ProcessImageRequest) returns (Image) {
     option (google.api.http) = {
       post: "/v1/{name=images/*}:process"
@@ -54,21 +60,39 @@ service AssetService {
 }
 
 message Image {
+  // The processing state of an image.
   enum State {
+    // The image state is unspecified.
     STATE_UNSPECIFIED = 0;
 
+    // The image is awaiting an upload.
     AWAITING_UPLOAD = 1;
-    PENDING         = 2;
-    PROCESSING      = 3;
-    ACTIVE          = 4;
+
+    // The image is awaiting processing.
+    PENDING = 2;
+
+    // The image is being processed.
+    PROCESSING = 3;
+
+    // The image is active.
+    ACTIVE = 4;
   }
 
+  // The encoding format of an image.
   enum Format {
+    // The image format is unspecified.
     FORMAT_UNSPECIFIED = 0;
 
+    // JPEG image format.
     JPEG = 1;
-    PNG  = 2;
+
+    // PNG image format.
+    PNG = 2;
+
+    // WebP image format.
     WEBP = 3;
+
+    // AVIF image format.
     AVIF = 4;
   }
 
@@ -144,7 +168,7 @@ message Image {
 }
 
 message GetImageRequest {
-  // The name of the image to retrieve.
+  // The image to retrieve.
   //
   // Format: `images/{image}`
   string name = 1 [
@@ -163,7 +187,7 @@ message CreateImageRequest {
 }
 
 message DeleteImageRequest {
-  // The name of the image to delete.
+  // The image to delete.
   //
   // Format: `images/{image}`
   string name = 1 [
@@ -175,7 +199,7 @@ message DeleteImageRequest {
 }
 
 message ConfirmImageRequest {
-  // The name of the image to confirm.
+  // The image to confirm.
   //
   // Format: `images/{image}`
   string name = 1 [
@@ -187,7 +211,7 @@ message ConfirmImageRequest {
 }
 
 message ProcessImageRequest {
-  // The name of the image to process.
+  // The image to process.
   //
   // Format: `images/{image}`
   string name = 1 [
