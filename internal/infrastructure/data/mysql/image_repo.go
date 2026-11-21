@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -21,15 +22,18 @@ var _ repo.Image = (*imageRepo)(nil)
 type imageRepo struct {
 	db         *sql.DB
 	dispatcher *domainevent.Dispatcher
+	log        *slog.Logger
 }
 
 func NewImageRepo(
 	db *sql.DB,
 	dispatcher *domainevent.Dispatcher,
+	log *slog.Logger,
 ) repo.Image {
 	return &imageRepo{
 		db:         db,
 		dispatcher: dispatcher,
+		log:        log,
 	}
 }
 
@@ -67,6 +71,11 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find image",
+			slog.String("image_id", imageID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -103,6 +112,11 @@ func (r *imageRepo) FindByObjectKey(ctx context.Context, objectKey vo.ObjectKey)
 			return nil, nil
 		}
 
+		r.log.ErrorContext(ctx,
+			"failed to find image by object key",
+			slog.String("object_key", objectKey.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -124,6 +138,11 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
 				image.ID().String(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to delete image",
+					slog.String("image_id", image.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 		}
@@ -149,6 +168,11 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 
 			metadata, err := json.Marshal(image.Metadata().Map())
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to marshal image metadata",
+					slog.String("image_id", image.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 
@@ -166,6 +190,12 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 				image.UpdateTime(),
 				image.Version(),
 			); err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to insert image",
+					slog.String("image_id", image.ID().String()),
+					slog.Any("error", err),
+				)
+
 				var mysqlErr *mysql.MySQLError
 				if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
 					switch {
@@ -195,10 +225,20 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 				image.Version()-1,
 			)
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to update image",
+					slog.String("image_id", image.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			rowsAffected, err := result.RowsAffected()
 			if err != nil {
+				r.log.ErrorContext(ctx,
+					"failed to get image rows affected",
+					slog.String("image_id", image.ID().String()),
+					slog.Any("error", err),
+				)
 				return err
 			}
 			if rowsAffected == 0 {
@@ -209,6 +249,11 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 
 	for _, domainEvent := range image.PullEvents() {
 		if err := r.dispatcher.Dispatch(ctx, domainEvent); err != nil {
+			r.log.ErrorContext(ctx,
+				"failed to dispatch image domain event",
+				slog.String("image_id", image.ID().String()),
+				slog.Any("error", err),
+			)
 			return err
 		}
 	}

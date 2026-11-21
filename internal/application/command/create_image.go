@@ -85,7 +85,7 @@ func (h *createImageHandler) Handle(
 		return CreateImageResult{}, err
 	}
 
-	sourceObjectKey, err := h.sourceObjectKeyGenerator.Generate()
+	sourceObjectKey, err := h.sourceObjectKeyGenerator.Generate(ctx)
 	if err != nil {
 		return CreateImageResult{}, err
 	}

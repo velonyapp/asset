@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -16,14 +17,17 @@ import (
 var _ query.Image = (*imageQuery)(nil)
 
 type imageQuery struct {
-	db *sql.DB
+	db  *sql.DB
+	log *slog.Logger
 }
 
 func NewImageQuery(
 	db *sql.DB,
+	log *slog.Logger,
 ) query.Image {
 	return &imageQuery{
-		db: db,
+		db:  db,
+		log: log,
 	}
 }
 
@@ -59,6 +63,11 @@ func (q *imageQuery) Find(ctx context.Context, imageID vo.ImageID) (*common.Imag
 			return nil, nil
 		}
 
+		q.log.ErrorContext(ctx,
+			"failed to find image",
+			slog.String("image_id", imageID.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 

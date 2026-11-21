@@ -119,7 +119,7 @@ func (h *processImageHandler) Handle(
 		processErrChan := make(chan error, 1)
 
 		go func() {
-			err := h.imageProcessor.Process(src, pw, image.Width(), image.Height(), image.Format())
+			err := h.imageProcessor.Process(ctx, src, pw, image.Width(), image.Height(), image.Format())
 			_ = pw.CloseWithError(err)
 			processErrChan <- err
 		}()

@@ -30,34 +30,34 @@ import (
 
 // wireApp init kratos application.
 func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger) (*kratos.App, func(), error) {
-	db, err := mysql.NewConnection(data)
+	db, err := mysql.NewConnection(data, logger)
 	if err != nil {
 		return nil, nil, err
 	}
 	eventEncoder := protobuf.NewEventEncoder()
-	eventPublisher := mysql.NewEventPublisher(db, eventEncoder)
+	eventPublisher := mysql.NewEventPublisher(db, eventEncoder, logger)
 	imageCreatedHandler := domainevent.NewImageCreatedHandler(eventPublisher)
 	jobEncoder := protobuf.NewJobEncoder()
-	jobPublisher := mysql.NewJobPublisher(db, jobEncoder)
+	jobPublisher := mysql.NewJobPublisher(db, jobEncoder, logger)
 	imageConfirmedHandler := domainevent.NewImageConfirmedHandler(jobPublisher)
 	imageActiveHandler := domainevent.NewImageActiveHandler(eventPublisher)
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageConfirmedHandler, imageActiveHandler, imageDeletedHandler)
-	image := mysql.NewImageRepo(db, dispatcher)
+	image := mysql.NewImageRepo(db, dispatcher, logger)
 	unitOfWork := mysql.NewUnitOfWork(db)
-	client, err := s3.NewClient(data)
+	client, err := s3.NewClient(data, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	storage := s3.NewStorage(client, data)
-	sourceObjectKeyGenerator := s3.NewSourceObjectKeyGenerator()
+	storage := s3.NewStorage(client, data, logger)
+	sourceObjectKeyGenerator := s3.NewSourceObjectKeyGenerator(logger)
 	createImageHandler := command.NewCreateImageHandler(image, unitOfWork, storage, sourceObjectKeyGenerator)
 	confirmImageHandler := command.NewConfirmImageHandler(image, unitOfWork, storage)
-	imageProcessor := processing.NewImageProcessor()
+	imageProcessor := processing.NewImageProcessor(logger)
 	processImageHandler := command.NewProcessImageHandler(image, unitOfWork, storage, imageProcessor)
 	deleteImageHandler := command.NewDeleteImageHandler(image, unitOfWork, storage)
 	bus := command.NewBus(createImageHandler, confirmImageHandler, processImageHandler, deleteImageHandler)
-	queryImage := mysql.NewImageQuery(db)
+	queryImage := mysql.NewImageQuery(db, logger)
 	getImageHandler := query.NewGetImageHandler(queryImage, storage)
 	queryBus := query.NewBus(getImageHandler)
 	api := service.NewAPI(bus, queryBus)
@@ -71,7 +71,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	server := transport.NewGRPCServer(confTransport, api, tracing, metrics, errorMapper, validation)
 	httpServer := transport.NewHTTPServer(confTransport, api, tracing, metrics, errorMapper, validation)
 	job := service.NewJob(bus)
-	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, job)
+	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, job, logger)
 	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {
 	}, nil

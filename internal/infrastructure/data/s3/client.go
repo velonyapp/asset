@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/velonyapp/asset/internal/conf"
 
@@ -12,7 +13,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-sdk-go-v2/otelaws"
 )
 
-func NewClient(c *conf.Data) (*s3.Client, error) {
+func NewClient(c *conf.Data, log *slog.Logger) (*s3.Client, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background(),
 		config.WithRegion("auto"),
 		config.WithCredentialsProvider(
@@ -24,6 +25,10 @@ func NewClient(c *conf.Data) (*s3.Client, error) {
 		),
 	)
 	if err != nil {
+		log.Error(
+			"failed to load S3 configuration",
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -32,6 +37,10 @@ func NewClient(c *conf.Data) (*s3.Client, error) {
 	client := s3.NewFromConfig(cfg, func(options *s3.Options) {
 		options.BaseEndpoint = aws.String(c.S3.Endpoint)
 	})
+
+	log.Info(
+		"S3 client initialized",
+	)
 
 	return client, nil
 }

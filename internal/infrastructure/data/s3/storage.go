@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log/slog"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/port"
@@ -24,17 +25,20 @@ type storage struct {
 	presignClient         *s3.PresignClient
 	transferManagerClient *transfermanager.Client
 	c                     *conf.Data
+	log                   *slog.Logger
 }
 
 func NewStorage(
 	client *s3.Client,
 	c *conf.Data,
+	log *slog.Logger,
 ) port.Storage {
 	return &storage{
 		client:                client,
 		presignClient:         s3.NewPresignClient(client),
 		transferManagerClient: transfermanager.New(client),
 		c:                     c,
+		log:                   log,
 	}
 }
 
@@ -52,6 +56,11 @@ func (s *storage) Exists(ctx context.Context, key vo.ObjectKey) (bool, error) {
 			}
 		}
 
+		s.log.ErrorContext(ctx,
+			"failed to check S3 object existence",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return false, err
 	}
 
@@ -64,6 +73,11 @@ func (s *storage) Get(ctx context.Context, key vo.ObjectKey) (io.ReadCloser, err
 		Key:    aws.String(key.String()),
 	})
 	if err != nil {
+		s.log.ErrorContext(ctx,
+			"failed to get S3 object",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return nil, err
 	}
 
@@ -76,6 +90,11 @@ func (s *storage) Put(ctx context.Context, key vo.ObjectKey, body io.Reader) err
 		Key:    aws.String(key.String()),
 		Body:   body,
 	}); err != nil {
+		s.log.ErrorContext(ctx,
+			"failed to put S3 object",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -87,6 +106,11 @@ func (s *storage) Delete(ctx context.Context, key vo.ObjectKey) error {
 		Bucket: aws.String(s.c.S3.Bucket),
 		Key:    aws.String(key.String()),
 	}); err != nil {
+		s.log.ErrorContext(ctx,
+			"failed to delete S3 object",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -117,6 +141,11 @@ func (s *storage) DeleteMany(ctx context.Context, keys []vo.ObjectKey) error {
 			},
 		})
 		if err != nil {
+			s.log.ErrorContext(ctx,
+				"failed to delete S3 objects",
+				slog.Int("object_count", len(objects)),
+				slog.Any("error", err),
+			)
 			return err
 		}
 
@@ -124,10 +153,22 @@ func (s *storage) DeleteMany(ctx context.Context, keys []vo.ObjectKey) error {
 			deleteError := result.Errors[0]
 
 			if deleteError.Message != nil {
-				return errors.New(aws.ToString(deleteError.Message))
+				err := errors.New(aws.ToString(deleteError.Message))
+				s.log.ErrorContext(ctx,
+					"failed to delete S3 objects",
+					slog.Int("object_count", len(objects)),
+					slog.Any("error", err),
+				)
+				return err
 			}
 
-			return errors.New(aws.ToString(deleteError.Code))
+			err := errors.New(aws.ToString(deleteError.Code))
+			s.log.ErrorContext(ctx,
+				"failed to delete S3 objects",
+				slog.Int("object_count", len(objects)),
+				slog.Any("error", err),
+			)
+			return err
 		}
 	}
 
@@ -142,6 +183,11 @@ func (s *storage) PresignGet(ctx context.Context, key vo.ObjectKey, ttl time.Dur
 		options.Expires = ttl
 	})
 	if err != nil {
+		s.log.ErrorContext(ctx,
+			"failed to presign S3 get object",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return "", err
 	}
 
@@ -156,6 +202,11 @@ func (s *storage) PresignPut(ctx context.Context, key vo.ObjectKey, ttl time.Dur
 		options.Expires = ttl
 	})
 	if err != nil {
+		s.log.ErrorContext(ctx,
+			"failed to presign S3 put object",
+			slog.String("object_key", key.String()),
+			slog.Any("error", err),
+		)
 		return "", err
 	}
 

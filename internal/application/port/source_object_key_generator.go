@@ -1,7 +1,11 @@
 package port
 
-import "github.com/velonyapp/asset/internal/domain/vo"
+import (
+	"context"
+
+	"github.com/velonyapp/asset/internal/domain/vo"
+)
 
 type SourceObjectKeyGenerator interface {
-	Generate() (vo.ObjectKey, error)
+	Generate(ctx context.Context) (vo.ObjectKey, error)
 }

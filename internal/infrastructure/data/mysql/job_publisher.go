@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"log/slog"
 
 	"github.com/velonyapp/asset/internal/application/job"
 	"github.com/velonyapp/asset/internal/application/port"
@@ -16,26 +17,41 @@ var _ port.JobPublisher = (*jobPublisher)(nil)
 type jobPublisher struct {
 	db      *sql.DB
 	encoder *protobuf.JobEncoder
+	log     *slog.Logger
 }
 
 func NewJobPublisher(
 	db *sql.DB,
 	encoder *protobuf.JobEncoder,
+	log *slog.Logger,
 ) port.JobPublisher {
 	return &jobPublisher{
 		db:      db,
 		encoder: encoder,
+		log:     log,
 	}
 }
 
 func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 	jobPayload, err := pub.encoder.Encode(job)
 	if err != nil {
+		pub.log.ErrorContext(ctx,
+			"failed to encode job",
+			slog.Any("job_id", job.ID()),
+			slog.Any("job_type", job.Type()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
 	payload, err := protojson.Marshal(jobPayload)
 	if err != nil {
+		pub.log.ErrorContext(ctx,
+			"failed to marshal job payload",
+			slog.Any("job_id", job.ID()),
+			slog.Any("job_type", job.Type()),
+			slog.Any("error", err),
+		)
 		return err
 	}
 
@@ -55,6 +71,14 @@ func (pub *jobPublisher) Publish(ctx context.Context, job job.Job) error {
 		string(payload),
 		job.EnqueueTime(),
 	)
+	if err != nil {
+		pub.log.ErrorContext(ctx,
+			"failed to insert job into outbox",
+			slog.Any("job_id", job.ID()),
+			slog.Any("job_type", job.Type()),
+			slog.Any("error", err),
+		)
+	}
 
 	return err
 }
