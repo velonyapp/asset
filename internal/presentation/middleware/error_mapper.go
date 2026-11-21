@@ -171,13 +171,6 @@ func NewErrorMapper() ErrorMapper {
 						applicationcommand.ErrSourceObjectNotFound.Error(),
 					)
 
-				// Create Image Command
-				case errors.Is(err, applicationcommand.ErrObjectAlreadyExists):
-					return reply, kerrors.Conflict(
-						apiv1.ErrorReason_OBJECT_KEY_ALREADY_EXISTS.String(),
-						applicationcommand.ErrObjectAlreadyExists.Error(),
-					)
-
 				// API Service
 				case errors.Is(err, presentationservice.ErrInvalidImageResourceName):
 					return reply, kerrors.BadRequest("",

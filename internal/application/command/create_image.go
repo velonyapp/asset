@@ -2,7 +2,6 @@ package command
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/common"
@@ -10,11 +9,6 @@ import (
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
-)
-
-var (
-	ErrObjectAlreadyExists       = errors.New("object already exists")
-	ErrSourceObjectAlreadyExists = errors.New("source object already exists")
 )
 
 type CreateImage struct {
@@ -92,22 +86,6 @@ func (h *createImageHandler) Handle(
 	sourceObjectKey, err := h.sourceObjectKeyGenerator.Generate()
 	if err != nil {
 		return CreateImageResult{}, err
-	}
-
-	objectPresent, err := h.storage.Exists(ctx, objectKey)
-	if err != nil {
-		return CreateImageResult{}, err
-	}
-	if objectPresent {
-		return CreateImageResult{}, ErrObjectAlreadyExists
-	}
-
-	sourceObjectPresent, err := h.storage.Exists(ctx, sourceObjectKey)
-	if err != nil {
-		return CreateImageResult{}, err
-	}
-	if sourceObjectPresent {
-		return CreateImageResult{}, ErrSourceObjectAlreadyExists
 	}
 
 	image, err := entity.NewImage(
