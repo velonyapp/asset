@@ -78,16 +78,17 @@ func (s *API) CreateImage(ctx context.Context, req *v1.CreateImageRequest) (*v1.
 	}
 
 	return &v1.Image{
-		Name:       formatImageName(result.Image.ID),
-		Tags:       result.Image.Tags,
-		Metadata:   result.Image.Metadata,
-		ObjectKey:  result.Image.ObjectKey,
-		State:      formatImageStateAPIV1(result.Image.State),
-		WidthPx:    result.Image.Width,
-		HeightPx:   result.Image.Height,
-		Format:     formatImageFormatAPIV1(result.Image.Format),
-		CreateTime: timestamppb.New(result.Image.CreateTime),
-		UploadUrl:  &result.UploadURL,
+		Name:        formatImageName(result.Image.ID),
+		Tags:        result.Image.Tags,
+		Metadata:    result.Image.Metadata,
+		ObjectKey:   result.Image.ObjectKey,
+		State:       formatImageStateAPIV1(result.Image.State),
+		WidthPx:     result.Image.Width,
+		HeightPx:    result.Image.Height,
+		Format:      formatImageFormatAPIV1(result.Image.Format),
+		CreateTime:  timestamppb.New(result.Image.CreateTime),
+		UploadUrl:   result.UploadURL,
+		DownloadUrl: result.DownloadURL,
 	}, nil
 }
 
@@ -105,15 +106,16 @@ func (s *API) ConfirmImage(ctx context.Context, req *v1.ConfirmImageRequest) (*v
 	}
 
 	return &v1.Image{
-		Name:       formatImageName(result.Image.ID),
-		Tags:       result.Image.Tags,
-		Metadata:   result.Image.Metadata,
-		ObjectKey:  result.Image.ObjectKey,
-		State:      formatImageStateAPIV1(result.Image.State),
-		WidthPx:    result.Image.Width,
-		HeightPx:   result.Image.Height,
-		Format:     formatImageFormatAPIV1(result.Image.Format),
-		CreateTime: timestamppb.New(result.Image.CreateTime),
+		Name:        formatImageName(result.Image.ID),
+		Tags:        result.Image.Tags,
+		Metadata:    result.Image.Metadata,
+		ObjectKey:   result.Image.ObjectKey,
+		State:       formatImageStateAPIV1(result.Image.State),
+		WidthPx:     result.Image.Width,
+		HeightPx:    result.Image.Height,
+		Format:      formatImageFormatAPIV1(result.Image.Format),
+		CreateTime:  timestamppb.New(result.Image.CreateTime),
+		DownloadUrl: result.DownloadURL,
 	}, nil
 }
 

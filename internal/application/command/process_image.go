@@ -66,9 +66,37 @@ func (h *processImageHandler) Handle(
 	now := time.Now()
 
 	if err := image.StartProcessing(now); err != nil {
-		if !errors.Is(err, entity.ErrImageAlreadyProcessing) && !errors.Is(err, entity.ErrImageActive) {
-			return ProcessImageResult{}, err
+		if errors.Is(err, entity.ErrImageAlreadyProcessing) ||
+			errors.Is(err, entity.ErrImageActive) {
+			var downloadURL string
+
+			if errors.Is(err, entity.ErrImageActive) {
+				downloadURL, err = h.storage.PresignGet(ctx,
+					image.ObjectKey(),
+					common.PresignTTL,
+				)
+				if err != nil {
+					return ProcessImageResult{}, err
+				}
+			}
+
+			return ProcessImageResult{
+				Image: common.ImageResult{
+					ID:         image.ID().String(),
+					Tags:       image.Tags().Strings(),
+					Metadata:   image.Metadata().Map(),
+					ObjectKey:  image.ObjectKey().String(),
+					State:      image.State().String(),
+					Width:      image.Width().Int32(),
+					Height:     image.Height().Int32(),
+					Format:     image.Format().String(),
+					CreateTime: image.CreateTime(),
+				},
+				DownloadURL: downloadURL,
+			}, nil
 		}
+
+		return ProcessImageResult{}, err
 	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
@@ -114,10 +142,6 @@ func (h *processImageHandler) Handle(
 		now := time.Now()
 
 		if err := image.CompleteProcessing(now); err != nil {
-			if errors.Is(err, entity.ErrImageAlreadyActive) {
-				return nil
-			}
-
 			return err
 		}
 

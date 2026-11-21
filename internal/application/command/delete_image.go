@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/velonyapp/asset/internal/application/common"
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
@@ -56,7 +55,7 @@ func (h *deleteImageHandler) Handle(
 		return DeleteImageResult{}, err
 	}
 	if image == nil {
-		return DeleteImageResult{}, common.ErrImageNotFound
+		return DeleteImageResult{}, nil
 	}
 
 	if err := image.CanDelete(); err != nil {

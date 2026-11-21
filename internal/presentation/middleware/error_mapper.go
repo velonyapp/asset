@@ -106,41 +106,17 @@ func NewErrorMapper() ErrorMapper {
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageDeleted.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageAlreadyDeleted):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyDeleted.Error(),
-					)
 				case errors.Is(err, domainentity.ErrImageNotAwaitingUpload):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageNotAwaitingUpload.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageAlreadyPending):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyPending.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageNotPending):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageNotPending.Error(),
 					)
-				case errors.Is(err, domainentity.ErrImageProcessing):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageProcessing.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageAlreadyProcessing):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyProcessing.Error(),
-					)
 				case errors.Is(err, domainentity.ErrImageNotProcessing):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageNotProcessing.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageActive):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageActive.Error(),
-					)
-				case errors.Is(err, domainentity.ErrImageAlreadyActive):
-					return reply, kerrors.BadRequest("",
-						domainentity.ErrImageAlreadyActive.Error(),
 					)
 				case errors.Is(err, domainentity.ErrImageObjectKeysEqual):
 					return reply, kerrors.BadRequest("",

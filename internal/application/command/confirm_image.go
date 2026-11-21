@@ -21,7 +21,8 @@ type ConfirmImage struct {
 }
 
 type ConfirmImageResult struct {
-	Image common.ImageResult
+	Image       common.ImageResult
+	DownloadURL *string
 }
 
 func (ConfirmImage) resultType() ConfirmImageResult {
@@ -65,7 +66,23 @@ func (h *confirmImageHandler) Handle(
 	}
 
 	if err := image.CanConfirmUpload(); err != nil {
-		if errors.Is(err, entity.ErrImageAlreadyPending) {
+		if errors.Is(err, entity.ErrImageAlreadyPending) ||
+			errors.Is(err, entity.ErrImageProcessing) ||
+			errors.Is(err, entity.ErrImageActive) {
+			var downloadURL *string
+
+			if errors.Is(err, entity.ErrImageActive) {
+				url, err := h.storage.PresignGet(ctx,
+					image.ObjectKey(),
+					common.PresignTTL,
+				)
+				if err != nil {
+					return ConfirmImageResult{}, err
+				}
+
+				downloadURL = &url
+			}
+
 			return ConfirmImageResult{
 				Image: common.ImageResult{
 					ID:         image.ID().String(),
@@ -78,6 +95,7 @@ func (h *confirmImageHandler) Handle(
 					Format:     image.Format().String(),
 					CreateTime: image.CreateTime(),
 				},
+				DownloadURL: downloadURL,
 			}, nil
 		}
 

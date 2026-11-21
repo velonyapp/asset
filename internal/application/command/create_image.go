@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/velonyapp/asset/internal/application/common"
@@ -21,8 +22,9 @@ type CreateImage struct {
 }
 
 type CreateImageResult struct {
-	Image     common.ImageResult
-	UploadURL string
+	Image       common.ImageResult
+	UploadURL   *string
+	DownloadURL *string
 }
 
 func (CreateImage) resultType() CreateImageResult {
@@ -102,7 +104,7 @@ func (h *createImageHandler) Handle(
 		return CreateImageResult{}, err
 	}
 
-	uploadURL, err := h.storage.PresignPut(ctx,
+	url, err := h.storage.PresignPut(ctx,
 		sourceObjectKey,
 		common.PresignTTL,
 	)
@@ -110,10 +112,59 @@ func (h *createImageHandler) Handle(
 		return CreateImageResult{}, err
 	}
 
+	uploadURL := &url
+	var downloadURL *string
+
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
-		return CreateImageResult{}, err
+		if !errors.Is(err, repo.ErrObjectKeyAlreadyExists) {
+			return CreateImageResult{}, err
+		}
+
+		existingImage, err := h.imageRepo.FindByObjectKey(ctx, objectKey)
+		if err != nil {
+			return CreateImageResult{}, err
+		}
+		if existingImage == nil {
+			return CreateImageResult{}, repo.ErrImageVersionConflict
+		}
+		if existingImage.IsDeleted() {
+			return CreateImageResult{}, repo.ErrImageVersionConflict
+		}
+		if !existingImage.Tags().Equal(tags) ||
+			!existingImage.Metadata().Equal(metadata) ||
+			!existingImage.Width().Equal(width) ||
+			!existingImage.Height().Equal(height) ||
+			!existingImage.Format().Equal(format) {
+			return CreateImageResult{}, repo.ErrObjectKeyAlreadyExists
+		}
+
+		image = existingImage
+		uploadURL = nil
+
+		if image.IsAwaitingUpload() {
+			url, err := h.storage.PresignPut(ctx,
+				image.SourceObjectKey(),
+				common.PresignTTL,
+			)
+			if err != nil {
+				return CreateImageResult{}, err
+			}
+
+			uploadURL = &url
+		}
+		if image.IsActive() {
+			url, err := h.storage.PresignGet(ctx,
+				image.ObjectKey(),
+				common.PresignTTL,
+			)
+			if err != nil {
+				return CreateImageResult{}, err
+			}
+
+			downloadURL = &url
+		}
 	}
 
 	return CreateImageResult{
@@ -128,6 +179,7 @@ func (h *createImageHandler) Handle(
 			Format:     image.Format().String(),
 			CreateTime: image.CreateTime(),
 		},
-		UploadURL: uploadURL,
+		UploadURL:   uploadURL,
+		DownloadURL: downloadURL,
 	}, nil
 }
