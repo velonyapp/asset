@@ -12,6 +12,8 @@ import (
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
 	"github.com/velonyapp/asset/internal/domain/vo"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 var _ repo.Image = (*imageRepo)(nil)
@@ -48,11 +50,11 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 			height,
 			format,
 			create_time,
-			update_time
+			update_time,
+			version
 		FROM images
 		WHERE id = ?
 		LIMIT 1
-		FOR UPDATE
 	`
 
 	row := executor(ctx, r.db).QueryRowContext(ctx, query,
@@ -71,95 +73,101 @@ func (r *imageRepo) FindByID(ctx context.Context, imageID vo.ImageID) (*entity.I
 	return image, nil
 }
 
-func (r *imageRepo) FindByAnyObjectKey(ctx context.Context, objectKey vo.ObjectKey) (*entity.Image, error) {
-	const query = `
-		SELECT
-			id,
-			tags,
-			metadata,
-			source_object_key,
-			object_key,
-			state,
-			width,
-			height,
-			format,
-			create_time,
-			update_time
-		FROM images
-		WHERE (source_object_key = ? OR object_key = ?)
-		LIMIT 1
-		FOR UPDATE
-	`
-
-	row := executor(ctx, r.db).QueryRowContext(ctx, query,
-		objectKey.String(),
-		objectKey.String(),
-	)
-
-	image, err := scanRepoImage(row)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
-		return nil, err
+func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
+	if !image.IsDirty() {
+		return nil
 	}
 
-	return image, nil
-}
-
-func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 	if image.IsDeleted() {
-		const query = `
-			DELETE FROM images
-			WHERE id = ?
-		`
+		if !image.IsNew() {
+			const query = `
+				DELETE FROM images
+				WHERE id = ?
+			`
 
-		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
-			image.ID().String(),
-		); err != nil {
-			return err
+			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
+				image.ID().String(),
+			); err != nil {
+				return err
+			}
 		}
 	} else {
-		const query = `
-		    INSERT INTO images (
-		        id,
-		        tags,
-		        metadata,
-		        source_object_key,
-		        object_key,
-		        state,
-				width,
-				height,
-				format,
-		        create_time,
-		        update_time
-		    )
-		    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) AS new
-		    ON DUPLICATE KEY UPDATE
-		        state = new.state,
-		        update_time = new.update_time
-		`
+		if image.IsNew() {
+			const query = `
+				INSERT INTO images (
+					id,
+					tags,
+					metadata,
+					source_object_key,
+					object_key,
+					state,
+					width,
+					height,
+					format,
+					create_time,
+					update_time,
+					version
+				)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			`
 
-		metadata, err := json.Marshal(image.Metadata().Map())
-		if err != nil {
-			return err
-		}
+			metadata, err := json.Marshal(image.Metadata().Map())
+			if err != nil {
+				return err
+			}
 
-		if _, err := executor(ctx, r.db).ExecContext(ctx, query,
-			image.ID().String(),
-			strings.Join(image.Tags().Strings(), ";"),
-			string(metadata),
-			image.SourceObjectKey().String(),
-			image.ObjectKey().String(),
-			image.State().String(),
-			image.Width().Int32(),
-			image.Height().Int32(),
-			image.Format().String(),
-			image.CreateTime(),
-			image.UpdateTime(),
-		); err != nil {
-			return err
+			if _, err := executor(ctx, r.db).ExecContext(ctx, query,
+				image.ID().String(),
+				strings.Join(image.Tags().Strings(), ";"),
+				string(metadata),
+				image.SourceObjectKey().String(),
+				image.ObjectKey().String(),
+				image.State().String(),
+				image.Width().Int32(),
+				image.Height().Int32(),
+				image.Format().String(),
+				image.CreateTime(),
+				image.UpdateTime(),
+				image.Version(),
+			); err != nil {
+				var mysqlErr *mysql.MySQLError
+				if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+					switch {
+					case strings.Contains(mysqlErr.Message, "uq_images_object_keys"):
+						return repo.ErrObjectKeyAlreadyExists
+					}
+				}
+
+				return err
+			}
+		} else {
+			const query = `
+			    UPDATE images
+			    SET
+			        state = ?,
+			        update_time = ?,
+			        version = ?
+			    WHERE id = ?
+			        AND version = ?
+			`
+
+			result, err := executor(ctx, r.db).ExecContext(ctx, query,
+				image.State().String(),
+				image.UpdateTime(),
+				image.Version(),
+				image.ID().String(),
+				image.Version()-1,
+			)
+			if err != nil {
+				return err
+			}
+			rowsAffected, err := result.RowsAffected()
+			if err != nil {
+				return err
+			}
+			if rowsAffected == 0 {
+				return repo.ErrImageVersionConflict
+			}
 		}
 	}
 
@@ -168,6 +176,8 @@ func (r *imageRepo) Save(ctx context.Context, image *entity.Image) error {
 			return err
 		}
 	}
+
+	image.MarkPersisted()
 
 	return nil
 }
@@ -185,6 +195,7 @@ func scanRepoImage(scanner repoImageScanner) (*entity.Image, error) {
 		formatRaw          string
 		createTimeRaw      time.Time
 		updateTimeRaw      time.Time
+		versionRaw         uint32
 	)
 
 	if err := scanner.Scan(
@@ -199,6 +210,7 @@ func scanRepoImage(scanner repoImageScanner) (*entity.Image, error) {
 		&formatRaw,
 		&createTimeRaw,
 		&updateTimeRaw,
+		&versionRaw,
 	); err != nil {
 		return nil, err
 	}
@@ -224,6 +236,7 @@ func scanRepoImage(scanner repoImageScanner) (*entity.Image, error) {
 	format, _ := vo.NewImageFormat(formatRaw)
 	createTime := createTimeRaw
 	updateTime := updateTimeRaw
+	version := versionRaw
 
 	return entity.ReconstituteImage(
 		id,
@@ -237,5 +250,6 @@ func scanRepoImage(scanner repoImageScanner) (*entity.Image, error) {
 		format,
 		createTime,
 		updateTime,
+		version,
 	), nil
 }

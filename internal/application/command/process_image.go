@@ -55,34 +55,29 @@ func (h *processImageHandler) Handle(
 ) (ProcessImageResult, error) {
 	imageID, _ := vo.NewImageID(cmd.ImageID)
 
-	var image *entity.Image
-	var downloadURL string
+	image, err := h.imageRepo.FindByID(ctx, imageID)
+	if err != nil {
+		return ProcessImageResult{}, err
+	}
+	if image == nil {
+		return ProcessImageResult{}, common.ErrImageNotFound
+	}
+
+	now := time.Now()
+
+	if err := image.StartProcessing(now); err != nil {
+		if !errors.Is(err, entity.ErrImageAlreadyProcessing) && !errors.Is(err, entity.ErrImageActive) {
+			return ProcessImageResult{}, err
+		}
+	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		now := time.Now()
-
-		var err error
-
-		image, err = h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil {
-			return common.ErrImageNotFound
-		}
-
-		if err := image.StartProcessing(now); err != nil {
-			if errors.Is(err, entity.ErrImageAlreadyProcessing) || errors.Is(err, entity.ErrImageActive) {
-				return nil
-			}
-
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return ProcessImageResult{}, err
 	}
+
+	var downloadURL string
 
 	if err := func() error {
 		src, err := h.storage.Get(ctx, image.SourceObjectKey())
@@ -116,26 +111,7 @@ func (h *processImageHandler) Handle(
 			return putErr
 		}
 
-		return nil
-	}(); err != nil {
-		// Try rolling back, failed rollback will be handled by background worker
-		h.tryRollback(ctx, imageID)
-
-		return ProcessImageResult{}, err
-	}
-
-	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
 		now := time.Now()
-
-		var err error
-
-		image, err = h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil {
-			return common.ErrImageNotFound
-		}
 
 		if err := image.CompleteProcessing(now); err != nil {
 			if errors.Is(err, entity.ErrImageAlreadyActive) {
@@ -153,8 +129,10 @@ func (h *processImageHandler) Handle(
 			return err
 		}
 
-		return h.imageRepo.Save(ctx, image)
-	}); err != nil {
+		return h.unitOfWork.Do(ctx, func(ctx context.Context) error {
+			return h.imageRepo.Save(ctx, image)
+		})
+	}(); err != nil {
 		// Try rolling back, failed rollback will be handled by background worker
 		h.tryRollback(ctx, imageID)
 
@@ -181,21 +159,21 @@ func (h *processImageHandler) tryRollback(ctx context.Context, imageID vo.ImageI
 	rollbackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 	defer cancel()
 
+	image, err := h.imageRepo.FindByID(rollbackCtx, imageID)
+	if err != nil {
+		return err
+	}
+	if image == nil {
+		return common.ErrImageNotFound
+	}
+
+	now := time.Now()
+
+	if err := image.CancelProcessing(now); err != nil {
+		return err
+	}
+
 	return h.unitOfWork.Do(rollbackCtx, func(ctx context.Context) error {
-		now := time.Now()
-
-		image, err := h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil {
-			return common.ErrImageNotFound
-		}
-
-		if err := image.CancelProcessing(now); err != nil {
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	})
 }

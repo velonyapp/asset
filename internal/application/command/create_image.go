@@ -9,7 +9,6 @@ import (
 	"github.com/velonyapp/asset/internal/application/port"
 	"github.com/velonyapp/asset/internal/domain/entity"
 	"github.com/velonyapp/asset/internal/domain/repo"
-	"github.com/velonyapp/asset/internal/domain/service"
 	"github.com/velonyapp/asset/internal/domain/vo"
 )
 
@@ -40,7 +39,6 @@ type CreateImageHandler Handler[CreateImage, CreateImageResult]
 
 type createImageHandler struct {
 	imageRepo                repo.Image
-	objectKeyPolicy          *service.ObjectKeyPolicy
 	unitOfWork               port.UnitOfWork
 	storage                  port.Storage
 	sourceObjectKeyGenerator port.SourceObjectKeyGenerator
@@ -48,14 +46,12 @@ type createImageHandler struct {
 
 func NewCreateImageHandler(
 	imageRepo repo.Image,
-	objectKeyPolicy *service.ObjectKeyPolicy,
 	unitOfWork port.UnitOfWork,
 	storage port.Storage,
 	sourceObjectKeyGenerator port.SourceObjectKeyGenerator,
 ) CreateImageHandler {
 	return &createImageHandler{
 		imageRepo:                imageRepo,
-		objectKeyPolicy:          objectKeyPolicy,
 		unitOfWork:               unitOfWork,
 		storage:                  storage,
 		sourceObjectKeyGenerator: sourceObjectKeyGenerator,
@@ -98,62 +94,45 @@ func (h *createImageHandler) Handle(
 		return CreateImageResult{}, err
 	}
 
-	var image *entity.Image
-	var uploadURL string
+	objectPresent, err := h.storage.Exists(ctx, objectKey)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+	if objectPresent {
+		return CreateImageResult{}, ErrObjectAlreadyExists
+	}
+
+	sourceObjectPresent, err := h.storage.Exists(ctx, sourceObjectKey)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+	if sourceObjectPresent {
+		return CreateImageResult{}, ErrSourceObjectAlreadyExists
+	}
+
+	image, err := entity.NewImage(
+		tags,
+		metadata,
+		sourceObjectKey,
+		objectKey,
+		width,
+		height,
+		format,
+		now,
+	)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
+
+	uploadURL, err := h.storage.PresignPut(ctx,
+		sourceObjectKey,
+		common.PresignTTL,
+	)
+	if err != nil {
+		return CreateImageResult{}, err
+	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		if err := h.objectKeyPolicy.CanUse(ctx, objectKey); err != nil {
-			if errors.Is(err, service.ErrObjectKeyAlreadyExists) {
-				return ErrObjectAlreadyExists
-			}
-			return err
-		}
-
-		objectPresent, err := h.storage.Exists(ctx, objectKey)
-		if err != nil {
-			return err
-		}
-		if objectPresent {
-			return ErrObjectAlreadyExists
-		}
-
-		if err := h.objectKeyPolicy.CanUse(ctx, sourceObjectKey); err != nil {
-			if errors.Is(err, service.ErrObjectKeyAlreadyExists) {
-				return ErrSourceObjectAlreadyExists
-			}
-			return err
-		}
-
-		sourceObjectPresent, err := h.storage.Exists(ctx, sourceObjectKey)
-		if err != nil {
-			return err
-		}
-		if sourceObjectPresent {
-			return ErrSourceObjectAlreadyExists
-		}
-
-		image, err = entity.NewImage(
-			tags,
-			metadata,
-			sourceObjectKey,
-			objectKey,
-			width,
-			height,
-			format,
-			now,
-		)
-		if err != nil {
-			return err
-		}
-
-		uploadURL, err = h.storage.PresignPut(ctx,
-			sourceObjectKey,
-			common.PresignTTL,
-		)
-		if err != nil {
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return CreateImageResult{}, err

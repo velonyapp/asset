@@ -12,13 +12,12 @@ import (
 	"github.com/velonyapp/asset/internal/application/domainevent"
 	"github.com/velonyapp/asset/internal/application/query"
 	"github.com/velonyapp/asset/internal/conf"
-	"github.com/velonyapp/asset/internal/domain/service"
 	"github.com/velonyapp/asset/internal/infrastructure/data/mysql"
 	"github.com/velonyapp/asset/internal/infrastructure/data/s3"
 	"github.com/velonyapp/asset/internal/infrastructure/messaging/protobuf"
 	"github.com/velonyapp/asset/internal/infrastructure/processing"
 	"github.com/velonyapp/asset/internal/presentation/middleware"
-	service2 "github.com/velonyapp/asset/internal/presentation/service"
+	"github.com/velonyapp/asset/internal/presentation/service"
 	"github.com/velonyapp/asset/internal/presentation/transport"
 	"log/slog"
 )
@@ -45,7 +44,6 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	imageDeletedHandler := domainevent.NewImageDeletedHandler(eventPublisher)
 	dispatcher := domainevent.NewDispatcher(imageCreatedHandler, imageConfirmedHandler, imageActiveHandler, imageDeletedHandler)
 	image := mysql.NewImageRepo(db, dispatcher)
-	objectKeyPolicy := service.NewObjectKeyPolicy(image)
 	unitOfWork := mysql.NewUnitOfWork(db)
 	client, err := s3.NewClient(data)
 	if err != nil {
@@ -53,7 +51,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	}
 	storage := s3.NewStorage(client, data)
 	sourceObjectKeyGenerator := s3.NewSourceObjectKeyGenerator()
-	createImageHandler := command.NewCreateImageHandler(image, objectKeyPolicy, unitOfWork, storage, sourceObjectKeyGenerator)
+	createImageHandler := command.NewCreateImageHandler(image, unitOfWork, storage, sourceObjectKeyGenerator)
 	confirmImageHandler := command.NewConfirmImageHandler(image, unitOfWork, storage)
 	imageProcessor := processing.NewImageProcessor()
 	processImageHandler := command.NewProcessImageHandler(image, unitOfWork, storage, imageProcessor)
@@ -62,7 +60,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	queryImage := mysql.NewImageQuery(db)
 	getImageHandler := query.NewGetImageHandler(queryImage, storage)
 	queryBus := query.NewBus(getImageHandler)
-	api := service2.NewAPI(bus, queryBus)
+	api := service.NewAPI(bus, queryBus)
 	tracing := middleware.NewTracing()
 	metrics, err := middleware.NewMetrics()
 	if err != nil {
@@ -72,7 +70,7 @@ func wireApp(data *conf.Data, confTransport *conf.Transport, logger *slog.Logger
 	validation := middleware.NewValidation()
 	server := transport.NewGRPCServer(confTransport, api, tracing, metrics, errorMapper, validation)
 	httpServer := transport.NewHTTPServer(confTransport, api, tracing, metrics, errorMapper, validation)
-	job := service2.NewJob(bus)
+	job := service.NewJob(bus)
 	rabbitMQConsumer := transport.NewRabbitMQConsumer(confTransport, job)
 	app := newApp(logger, server, httpServer, rabbitMQConsumer)
 	return app, func() {

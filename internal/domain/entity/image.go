@@ -36,6 +36,10 @@ type Image struct {
 	updateTime      time.Time
 
 	domainEvents []event.DomainEvent
+
+	version uint32
+	isNew   bool
+	isDirty bool
 }
 
 func NewImage(
@@ -67,6 +71,10 @@ func NewImage(
 		format:          format,
 		createTime:      now,
 		updateTime:      now,
+
+		version: 0,
+		isNew:   true,
+		isDirty: true,
 	}
 
 	a.recordEvent(event.NewImageCreated(id, tags, metadata, objectKey, now))
@@ -86,6 +94,7 @@ func ReconstituteImage(
 	format vo.ImageFormat,
 	createTime time.Time,
 	updateTime time.Time,
+	version uint32,
 ) *Image {
 	return &Image{
 		id:              id,
@@ -99,6 +108,7 @@ func ReconstituteImage(
 		format:          format,
 		createTime:      createTime,
 		updateTime:      updateTime,
+		version:         version,
 	}
 }
 
@@ -246,6 +256,8 @@ func (a *Image) ConfirmUpload(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
+	a.markDirty()
+
 	a.recordEvent(event.NewImageConfirmed(a.id, a.tags, a.metadata, now))
 
 	return nil
@@ -261,6 +273,8 @@ func (a *Image) StartProcessing(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
+	a.markDirty()
+
 	return nil
 }
 
@@ -274,6 +288,8 @@ func (a *Image) CancelProcessing(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
+	a.markDirty()
+
 	return nil
 }
 
@@ -286,6 +302,8 @@ func (a *Image) CompleteProcessing(now time.Time) error {
 
 	a.state = newState
 	a.updateTime = now
+
+	a.markDirty()
 
 	a.recordEvent(event.NewImageActive(a.id, a.tags, a.metadata, now))
 
@@ -302,6 +320,8 @@ func (a *Image) Delete(now time.Time) error {
 	a.state = newState
 	a.updateTime = now
 
+	a.markDirty()
+
 	a.recordEvent(event.NewImageDeleted(a.id, a.tags, a.metadata, now))
 
 	return nil
@@ -315,4 +335,30 @@ func (a *Image) PullEvents() []event.DomainEvent {
 
 func (a *Image) recordEvent(domainEvent event.DomainEvent) {
 	a.domainEvents = append(a.domainEvents, domainEvent)
+}
+
+func (a *Image) Version() uint32 {
+	return a.version
+}
+
+func (a *Image) IsNew() bool {
+	return a.isNew
+}
+
+func (a *Image) IsDirty() bool {
+	return a.isDirty
+}
+
+func (a *Image) markDirty() {
+	if a.isDirty {
+		return
+	}
+
+	a.isDirty = true
+	a.version++
+}
+
+func (a *Image) MarkPersisted() {
+	a.isNew = false
+	a.isDirty = false
 }

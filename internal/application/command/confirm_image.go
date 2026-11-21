@@ -56,39 +56,47 @@ func (h *confirmImageHandler) Handle(
 
 	imageID, _ := vo.NewImageID(cmd.ImageID)
 
-	var image *entity.Image
+	image, err := h.imageRepo.FindByID(ctx, imageID)
+	if err != nil {
+		return ConfirmImageResult{}, err
+	}
+	if image == nil {
+		return ConfirmImageResult{}, common.ErrImageNotFound
+	}
+
+	if err := image.CanConfirmUpload(); err != nil {
+		if errors.Is(err, entity.ErrImageAlreadyPending) {
+			return ConfirmImageResult{
+				Image: common.ImageResult{
+					ID:         image.ID().String(),
+					Tags:       image.Tags().Strings(),
+					Metadata:   image.Metadata().Map(),
+					ObjectKey:  image.ObjectKey().String(),
+					State:      image.State().String(),
+					Width:      image.Width().Int32(),
+					Height:     image.Height().Int32(),
+					Format:     image.Format().String(),
+					CreateTime: image.CreateTime(),
+				},
+			}, nil
+		}
+
+		return ConfirmImageResult{}, err
+	}
+
+	present, err := h.storage.Exists(ctx, image.SourceObjectKey())
+	if err != nil {
+		return ConfirmImageResult{}, err
+	}
+	if !present {
+		return ConfirmImageResult{}, ErrSourceObjectNotFound
+	}
+
+	if err := image.ConfirmUpload(now); err != nil {
+		return ConfirmImageResult{}, err
+	}
 
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		var err error
-
-		image, err = h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil {
-			return common.ErrImageNotFound
-		}
-
-		if err := image.CanConfirmUpload(); err != nil {
-			if errors.Is(err, entity.ErrImageAlreadyPending) {
-				return nil
-			}
-
-			return err
-		}
-
-		present, err := h.storage.Exists(ctx, image.SourceObjectKey())
-		if err != nil {
-			return err
-		}
-		if !present {
-			return ErrSourceObjectNotFound
-		}
-
-		if err := image.ConfirmUpload(now); err != nil {
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return ConfirmImageResult{}, err

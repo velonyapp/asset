@@ -132,7 +132,12 @@ func TestImage_Transitions(t *testing.T) {
 						vo.ImageFormatPNG,
 						time.Time{},
 						time.Time{},
+						7,
 					)
+
+					if image.IsNew() || image.IsDirty() {
+						t.Error("expected reconstituted image to be persisted and clean")
+					}
 
 					err := tt.can(image)
 
@@ -148,6 +153,10 @@ func TestImage_Transitions(t *testing.T) {
 						t.Errorf("expected update time to remain zero, got %v", image.UpdateTime())
 					}
 
+					if image.Version() != 7 || image.IsDirty() {
+						t.Error("expected validation to preserve version and dirty state")
+					}
+
 					if events := image.PullEvents(); len(events) != 0 {
 						t.Errorf("expected no events, got %d", len(events))
 					}
@@ -161,6 +170,10 @@ func TestImage_Transitions(t *testing.T) {
 					}
 
 					if tc.wantErr != nil {
+						if image.Version() != 7 || image.IsDirty() {
+							t.Error("expected rejected transition to preserve version and dirty state")
+						}
+
 						if !image.State().Equal(tc.state) {
 							t.Error("expected image state to remain unchanged")
 						}
@@ -182,6 +195,10 @@ func TestImage_Transitions(t *testing.T) {
 
 					if !image.UpdateTime().Equal(now) {
 						t.Errorf("expected update time %v, got %v", now, image.UpdateTime())
+					}
+
+					if image.Version() != 8 || !image.IsDirty() || image.IsNew() {
+						t.Error("expected successful transition to advance version and mark image dirty")
 					}
 
 					events := image.PullEvents()
@@ -220,6 +237,7 @@ func TestImage_PullEvents(t *testing.T) {
 		vo.ImageFormatPNG,
 		time.Time{},
 		time.Time{},
+		0,
 	)
 
 	err := image.Delete(time.Now().UTC())
@@ -253,6 +271,7 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 		vo.ImageFormatPNG,
 		time.Time{},
 		time.Time{},
+		0,
 	)
 
 	now := time.Now().UTC()
@@ -297,5 +316,77 @@ func TestImage_PullEvents_WhenMultipleEvents(t *testing.T) {
 
 	if events := image.PullEvents(); len(events) != 0 {
 		t.Errorf("expected events to be consumed, got %d", len(events))
+	}
+}
+
+func TestImage_MarkPersisted(t *testing.T) {
+	sourceObjectKey, _ := vo.NewObjectKey("source")
+	objectKey, _ := vo.NewObjectKey("image")
+	now := time.Now().UTC()
+
+	image, err := NewImage(
+		vo.Tags{},
+		vo.Metadata{},
+		sourceObjectKey,
+		objectKey,
+		vo.ImageWidth{},
+		vo.ImageHeight{},
+		vo.ImageFormatPNG,
+		now,
+	)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if image.Version() != 0 || !image.IsNew() || !image.IsDirty() {
+		t.Error("expected new image to be new and dirty at version zero")
+	}
+
+	err = image.ConfirmUpload(now)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if image.Version() != 0 {
+		t.Errorf("expected new image version to remain zero, got %d", image.Version())
+	}
+
+	image.MarkPersisted()
+
+	if image.Version() != 0 || image.IsNew() || image.IsDirty() {
+		t.Error("expected persisted image to be clean at version zero")
+	}
+
+	err = image.StartProcessing(now)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if image.Version() != 1 || !image.IsDirty() {
+		t.Error("expected first change after persistence to advance version and mark image dirty")
+	}
+
+	err = image.CancelProcessing(now)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if image.Version() != 1 || !image.IsDirty() {
+		t.Error("expected further changes before persistence to keep the same version")
+	}
+
+	image.MarkPersisted()
+
+	if image.Version() != 1 || image.IsNew() || image.IsDirty() {
+		t.Error("expected persistence to clear flags and preserve version")
+	}
+
+	err = image.StartProcessing(now)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if image.Version() != 2 || !image.IsDirty() {
+		t.Error("expected next change after persistence to advance version again")
 	}
 }

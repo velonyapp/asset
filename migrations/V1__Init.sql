@@ -10,11 +10,17 @@ CREATE TABLE images (
     format            VARCHAR(16) NOT NULL,
     create_time       DATETIME(6) NOT NULL,
     update_time       DATETIME(6) NOT NULL,
+    version           INT NOT NULL,
 
     INDEX idx_images_update_time       (update_time),
     INDEX idx_images_source_object_key (source_object_key),
     INDEX idx_images_object_key        (object_key),
-    INDEX idx_images_format            (format)
+    INDEX idx_images_format            (format),
+
+    UNIQUE KEY uq_images_object_keys ((CAST(JSON_ARRAY(source_object_key, object_key) AS CHAR(128) ARRAY))),
+
+    CONSTRAINT chk_images_object_keys_differ
+        CHECK (CAST(source_object_key AS BINARY) <> CAST(object_key AS BINARY))
 ) ENGINE = InnoDB;
 
 CREATE TABLE outbox_events (

@@ -8,7 +8,7 @@ import (
 	applicationcommand "github.com/velonyapp/asset/internal/application/command"
 	applicationcommon "github.com/velonyapp/asset/internal/application/common"
 	domainentity "github.com/velonyapp/asset/internal/domain/entity"
-	domainservice "github.com/velonyapp/asset/internal/domain/service"
+	domainrepo "github.com/velonyapp/asset/internal/domain/repo"
 	domainvo "github.com/velonyapp/asset/internal/domain/vo"
 	presentationservice "github.com/velonyapp/asset/internal/presentation/service"
 
@@ -101,12 +101,6 @@ func NewErrorMapper() ErrorMapper {
 						domainvo.ErrImageFormatInvalid.Error(),
 					)
 
-				// Object Key Policy
-				case errors.Is(err, domainservice.ErrObjectKeyAlreadyExists):
-					return reply, kerrors.Conflict("",
-						domainservice.ErrObjectKeyAlreadyExists.Error(),
-					)
-
 				// Image
 				case errors.Is(err, domainentity.ErrImageDeleted):
 					return reply, kerrors.BadRequest("",
@@ -151,6 +145,16 @@ func NewErrorMapper() ErrorMapper {
 				case errors.Is(err, domainentity.ErrImageObjectKeysEqual):
 					return reply, kerrors.BadRequest("",
 						domainentity.ErrImageObjectKeysEqual.Error(),
+					)
+
+				// Domain Repository
+				case errors.Is(err, domainrepo.ErrObjectKeyAlreadyExists):
+					return reply, kerrors.Conflict("",
+						domainrepo.ErrObjectKeyAlreadyExists.Error(),
+					)
+				case errors.Is(err, domainrepo.ErrImageVersionConflict):
+					return reply, kerrors.Conflict("",
+						domainrepo.ErrImageVersionConflict.Error(),
 					)
 
 				// Application Common

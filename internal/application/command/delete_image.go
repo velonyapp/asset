@@ -51,34 +51,34 @@ func (h *deleteImageHandler) Handle(
 
 	imageID, _ := vo.NewImageID(cmd.ImageID)
 
+	image, err := h.imageRepo.FindByID(ctx, imageID)
+	if err != nil {
+		return DeleteImageResult{}, err
+	}
+	if image == nil {
+		return DeleteImageResult{}, common.ErrImageNotFound
+	}
+
+	if err := image.CanDelete(); err != nil {
+		if errors.Is(err, entity.ErrImageAlreadyDeleted) {
+			return DeleteImageResult{}, nil
+		}
+
+		return DeleteImageResult{}, err
+	}
+
+	if err := h.storage.DeleteMany(ctx, []vo.ObjectKey{
+		image.SourceObjectKey(),
+		image.ObjectKey(),
+	}); err != nil {
+		return DeleteImageResult{}, err
+	}
+
+	if err := image.Delete(now); err != nil {
+		return DeleteImageResult{}, err
+	}
+
 	if err := h.unitOfWork.Do(ctx, func(ctx context.Context) error {
-		image, err := h.imageRepo.FindByID(ctx, imageID)
-		if err != nil {
-			return err
-		}
-		if image == nil {
-			return common.ErrImageNotFound
-		}
-
-		if err := image.CanDelete(); err != nil {
-			if errors.Is(err, entity.ErrImageAlreadyDeleted) {
-				return nil
-			}
-
-			return err
-		}
-
-		if err := h.storage.DeleteMany(ctx, []vo.ObjectKey{
-			image.SourceObjectKey(),
-			image.ObjectKey(),
-		}); err != nil {
-			return err
-		}
-
-		if err := image.Delete(now); err != nil {
-			return err
-		}
-
 		return h.imageRepo.Save(ctx, image)
 	}); err != nil {
 		return DeleteImageResult{}, err
