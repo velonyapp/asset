@@ -63,7 +63,7 @@ func (h *processImageHandler) Handle(
 		return ProcessImageResult{}, common.ErrImageNotFound
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 
 	if err := image.StartProcessing(now); err != nil {
 		if errors.Is(err, entity.ErrImageAlreadyProcessing) ||
@@ -139,7 +139,7 @@ func (h *processImageHandler) Handle(
 			return putErr
 		}
 
-		now := time.Now()
+		now := time.Now().UTC()
 
 		if err := image.CompleteProcessing(now); err != nil {
 			return err
@@ -191,7 +191,7 @@ func (h *processImageHandler) tryRollback(ctx context.Context, imageID vo.ImageI
 		return common.ErrImageNotFound
 	}
 
-	now := time.Now()
+	now := time.Now().UTC()
 
 	if err := image.CancelProcessing(now); err != nil {
 		return err
